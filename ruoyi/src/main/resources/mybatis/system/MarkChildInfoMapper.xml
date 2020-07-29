@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.MarkChildInfoMapper">
+    
+    <resultMap type="MarkChildInfo" id="MarkChildInfoResult">
+        <result property="id"    column="id"    />
+        <result property="markCode"    column="mark_code"    />
+        <result property="markChildCode"    column="mark_child_code"    />
+        <result property="markChildName"    column="mark_child_name"    />
+        <result property="perationName"    column="peration_name"    />
+        <result property="perationNature"    column="peration_nature"    />
+        <result property="socialCreditCode"    column="social_credit_code"    />
+        <result property="operateType"    column="operate_type"    />
+        <result property="operateStartTime"    column="operate_start_time"    />
+        <result property="operateEndTime"    column="operate_end_time"    />
+        <result property="operateMoney"    column="operate_money"    />
+        <result property="markMerchantsCount"    column="mark_merchants_count"    />
+        <result property="markNote"    column="mark_note"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectMarkChildInfoVo">
+        select id, mark_code, mark_child_code, mark_child_name, peration_name, peration_nature, social_credit_code, operate_type, operate_start_time, operate_end_time, operate_money, mark_merchants_count, mark_note, create_user, create_by, create_time, update_by, update_time, remark from mark_child_info
+    </sql>
+
+    <select id="selectMarkChildInfoList" parameterType="MarkChildInfo" resultMap="MarkChildInfoResult">
+        <include refid="selectMarkChildInfoVo"/>
+        <where>  
+            <if test="markCode != null  and markCode != ''"> and mark_code = #{markCode}</if>
+            <if test="markChildCode != null  and markChildCode != ''"> and mark_child_code = #{markChildCode}</if>
+            <if test="markChildName != null  and markChildName != ''"> and mark_child_name like concat('%', #{markChildName}, '%')</if>
+            <if test="perationName != null  and perationName != ''"> and peration_name like concat('%', #{perationName}, '%')</if>
+            <if test="perationNature != null  and perationNature != ''"> and peration_nature = #{perationNature}</if>
+            <if test="socialCreditCode != null  and socialCreditCode != ''"> and social_credit_code = #{socialCreditCode}</if>
+            <if test="operateType != null  and operateType != ''"> and operate_type = #{operateType}</if>
+            <if test="operateStartTime != null  and operateStartTime != ''"> and operate_start_time = #{operateStartTime}</if>
+            <if test="operateEndTime != null  and operateEndTime != ''"> and operate_end_time = #{operateEndTime}</if>
+            <if test="operateMoney != null  and operateMoney != ''"> and operate_money = #{operateMoney}</if>
+            <if test="markMerchantsCount != null  and markMerchantsCount != ''"> and mark_merchants_count = #{markMerchantsCount}</if>
+            <if test="markNote != null  and markNote != ''"> and mark_note = #{markNote}</if>
+            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectMarkChildInfoById" parameterType="String" resultMap="MarkChildInfoResult">
+        <include refid="selectMarkChildInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectMarkData"  resultType="com.ruoyi.project.system.domain.MarkInfo">
+        select mark_code,mark_name from mark_info
+    </select>
+
+    <select id="selectMarkChildInfoByName" parameterType="String" resultMap="MarkChildInfoResult">
+        <include refid="selectMarkChildInfoVo"/>
+        where mark_child_name = #{name}
+        <if test="id != null  and id != ''">
+            and id != #{id}
+        </if>
+    </select>
+    <insert id="insertMarkChildInfo" parameterType="MarkChildInfo">
+        insert into mark_child_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="markCode != null  and markCode != ''">mark_code,</if>
+            <if test="markChildCode != null  and markChildCode != ''">mark_child_code,</if>
+            <if test="markChildName != null  and markChildName != ''">mark_child_name,</if>
+            <if test="perationName != null  and perationName != ''">peration_name,</if>
+            <if test="perationNature != null  and perationNature != ''">peration_nature,</if>
+            <if test="socialCreditCode != null  and socialCreditCode != ''">social_credit_code,</if>
+            <if test="operateType != null  and operateType != ''">operate_type,</if>
+            <if test="operateStartTime != null  and operateStartTime != ''">operate_start_time,</if>
+            <if test="operateEndTime != null  and operateEndTime != ''">operate_end_time,</if>
+            <if test="operateMoney != null  and operateMoney != ''">operate_money,</if>
+            <if test="markMerchantsCount != null  and markMerchantsCount != ''">mark_merchants_count,</if>
+            <if test="markNote != null  and markNote != ''">mark_note,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="markCode != null  and markCode != ''">#{markCode},</if>
+            <if test="markChildCode != null  and markChildCode != ''">#{markChildCode},</if>
+            <if test="markChildName != null  and markChildName != ''">#{markChildName},</if>
+            <if test="perationName != null  and perationName != ''">#{perationName},</if>
+            <if test="perationNature != null  and perationNature != ''">#{perationNature},</if>
+            <if test="socialCreditCode != null  and socialCreditCode != ''">#{socialCreditCode},</if>
+            <if test="operateType != null  and operateType != ''">#{operateType},</if>
+            <if test="operateStartTime != null  and operateStartTime != ''">#{operateStartTime},</if>
+            <if test="operateEndTime != null  and operateEndTime != ''">#{operateEndTime},</if>
+            <if test="operateMoney != null  and operateMoney != ''">#{operateMoney},</if>
+            <if test="markMerchantsCount != null  and markMerchantsCount != ''">#{markMerchantsCount},</if>
+            <if test="markNote != null  and markNote != ''">#{markNote},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateMarkChildInfo" parameterType="MarkChildInfo">
+        update mark_child_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="markCode != null  and markCode != ''">mark_code = #{markCode},</if>
+            <if test="markChildCode != null  and markChildCode != ''">mark_child_code = #{markChildCode},</if>
+            <if test="markChildName != null  and markChildName != ''">mark_child_name = #{markChildName},</if>
+            <if test="perationName != null  and perationName != ''">peration_name = #{perationName},</if>
+            <if test="perationNature != null  and perationNature != ''">peration_nature = #{perationNature},</if>
+            <if test="socialCreditCode != null  and socialCreditCode != ''">social_credit_code = #{socialCreditCode},</if>
+            <if test="operateType != null  and operateType != ''">operate_type = #{operateType},</if>
+            <if test="operateStartTime != null  and operateStartTime != ''">operate_start_time = #{operateStartTime},</if>
+            <if test="operateEndTime != null  and operateEndTime != ''">operate_end_time = #{operateEndTime},</if>
+            <if test="operateMoney != null  and operateMoney != ''">operate_money = #{operateMoney},</if>
+            <if test="markMerchantsCount != null  and markMerchantsCount != ''">mark_merchants_count = #{markMerchantsCount},</if>
+            <if test="markNote != null  and markNote != ''">mark_note = #{markNote},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMarkChildInfoById" parameterType="String">
+        delete from mark_child_info where id = #{id}
+    </delete>
+
+    <delete id="deleteMarkChildInfoByIds" parameterType="String">
+        delete from mark_child_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

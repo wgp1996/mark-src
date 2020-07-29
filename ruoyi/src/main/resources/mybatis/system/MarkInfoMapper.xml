@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.MarkInfoMapper">
+    
+    <resultMap type="MarkInfo" id="MarkInfoResult">
+        <result property="id"    column="id"    />
+        <result property="markName"    column="mark_name"    />
+        <result property="perationName"    column="peration_name"    />
+        <result property="perationNature"    column="peration_nature"    />
+        <result property="socialCreditCode"    column="social_credit_code"    />
+        <result property="markAddressCity"    column="mark_address_city"    />
+        <result property="markAddressProvince"    column="mark_address_province"    />
+        <result property="markAddressArea"    column="mark_address_area"    />
+        <result property="markAddressDetail"    column="mark_address_detail"    />
+        <result property="markCreateTime"    column="mark_create_time"    />
+        <result property="markMerchantsCount"    column="mark_merchants_count"    />
+        <result property="markNote"    column="mark_note"    />
+        <result property="createUser"    column="create_user"    />
+        <result property="markCode"    column="mark_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectMarkInfoVo">
+        select id, mark_name, peration_name, peration_nature, social_credit_code, mark_address_city, mark_address_province, mark_address_area, mark_address_detail, mark_create_time, mark_merchants_count, mark_note, create_user, mark_code, create_by, create_time, update_by, update_time, remark from mark_info
+    </sql>
+
+    <select id="selectMarkInfoList" parameterType="MarkInfo" resultMap="MarkInfoResult">
+        <include refid="selectMarkInfoVo"/>
+        <where>  
+            <if test="markName != null  and markName != ''"> and mark_name like concat('%', #{markName}, '%')</if>
+            <if test="perationName != null  and perationName != ''"> and peration_name like concat('%', #{perationName}, '%')</if>
+            <if test="perationNature != null  and perationNature != ''"> and peration_nature = #{perationNature}</if>
+            <if test="socialCreditCode != null  and socialCreditCode != ''"> and social_credit_code = #{socialCreditCode}</if>
+            <if test="markAddressCity != null  and markAddressCity != ''"> and mark_address_city = #{markAddressCity}</if>
+            <if test="markAddressProvince != null  and markAddressProvince != ''"> and mark_address_province = #{markAddressProvince}</if>
+            <if test="markAddressArea != null  and markAddressArea != ''"> and mark_address_area = #{markAddressArea}</if>
+            <if test="markAddressDetail != null  and markAddressDetail != ''"> and mark_address_detail = #{markAddressDetail}</if>
+            <if test="markCreateTime != null  and markCreateTime != ''"> and mark_create_time = #{markCreateTime}</if>
+            <if test="markMerchantsCount != null  and markMerchantsCount != ''"> and mark_merchants_count = #{markMerchantsCount}</if>
+            <if test="markNote != null  and markNote != ''"> and mark_note = #{markNote}</if>
+            <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+            <if test="markCode != null  and markCode != ''"> and mark_code = #{markCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectMarkInfoById" parameterType="String" resultMap="MarkInfoResult">
+        <include refid="selectMarkInfoVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectMarkInfoByName" parameterType="String" resultMap="MarkInfoResult">
+        <include refid="selectMarkInfoVo"/>
+            where mark_name = #{name}
+        <if test="id != null  and id != ''">
+            and id != #{id}
+        </if>
+    </select>
+        
+    <insert id="insertMarkInfo" parameterType="MarkInfo">
+        insert into mark_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="markName != null  and markName != ''">mark_name,</if>
+            <if test="perationName != null  and perationName != ''">peration_name,</if>
+            <if test="perationNature != null  and perationNature != ''">peration_nature,</if>
+            <if test="socialCreditCode != null  and socialCreditCode != ''">social_credit_code,</if>
+            <if test="markAddressCity != null  and markAddressCity != ''">mark_address_city,</if>
+            <if test="markAddressProvince != null  and markAddressProvince != ''">mark_address_province,</if>
+            <if test="markAddressArea != null  and markAddressArea != ''">mark_address_area,</if>
+            <if test="markAddressDetail != null  and markAddressDetail != ''">mark_address_detail,</if>
+            <if test="markCreateTime != null  and markCreateTime != ''">mark_create_time,</if>
+            <if test="markMerchantsCount != null  and markMerchantsCount != ''">mark_merchants_count,</if>
+            <if test="markNote != null  and markNote != ''">mark_note,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+            <if test="markCode != null  and markCode != ''">mark_code,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="markName != null  and markName != ''">#{markName},</if>
+            <if test="perationName != null  and perationName != ''">#{perationName},</if>
+            <if test="perationNature != null  and perationNature != ''">#{perationNature},</if>
+            <if test="socialCreditCode != null  and socialCreditCode != ''">#{socialCreditCode},</if>
+            <if test="markAddressCity != null  and markAddressCity != ''">#{markAddressCity},</if>
+            <if test="markAddressProvince != null  and markAddressProvince != ''">#{markAddressProvince},</if>
+            <if test="markAddressArea != null  and markAddressArea != ''">#{markAddressArea},</if>
+            <if test="markAddressDetail != null  and markAddressDetail != ''">#{markAddressDetail},</if>
+            <if test="markCreateTime != null  and markCreateTime != ''">#{markCreateTime},</if>
+            <if test="markMerchantsCount != null  and markMerchantsCount != ''">#{markMerchantsCount},</if>
+            <if test="markNote != null  and markNote != ''">#{markNote},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+            <if test="markCode != null  and markCode != ''">#{markCode},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+             sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateMarkInfo" parameterType="MarkInfo">
+        update mark_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="markName != null  and markName != ''">mark_name = #{markName},</if>
+            <if test="perationName != null  and perationName != ''">peration_name = #{perationName},</if>
+            <if test="perationNature != null  and perationNature != ''">peration_nature = #{perationNature},</if>
+            <if test="socialCreditCode != null  and socialCreditCode != ''">social_credit_code = #{socialCreditCode},</if>
+            <if test="markAddressCity != null  and markAddressCity != ''">mark_address_city = #{markAddressCity},</if>
+            <if test="markAddressProvince != null  and markAddressProvince != ''">mark_address_province = #{markAddressProvince},</if>
+            <if test="markAddressArea != null  and markAddressArea != ''">mark_address_area = #{markAddressArea},</if>
+            <if test="markAddressDetail != null  and markAddressDetail != ''">mark_address_detail = #{markAddressDetail},</if>
+            <if test="markCreateTime != null  and markCreateTime != ''">mark_create_time = #{markCreateTime},</if>
+            <if test="markMerchantsCount != null  and markMerchantsCount != ''">mark_merchants_count = #{markMerchantsCount},</if>
+            <if test="markNote != null  and markNote != ''">mark_note = #{markNote},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="markCode != null  and markCode != ''">mark_code = #{markCode},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMarkInfoById" parameterType="String">
+        delete from mark_info where id = #{id}
+    </delete>
+
+    <delete id="deleteMarkInfoByIds" parameterType="String">
+        delete from mark_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

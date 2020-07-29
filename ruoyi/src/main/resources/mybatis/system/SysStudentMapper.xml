@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.SysStudentMapper">
+    
+    <resultMap type="SysStudent" id="SysStudentResult">
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="studentAge"    column="student_age"    />
+        <result property="studentSex"    column="student_sex"    />
+        <result property="studentStatus"    column="student_status"    />
+        <result property="studentBirthday"    column="student_birthday"    />
+        <result property="remark"    column="remark"    />
+        <result property="studentSexName"    column="studentSexName"    />
+        <result property="studentImg"    column="student_img"    />
+        <result property="fileName"    column="file_name"    />
+    </resultMap>
+
+    <sql id="selectSysStudentVo">
+        select student_id, student_img,student_name,(case student_sex when 0 then '男' when 1 then '女' end ) as studentSexName,student_age, student_sex, student_status, student_birthday, remark from sys_student
+    </sql>
+
+    <select id="selectSysStudentList" parameterType="SysStudent" resultMap="SysStudentResult">
+        <include refid="selectSysStudentVo"/>
+        <where>  
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="studentAge != null "> and student_age = #{studentAge}</if>
+            <if test="studentSex != null  and studentSex != ''"> and student_sex = #{studentSex}</if>
+            <if test="studentStatus != null  and studentStatus != ''"> and student_status = #{studentStatus}</if>
+            <if test="studentBirthday != null "> and student_birthday = #{studentBirthday}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysStudentById" parameterType="Long" resultMap="SysStudentResult">
+        <include refid="selectSysStudentVo"/>
+        where student_id = #{studentId}
+    </select>
+        
+    <insert id="insertSysStudent" parameterType="SysStudent" useGeneratedKeys="true" keyProperty="studentId">
+        insert into sys_student
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentName != null  and studentName != ''">student_name,</if>
+            <if test="studentImg != null ">student_img,</if>
+            <if test="fileName != null ">file_name,</if>
+            <if test="studentAge != null ">student_age,</if>
+            <if test="studentSex != null  and studentSex != ''">student_sex,</if>
+            <if test="studentStatus != null  and studentStatus != ''">student_status,</if>
+            <if test="studentBirthday != null ">student_birthday,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentName != null  and studentName != ''">#{studentName},</if>
+            <if test="studentImg != null ">#{studentImg},</if>
+            <if test="fileName != null ">#{fileName},</if>
+            <if test="studentAge != null ">#{studentAge},</if>
+            <if test="studentSex != null  and studentSex != ''">#{studentSex},</if>
+            <if test="studentStatus != null  and studentStatus != ''">#{studentStatus},</if>
+            <if test="studentBirthday != null ">#{studentBirthday},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysStudent" parameterType="SysStudent">
+        update sys_student
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentName != null  and studentName != ''">student_name = #{studentName},</if>
+            <if test="studentAge != null ">student_age = #{studentAge},</if>
+            <if test="studentImg != null ">student_img = #{studentImg},</if>
+            <if test="fileName != null ">file_name = #{fileName},</if>
+            <if test="studentSex != null  and studentSex != ''">student_sex = #{studentSex},</if>
+            <if test="studentStatus != null  and studentStatus != ''">student_status = #{studentStatus},</if>
+            <if test="studentBirthday != null ">student_birthday = #{studentBirthday},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where student_id = #{studentId}
+    </update>
+
+    <delete id="deleteSysStudentById" parameterType="Long">
+        delete from sys_student where student_id = #{studentId}
+    </delete>
+
+    <delete id="deleteSysStudentByIds" parameterType="String">
+        delete from sys_student where student_id in 
+        <foreach item="studentId" collection="array" open="(" separator="," close=")">
+            #{studentId}
+        </foreach>
+    </delete>
+    
+</mapper>
