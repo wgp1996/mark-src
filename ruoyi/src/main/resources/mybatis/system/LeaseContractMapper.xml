@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.LeaseContractMapper">
+    
+    <resultMap type="LeaseContract" id="LeaseContractResult">
+        <result property="id"    column="id"    />
+        <result property="contractCode"    column="contract_code"    />
+        <result property="contractName"    column="contract_name"    />
+        <result property="ownerCode"    column="owner_code"    />
+        <result property="ownerName"    column="owner_name"    />
+        <result property="contractMoney"    column="contract_money"    />
+        <result property="signAddress"    column="sign_address"    />
+        <result property="signTime"    column="sign_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectLeaseContractVo">
+        select (select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,id, contract_code, contract_name, owner_code, contract_money, sign_address, sign_time, create_by, create_time, update_by, update_time, remark from lease_contract
+    </sql>
+
+    <select id="selectLeaseContractList" parameterType="LeaseContract" resultMap="LeaseContractResult">
+        <include refid="selectLeaseContractVo"/>
+        <where>  
+            <if test="contractCode != null  and contractCode != ''"> and contract_code = #{contractCode}</if>
+            <if test="contractName != null  and contractName != ''"> and contract_name like concat('%', #{contractName}, '%')</if>
+            <if test="ownerCode != null  and ownerCode != ''"> and owner_code = #{ownerCode}</if>
+            <if test="ownerName != null  and ownerName != ''"> and owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="contractMoney != null  and contractMoney != ''"> and contract_money = #{contractMoney}</if>
+            <if test="signAddress != null  and signAddress != ''"> and sign_address = #{signAddress}</if>
+            <if test="signTime != null  and signTime != ''"> and sign_time = #{signTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectLeaseContractById" parameterType="String" resultMap="LeaseContractResult">
+        <include refid="selectLeaseContractVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertLeaseContract" parameterType="LeaseContract">
+        insert into lease_contract
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="contractCode != null  and contractCode != ''">contract_code,</if>
+            <if test="contractName != null  and contractName != ''">contract_name,</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code,</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name,</if>
+            <if test="contractMoney != null  and contractMoney != ''">contract_money,</if>
+            <if test="signAddress != null  and signAddress != ''">sign_address,</if>
+            <if test="signTime != null  and signTime != ''">sign_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="contractCode != null  and contractCode != ''">#{contractCode},</if>
+            <if test="contractName != null  and contractName != ''">#{contractName},</if>
+            <if test="ownerCode != null  and ownerCode != ''">#{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">#{ownerName},</if>
+            <if test="contractMoney != null  and contractMoney != ''">#{contractMoney},</if>
+            <if test="signAddress != null  and signAddress != ''">#{signAddress},</if>
+            <if test="signTime != null  and signTime != ''">#{signTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateLeaseContract" parameterType="LeaseContract">
+        update lease_contract
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="contractCode != null  and contractCode != ''">contract_code = #{contractCode},</if>
+            <if test="contractName != null  and contractName != ''">contract_name = #{contractName},</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code = #{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name = #{ownerName},</if>
+            <if test="contractMoney != null  and contractMoney != ''">contract_money = #{contractMoney},</if>
+            <if test="signAddress != null  and signAddress != ''">sign_address = #{signAddress},</if>
+            <if test="signTime != null  and signTime != ''">sign_time = #{signTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLeaseContractById" parameterType="String">
+        delete from lease_contract where id = #{id}
+    </delete>
+
+    <delete id="deleteLeaseContractByIds" parameterType="String">
+        delete from lease_contract where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

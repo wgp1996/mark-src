@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.LeaseContractChildMapper">
+    
+    <resultMap type="LeaseContractChild" id="LeaseContractChildResult">
+        <result property="id"    column="id"    />
+        <result property="contractCode"    column="contract_code"    />
+        <result property="stallCode"    column="stall_code"    />
+        <result property="stallName"    column="stall_name"    />
+        <result property="stallArea"    column="stall_area"    />
+        <result property="leaseStartTime"    column="lease_start_time"    />
+        <result property="leaseEndTime"    column="lease_end_time"    />
+        <result property="rentMoney"    column="rent_money"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="contractBz"    column="contract_bz"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectLeaseContractChildVo">
+        select id, contract_code, stall_code, stall_name, stall_area, lease_start_time, lease_end_time, rent_money, pay_type, contract_bz, create_by, create_time, update_by, update_time, remark from lease_contract_child
+    </sql>
+
+    <select id="selectLeaseContractChildList" parameterType="LeaseContractChild" resultMap="LeaseContractChildResult">
+        <include refid="selectLeaseContractChildVo"/>
+        <where>  
+            <if test="contractCode != null  and contractCode != ''"> and contract_code = #{contractCode}</if>
+            <if test="stallCode != null  and stallCode != ''"> and stall_code = #{stallCode}</if>
+            <if test="stallName != null  and stallName != ''"> and stall_name like concat('%', #{stallName}, '%')</if>
+            <if test="stallArea != null  and stallArea != ''"> and stall_area = #{stallArea}</if>
+            <if test="leaseStartTime != null and leaseStartTime != ''"> and lease_start_time = #{leaseStartTime}</if>
+            <if test="leaseEndTime != null and leaseEndTime != ''"> and lease_end_time = #{leaseEndTime}</if>
+            <if test="rentMoney != null  and rentMoney != ''"> and rent_money = #{rentMoney}</if>
+            <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
+            <if test="contractBz != null  and contractBz != ''"> and contract_bz = #{contractBz}</if>
+        </where>
+    </select>
+    
+    <select id="selectLeaseContractChildById" parameterType="String" resultMap="LeaseContractChildResult">
+        <include refid="selectLeaseContractChildVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectLeaseContractChildByCode" parameterType="String" resultMap="LeaseContractChildResult">
+        <include refid="selectLeaseContractChildVo"/>
+        where contract_code = #{code}
+    </select>
+        
+    <insert id="insertLeaseContractChild" parameterType="LeaseContractChild">
+        insert into lease_contract_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="contractCode != null  and contractCode != ''">contract_code,</if>
+            <if test="stallCode != null  and stallCode != ''">stall_code,</if>
+            <if test="stallName != null  and stallName != ''">stall_name,</if>
+            <if test="stallArea != null  and stallArea != ''">stall_area,</if>
+            <if test="leaseStartTime != null  and leaseStartTime != ''">lease_start_time,</if>
+            <if test="leaseEndTime != null  and leaseEndTime != ''">lease_end_time,</if>
+            <if test="rentMoney != null  and rentMoney != ''">rent_money,</if>
+            <if test="payType != null  and payType != ''">pay_type,</if>
+            <if test="contractBz != null  and contractBz != ''">contract_bz,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="contractCode != null  and contractCode != ''">#{contractCode},</if>
+            <if test="stallCode != null  and stallCode != ''">#{stallCode},</if>
+            <if test="stallName != null  and stallName != ''">#{stallName},</if>
+            <if test="stallArea != null  and stallArea != ''">#{stallArea},</if>
+            <if test="leaseStartTime != null and leaseStartTime != ''">#{leaseStartTime},</if>
+            <if test="leaseEndTime != null and leaseEndTime != ''">#{leaseEndTime},</if>
+            <if test="rentMoney != null  and rentMoney != ''">#{rentMoney},</if>
+            <if test="payType != null  and payType != ''">#{payType},</if>
+            <if test="contractBz != null  and contractBz != ''">#{contractBz},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateLeaseContractChild" parameterType="LeaseContractChild">
+        update lease_contract_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="contractCode != null  and contractCode != ''">contract_code = #{contractCode},</if>
+            <if test="stallCode != null  and stallCode != ''">stall_code = #{stallCode},</if>
+            <if test="stallName != null  and stallName != ''">stall_name = #{stallName},</if>
+            <if test="stallArea != null  and stallArea != ''">stall_area = #{stallArea},</if>
+            <if test="leaseStartTime != null and leaseStartTime != ''">lease_start_time = #{leaseStartTime},</if>
+            <if test="leaseEndTime != null and leaseEndTime != ''">lease_end_time = #{leaseEndTime},</if>
+            <if test="rentMoney != null  and rentMoney != ''">rent_money = #{rentMoney},</if>
+            <if test="payType != null  and payType != ''">pay_type = #{payType},</if>
+            <if test="contractBz != null  and contractBz != ''">contract_bz = #{contractBz},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLeaseContractChildById" parameterType="String">
+        delete from lease_contract_child where id = #{id}
+    </delete>
+
+    <delete id="deleteLeaseContractChildByIds" parameterType="String">
+        delete from lease_contract_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteLeaseContractChildPid" parameterType="String">
+        delete from lease_contract_child where contract_code in (select contract_code from lease_contract where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+
+    
+</mapper>

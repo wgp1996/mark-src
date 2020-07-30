@@ -36,7 +36,14 @@ import com.ruoyi.framework.web.page.TableDataInfo;
 public class OwnerInfoController extends BaseController {
     @Autowired
     private IOwnerInfoService ownerInfoService;
-
+    /**
+     * 获取主市场信息
+     */
+    @GetMapping(value = "/ownerList")
+    public AjaxResult areaData(OwnerInfo ownerInfo)
+    {
+        return AjaxResult.success(ownerInfoService.selectOwnerInfoList(ownerInfo));
+    }
     /**
      * 查询业户信息列表
      */
