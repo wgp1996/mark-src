@@ -115,7 +115,7 @@ public class MarkChildInfoController extends BaseController
             return  toAjaxByError("该二级市场在系统中已存在");
         }else{
             markChildInfo.setUpdateBy(SecurityUtils.getUsername());
-            return toAjax(markChildInfoService.insertMarkChildInfo(markChildInfo));
+            return toAjax(markChildInfoService.updateMarkChildInfo(markChildInfo));
         }
     }
 

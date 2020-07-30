@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.StallInfoMapper">
+
+    <resultMap type="StallInfo" id="StallInfoResult">
+        <result property="id" column="id"/>
+        <result property="stallName" column="stall_name"/>
+        <result property="stallCode" column="stall_code"/>
+        <result property="markCode" column="mark_code"/>
+        <result property="regionArea" column="region_area"/>
+        <result property="stallStatus" column="stall_status"/>
+        <result property="stallStartTime" column="stall_start_time"/>
+        <result property="stallEndTime" column="stall_end_time"/>
+        <result property="stallMoney" column="stall_money"/>
+        <result property="stallLeaseholder" column="stall_leaseholder"/>
+        <result property="stallNote" column="stall_note"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="markChildName" column="mark_child_name"/>
+
+    </resultMap>
+
+    <sql id="selectStallInfoVo">
+        select a.*,(select mark_child_name from mark_child_info where mark_child_code=a.mark_code) as mark_child_name from stall_info a
+    </sql>
+
+    <select id="selectStallInfoList" parameterType="StallInfo" resultMap="StallInfoResult">
+        <include refid="selectStallInfoVo"/>
+        <where>
+            <if test="stallName != null  and stallName != ''">and stall_name like concat('%', #{stallName}, '%')</if>
+            <if test="stallCode != null  and stallCode != ''">and stall_code = #{stallCode}</if>
+            <if test="markCode != null  and markCode != ''">and mark_code = #{markCode}</if>
+            <if test="regionArea != null  and regionArea != ''">and region_area = #{regionArea}</if>
+            <if test="stallStatus != null ">and stall_status = #{stallStatus}</if>
+            <if test="stallStartTime != null  and stallStartTime != ''">and stall_start_time = #{stallStartTime}</if>
+            <if test="stallEndTime != null  and stallEndTime != ''">and stall_end_time = #{stallEndTime}</if>
+            <if test="stallMoney != null  and stallMoney != ''">and stall_money = #{stallMoney}</if>
+            <if test="stallLeaseholder != null  and stallLeaseholder != ''">and stall_leaseholder =
+                #{stallLeaseholder}
+            </if>
+            <if test="stallNote != null  and stallNote != ''">and stall_note = #{stallNote}</if>
+            <if test="createUser != null  and createUser != ''">and create_user = #{createUser}</if>
+        </where>
+    </select>
+
+    <select id="selectStallInfoById" parameterType="String" resultMap="StallInfoResult">
+        <include refid="selectStallInfoVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectStallInfoByCode" parameterType="String" resultMap="StallInfoResult">
+        <include refid="selectStallInfoVo"/>
+        where stall_code = #{code}
+        <if test="id != null  and id != ''">
+            and id != #{id}
+        </if>
+    </select>
+    <resultMap type="MarkChildInfo" id="CMarkInfoResult">
+        <result property="id" column="id"/>
+        <result property="markChildCode" column="mark_child_code"/>
+        <result property="markChildName" column="mark_child_name"/>
+    </resultMap>
+    <select id="selectCMarkData" resultMap="CMarkInfoResult">
+        select mark_child_code,mark_child_name from mark_child_info
+    </select>
+    <insert id="insertStallInfo" parameterType="StallInfo">
+        insert into stall_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="stallName != null  and stallName != ''">stall_name,</if>
+            <if test="stallCode != null  and stallCode != ''">stall_code,</if>
+            <if test="markCode != null  and markCode != ''">mark_code,</if>
+            <if test="regionArea != null  and regionArea != ''">region_area,</if>
+            <if test="stallStatus != null ">stall_status,</if>
+            <if test="stallStartTime != null  and stallStartTime != ''">stall_start_time,</if>
+            <if test="stallEndTime != null  and stallEndTime != ''">stall_end_time,</if>
+            <if test="stallMoney != null  and stallMoney != ''">stall_money,</if>
+            <if test="stallLeaseholder != null  and stallLeaseholder != ''">stall_leaseholder,</if>
+            <if test="stallNote != null  and stallNote != ''">stall_note,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="stallName != null  and stallName != ''">#{stallName},</if>
+            <if test="stallCode != null  and stallCode != ''">#{stallCode},</if>
+            <if test="markCode != null  and markCode != ''">#{markCode},</if>
+            <if test="regionArea != null  and regionArea != ''">#{regionArea},</if>
+            <if test="stallStatus != null ">#{stallStatus},</if>
+            <if test="stallStartTime != null  and stallStartTime != ''">#{stallStartTime},</if>
+            <if test="stallEndTime != null  and stallEndTime != ''">#{stallEndTime},</if>
+            <if test="stallMoney != null  and stallMoney != ''">#{stallMoney},</if>
+            <if test="stallLeaseholder != null  and stallLeaseholder != ''">#{stallLeaseholder},</if>
+            <if test="stallNote != null  and stallNote != ''">#{stallNote},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateStallInfo" parameterType="StallInfo">
+        update stall_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stallName != null  and stallName != ''">stall_name = #{stallName},</if>
+            <if test="stallCode != null  and stallCode != ''">stall_code = #{stallCode},</if>
+            <if test="markCode != null  and markCode != ''">mark_code = #{markCode},</if>
+            <if test="regionArea != null  and regionArea != ''">region_area = #{regionArea},</if>
+            <if test="stallStatus != null ">stall_status = #{stallStatus},</if>
+            <if test="stallStartTime != null  and stallStartTime != ''">stall_start_time = #{stallStartTime},</if>
+            <if test="stallEndTime != null  and stallEndTime != ''">stall_end_time = #{stallEndTime},</if>
+            <if test="stallMoney != null  and stallMoney != ''">stall_money = #{stallMoney},</if>
+            <if test="stallLeaseholder != null  and stallLeaseholder != ''">stall_leaseholder = #{stallLeaseholder},
+            </if>
+            <if test="stallNote != null  and stallNote != ''">stall_note = #{stallNote},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStallInfoById" parameterType="String">
+        delete from stall_info where id = #{id}
+    </delete>
+
+    <delete id="deleteStallInfoByIds" parameterType="String">
+        delete from stall_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

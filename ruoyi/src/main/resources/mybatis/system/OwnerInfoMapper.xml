@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.OwnerInfoMapper">
+
+    <resultMap type="OwnerInfo" id="OwnerInfoResult">
+        <result property="id" column="id"/>
+        <result property="ownerCode" column="owner_code"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="ownerOrg" column="owner_org"/>
+        <result property="ownerOrgNature" column="owner_org_nature"/>
+        <result property="ownerPersonId" column="owner_person_id"/>
+        <result property="ownerMangerType" column="owner_manger_type"/>
+        <result property="ownerLxr" column="owner_lxr"/>
+        <result property="ownerLxrPhone" column="owner_lxr_phone"/>
+        <result property="ownerLxrWx" column="owner_lxr_wx"/>
+        <result property="ownerNote" column="owner_note"/>
+        <result property="createUser" column="create_user"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="fileName1" column="file_name1"/>
+        <result property="fileTitle1" column="file_title1"/>
+        <result property="fileName2" column="file_name2"/>
+        <result property="fileTitle2" column="file_title2"/>
+    </resultMap>
+
+    <sql id="selectOwnerInfoVo">
+        select id, owner_code, owner_name, owner_org, owner_org_nature, owner_person_id, owner_manger_type, owner_lxr, owner_lxr_phone, owner_lxr_wx, owner_note, create_user, create_by, create_time, update_by, update_time, remark, file_name1, file_title1, file_name2, file_title2 from owner_info
+    </sql>
+
+    <select id="selectOwnerInfoList" parameterType="OwnerInfo" resultMap="OwnerInfoResult">
+        <include refid="selectOwnerInfoVo"/>
+        <where>
+            <if test="ownerCode != null  and ownerCode != ''">and owner_code = #{ownerCode}</if>
+            <if test="ownerName != null  and ownerName != ''">and owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="ownerOrg != null  and ownerOrg != ''">and owner_org = #{ownerOrg}</if>
+            <if test="ownerOrgNature != null  and ownerOrgNature != ''">and owner_org_nature = #{ownerOrgNature}</if>
+            <if test="ownerPersonId != null  and ownerPersonId != ''">and owner_person_id = #{ownerPersonId}</if>
+            <if test="ownerMangerType != null  and ownerMangerType != ''">and owner_manger_type = #{ownerMangerType}
+            </if>
+            <if test="ownerLxr != null  and ownerLxr != ''">and owner_lxr = #{ownerLxr}</if>
+            <if test="ownerLxrPhone != null  and ownerLxrPhone != ''">and owner_lxr_phone = #{ownerLxrPhone}</if>
+            <if test="ownerLxrWx != null  and ownerLxrWx != ''">and owner_lxr_wx = #{ownerLxrWx}</if>
+            <if test="ownerNote != null  and ownerNote != ''">and owner_note = #{ownerNote}</if>
+            <if test="createUser != null  and createUser != ''">and create_user = #{createUser}</if>
+            <if test="fileName1 != null  and fileName1 != ''">and file_name1 = #{fileName1}</if>
+            <if test="fileTitle1 != null  and fileTitle1 != ''">and file_title1 = #{fileTitle1}</if>
+            <if test="fileName2 != null  and fileName2 != ''">and file_name2 = #{fileName2}</if>
+            <if test="fileTitle2 != null  and fileTitle2 != ''">and file_title2 = #{fileTitle2}</if>
+        </where>
+    </select>
+
+    <select id="selectOwnerInfoById" parameterType="String" resultMap="OwnerInfoResult">
+        <include refid="selectOwnerInfoVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectOwnerInfoByCode" parameterType="String" resultMap="OwnerInfoResult">
+        <include refid="selectOwnerInfoVo"/>
+        where owner_code = #{code}
+        <if test="id != null  and id != ''">
+            and id != #{id}
+        </if>
+    </select>
+
+    <insert id="insertOwnerInfo" parameterType="OwnerInfo">
+        insert into owner_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code,</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name,</if>
+            <if test="ownerOrg != null  and ownerOrg != ''">owner_org,</if>
+            <if test="ownerOrgNature != null  and ownerOrgNature != ''">owner_org_nature,</if>
+            <if test="ownerPersonId != null  and ownerPersonId != ''">owner_person_id,</if>
+            <if test="ownerMangerType != null  and ownerMangerType != ''">owner_manger_type,</if>
+            <if test="ownerLxr != null  and ownerLxr != ''">owner_lxr,</if>
+            <if test="ownerLxrPhone != null  and ownerLxrPhone != ''">owner_lxr_phone,</if>
+            <if test="ownerLxrWx != null  and ownerLxrWx != ''">owner_lxr_wx,</if>
+            <if test="ownerNote != null  and ownerNote != ''">owner_note,</if>
+            <if test="createUser != null  and createUser != ''">create_user,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="fileName1 != null  and fileName1 != ''">file_name1,</if>
+            <if test="fileTitle1 != null  and fileTitle1 != ''">file_title1,</if>
+            <if test="fileName2 != null  and fileName2 != ''">file_name2,</if>
+            <if test="fileTitle2 != null  and fileTitle2 != ''">file_title2,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="ownerCode != null  and ownerCode != ''">#{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">#{ownerName},</if>
+            <if test="ownerOrg != null  and ownerOrg != ''">#{ownerOrg},</if>
+            <if test="ownerOrgNature != null  and ownerOrgNature != ''">#{ownerOrgNature},</if>
+            <if test="ownerPersonId != null  and ownerPersonId != ''">#{ownerPersonId},</if>
+            <if test="ownerMangerType != null  and ownerMangerType != ''">#{ownerMangerType},</if>
+            <if test="ownerLxr != null  and ownerLxr != ''">#{ownerLxr},</if>
+            <if test="ownerLxrPhone != null  and ownerLxrPhone != ''">#{ownerLxrPhone},</if>
+            <if test="ownerLxrWx != null  and ownerLxrWx != ''">#{ownerLxrWx},</if>
+            <if test="ownerNote != null  and ownerNote != ''">#{ownerNote},</if>
+            <if test="createUser != null  and createUser != ''">#{createUser},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="fileName1 != null  and fileName1 != ''">#{fileName1},</if>
+            <if test="fileTitle1 != null  and fileTitle1 != ''">#{fileTitle1},</if>
+            <if test="fileName2 != null  and fileName2 != ''">#{fileName2},</if>
+            <if test="fileTitle2 != null  and fileTitle2 != ''">#{fileTitle2},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateOwnerInfo" parameterType="OwnerInfo">
+        update owner_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ownerCode != null  and ownerCode != ''">owner_code = #{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name = #{ownerName},</if>
+            <if test="ownerOrg != null  and ownerOrg != ''">owner_org = #{ownerOrg},</if>
+            <if test="ownerOrgNature != null  and ownerOrgNature != ''">owner_org_nature = #{ownerOrgNature},</if>
+            <if test="ownerPersonId != null  and ownerPersonId != ''">owner_person_id = #{ownerPersonId},</if>
+            <if test="ownerMangerType != null  and ownerMangerType != ''">owner_manger_type = #{ownerMangerType},</if>
+            <if test="ownerLxr != null  and ownerLxr != ''">owner_lxr = #{ownerLxr},</if>
+            <if test="ownerLxrPhone != null  and ownerLxrPhone != ''">owner_lxr_phone = #{ownerLxrPhone},</if>
+            <if test="ownerLxrWx != null  and ownerLxrWx != ''">owner_lxr_wx = #{ownerLxrWx},</if>
+            <if test="ownerNote != null  and ownerNote != ''">owner_note = #{ownerNote},</if>
+            <if test="createUser != null  and createUser != ''">create_user = #{createUser},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="fileName1 != null  and fileName1 != ''">file_name1 = #{fileName1},</if>
+            <if test="fileTitle1 != null  and fileTitle1 != ''">file_title1 = #{fileTitle1},</if>
+            <if test="fileName2 != null  and fileName2 != ''">file_name2 = #{fileName2},</if>
+            <if test="fileTitle2 != null  and fileTitle2 != ''">file_title2 = #{fileTitle2},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOwnerInfoById" parameterType="String">
+        delete from owner_info where id = #{id}
+    </delete>
+
+    <delete id="deleteOwnerInfoByIds" parameterType="String">
+        delete from owner_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
