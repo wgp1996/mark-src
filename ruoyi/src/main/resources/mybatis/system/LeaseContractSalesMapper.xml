@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.project.system.mapper.LeaseContractMapper">
-    
-    <resultMap type="LeaseContract" id="LeaseContractResult">
-        <result property="id"    column="id"    />
-        <result property="contractCode"    column="contract_code"    />
-        <result property="contractName"    column="contract_name"    />
-        <result property="ownerCode"    column="owner_code"    />
-        <result property="ownerName"    column="owner_name"    />
-        <result property="contractMoney"    column="contract_money"    />
-        <result property="signAddress"    column="sign_address"    />
-        <result property="signTime"    column="sign_time"    />
-        <result property="fileName"    column="file_name"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="remark"    column="remark"    />
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.LeaseContractSalesMapper">
+
+    <resultMap type="LeaseContractSales" id="LeaseContractResult">
+        <result property="id" column="id"/>
+        <result property="contractCode" column="contract_code"/>
+        <result property="contractName" column="contract_name"/>
+        <result property="ownerCode" column="owner_code"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="contractMoney" column="contract_money"/>
+        <result property="signAddress" column="sign_address"/>
+        <result property="signTime" column="sign_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="fileName" column="file_name"/>
     </resultMap>
 
     <sql id="selectLeaseContractVo">
-        select file_name,(select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,id, contract_code, contract_name, owner_code, contract_money, sign_address, sign_time, create_by, create_time, update_by, update_time, remark from lease_contract
+        select (select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,file_name,id, contract_code, contract_name, owner_code, contract_money, sign_address, sign_time, create_by, create_time, update_by, update_time, remark from lease_contract_sales
     </sql>
 
-    <select id="selectLeaseContractList" parameterType="LeaseContract" resultMap="LeaseContractResult">
+    <select id="selectLeaseContractSalesList" parameterType="LeaseContractSales" resultMap="LeaseContractResult">
         <include refid="selectLeaseContractVo"/>
-        <where>  
-            <if test="contractCode != null  and contractCode != ''"> and contract_code = #{contractCode}</if>
-            <if test="contractName != null  and contractName != ''"> and contract_name like concat('%', #{contractName}, '%')</if>
-            <if test="ownerCode != null  and ownerCode != ''"> and owner_code = #{ownerCode}</if>
-            <if test="ownerName != null  and ownerName != ''"> and owner_name like concat('%', #{ownerName}, '%')</if>
-            <if test="contractMoney != null  and contractMoney != ''"> and contract_money = #{contractMoney}</if>
-            <if test="signAddress != null  and signAddress != ''"> and sign_address = #{signAddress}</if>
-            <if test="signTime != null  and signTime != ''"> and sign_time = #{signTime}</if>
+        <where>
+            <if test="contractCode != null  and contractCode != ''">and contract_code = #{contractCode}</if>
+            <if test="contractName != null  and contractName != ''">and contract_name like concat('%', #{contractName},
+                '%')
+            </if>
+            <if test="ownerCode != null  and ownerCode != ''">and owner_code = #{ownerCode}</if>
+            <if test="ownerName != null  and ownerName != ''">and owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="contractMoney != null  and contractMoney != ''">and contract_money = #{contractMoney}</if>
+            <if test="signAddress != null  and signAddress != ''">and sign_address = #{signAddress}</if>
+            <if test="signTime != null  and signTime != ''">and sign_time = #{signTime}</if>
         </where>
     </select>
-    
+
     <select id="selectLeaseContractById" parameterType="String" resultMap="LeaseContractResult">
         <include refid="selectLeaseContractVo"/>
         where id = #{id}
@@ -49,9 +51,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and id!=#{id}
         </if>
     </select>
-        
-    <insert id="insertLeaseContract" parameterType="LeaseContract">
-        insert into lease_contract
+
+    <insert id="insertLeaseContract" parameterType="LeaseContractSales">
+        insert into lease_contract_sales
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">id,</if>
             <if test="contractCode != null  and contractCode != ''">contract_code,</if>
@@ -67,7 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null  and remark != ''">remark,</if>
             <if test="fileName != null  and fileName != ''">file_name,</if>
             create_time
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">#{id},</if>
             <if test="contractCode != null  and contractCode != ''">#{contractCode},</if>
@@ -83,11 +85,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null  and remark != ''">#{remark},</if>
             <if test="fileName != null  and fileName != ''">#{fileName},</if>
             sysdate()
-         </trim>
+        </trim>
     </insert>
 
-    <update id="updateLeaseContract" parameterType="LeaseContract">
-        update lease_contract
+    <update id="updateLeaseContract" parameterType="LeaseContractSales">
+        update lease_contract_sales
         <trim prefix="SET" suffixOverrides=",">
             <if test="contractCode != null  and contractCode != ''">contract_code = #{contractCode},</if>
             <if test="contractName != null  and contractName != ''">contract_name = #{contractName},</if>
@@ -100,21 +102,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
-            file_name=#{fileName},
+            file_name = #{fileName},
             update_time = sysdate()
         </trim>
         where id = #{id}
     </update>
 
     <delete id="deleteLeaseContractById" parameterType="String">
-        delete from lease_contract where id = #{id}
+        delete from lease_contract_sales where id = #{id}
     </delete>
 
     <delete id="deleteLeaseContractByIds" parameterType="String">
-        delete from lease_contract where id in 
+        delete from lease_contract_sales where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    
+
 </mapper>

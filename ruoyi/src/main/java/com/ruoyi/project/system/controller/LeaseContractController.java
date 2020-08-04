@@ -162,10 +162,11 @@ public class LeaseContractController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {
-        //先删除子表信息
-        int result=leaseContractChildService.deleteLeaseContractChildPid(ids);
+        int result=leaseContractService.deleteLeaseContractByIds(ids);
         if(result>0){
-            return toAjax(leaseContractService.deleteLeaseContractByIds(ids));
+            //删除子表信息
+            leaseContractChildService.deleteLeaseContractChildPid(ids);
+            return toAjaxBySuccess("删除成功!");
         }else{
             return  toAjaxByError("删除失败!");
         }

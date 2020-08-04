@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.project.system.mapper.LeaseContractChildSalesMapper">
 
-    <resultMap type="LeaseContractChild" id="LeaseContractChildResult">
+    <resultMap type="LeaseContractChildSales" id="LeaseContractChildResult">
         <result property="id" column="id"/>
         <result property="contractCode" column="contract_code"/>
         <result property="stallCode" column="stall_code"/>
@@ -25,7 +25,7 @@
         select id, contract_code, stall_code, stall_name, stall_area, lease_time,  rent_money, pay_type, contract_bz, create_by, create_time, update_by, update_time, remark from lease_contract_child_sales
     </sql>
 
-    <select id="selectLeaseContractChildList" parameterType="LeaseContractChild" resultMap="LeaseContractChildResult">
+    <select id="selectLeaseContractChildList" parameterType="LeaseContractChildSales" resultMap="LeaseContractChildResult">
         <include refid="selectLeaseContractChildVo"/>
         <where>
             <if test="contractCode != null  and contractCode != ''">and contract_code = #{contractCode}</if>
@@ -48,7 +48,7 @@
         where contract_code = #{code}
     </select>
 
-    <insert id="insertLeaseContractChild" parameterType="LeaseContractChild">
+    <insert id="insertLeaseContractChild" parameterType="LeaseContractChildSales">
         insert into lease_contract_child_sales
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">id,</if>
@@ -84,7 +84,7 @@
         </trim>
     </insert>
 
-    <update id="updateLeaseContractChild" parameterType="LeaseContractChild">
+    <update id="updateLeaseContractChild" parameterType="LeaseContractChildSales">
         update lease_contract_child_sales
         <trim prefix="SET" suffixOverrides=",">
             <if test="contractCode != null  and contractCode != ''">contract_code = #{contractCode},</if>

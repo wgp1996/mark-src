@@ -1,12 +1,9 @@
 package com.ruoyi.project.system.service.impl;
 
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.project.system.domain.LeaseContract;
 import com.ruoyi.project.system.domain.LeaseContractSales;
-import com.ruoyi.project.system.mapper.LeaseContractMapper;
 import com.ruoyi.project.system.mapper.LeaseContractSalesMapper;
 import com.ruoyi.project.system.service.ILeaseContractSalesService;
-import com.ruoyi.project.system.service.ILeaseContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +18,7 @@ import java.util.List;
 @Service
 public class LeaseContractSalesServiceImpl implements ILeaseContractSalesService {
     @Autowired
-    private LeaseContractSalesMapper leaseContractMapper;
+    private LeaseContractSalesMapper leaseContractSalesMapper;
 
     /**
      * 查询销售合同
@@ -31,7 +28,7 @@ public class LeaseContractSalesServiceImpl implements ILeaseContractSalesService
      */
     @Override
     public LeaseContractSales selectLeaseContractById(String id) {
-        return leaseContractMapper.selectLeaseContractById(id);
+        return leaseContractSalesMapper.selectLeaseContractById(id);
     }
 
     /**
@@ -43,18 +40,18 @@ public class LeaseContractSalesServiceImpl implements ILeaseContractSalesService
      */
     @Override
     public LeaseContractSales selectLeaseContractByCode(String code, String id) {
-        return leaseContractMapper.selectLeaseContractByCode(code, id);
+        return leaseContractSalesMapper.selectLeaseContractByCode(code, id);
     }
 
     /**
      * 查询销售合同列表
      *
-     * @param leaseContract 销售合同
+     * @param leaseContractSales 销售合同
      * @return 销售合同
      */
     @Override
-    public List<LeaseContractSales> selectLeaseContractList(LeaseContractSales leaseContract) {
-        return leaseContractMapper.selectLeaseContractList(leaseContract);
+    public List<LeaseContractSales> selectLeaseContractSalesList(LeaseContractSales leaseContractSales) {
+        return leaseContractSalesMapper.selectLeaseContractSalesList(leaseContractSales);
     }
 
     /**
@@ -66,7 +63,7 @@ public class LeaseContractSalesServiceImpl implements ILeaseContractSalesService
     @Override
     public int insertLeaseContract(LeaseContractSales leaseContract) {
         leaseContract.setCreateTime(DateUtils.getNowDate());
-        return leaseContractMapper.insertLeaseContract(leaseContract);
+        return leaseContractSalesMapper.insertLeaseContract(leaseContract);
     }
 
     /**
@@ -78,7 +75,7 @@ public class LeaseContractSalesServiceImpl implements ILeaseContractSalesService
     @Override
     public int updateLeaseContract(LeaseContractSales leaseContract) {
         leaseContract.setUpdateTime(DateUtils.getNowDate());
-        return leaseContractMapper.updateLeaseContract(leaseContract);
+        return leaseContractSalesMapper.updateLeaseContract(leaseContract);
     }
 
     /**
@@ -89,7 +86,7 @@ public class LeaseContractSalesServiceImpl implements ILeaseContractSalesService
      */
     @Override
     public int deleteLeaseContractByIds(String[] ids) {
-        return leaseContractMapper.deleteLeaseContractByIds(ids);
+        return leaseContractSalesMapper.deleteLeaseContractByIds(ids);
     }
 
     /**
@@ -100,6 +97,6 @@ public class LeaseContractSalesServiceImpl implements ILeaseContractSalesService
      */
     @Override
     public int deleteLeaseContractById(String id) {
-        return leaseContractMapper.deleteLeaseContractById(id);
+        return leaseContractSalesMapper.deleteLeaseContractById(id);
     }
 }

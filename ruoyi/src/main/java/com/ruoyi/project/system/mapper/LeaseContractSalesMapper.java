@@ -31,10 +31,10 @@ public interface LeaseContractSalesMapper {
     /**
      * 查询销售合同列表
      *
-     * @param LeaseContractSales 销售合同
+     * @param leaseContractSales 销售合同
      * @return 销售合同集合
      */
-    public List<LeaseContractSales> selectLeaseContractList(LeaseContractSales LeaseContractSales);
+    public List<LeaseContractSales> selectLeaseContractSalesList(LeaseContractSales leaseContractSales);
 
     /**
      * 新增销售合同

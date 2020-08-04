@@ -47,6 +47,8 @@ public class LeaseContract extends BaseEntity
     /** 签约时间 */
     @Excel(name = "签约时间")
     private String signTime;
+    /*附件信息*/
+    private String fileName;
     /**
      * 子表json字符串
      */
@@ -55,6 +57,14 @@ public class LeaseContract extends BaseEntity
        合同子表
      */
     private List<LeaseContractChild> childrenList;
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public List<LeaseContractChild> getChildrenList() {
         return childrenList;
@@ -161,6 +171,7 @@ public class LeaseContract extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
+            .append("fileName", getFileName())
             .toString();
     }
 }
