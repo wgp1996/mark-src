@@ -37,6 +37,14 @@ public interface IStallInfoService {
     public List<StallInfo> selectStallInfoList(StallInfo stallInfo);
 
     /**
+     * 合同选择市场摊位信息列表
+     *
+     * @param stallInfo 市场摊位信息
+     * @return 市场摊位信息集合
+     */
+    public List<StallInfo> selectLeaseStallInfoList(StallInfo stallInfo);
+
+    /**
      * 查询二级市场信息列表
      *
      * @return 二级市场信息集合

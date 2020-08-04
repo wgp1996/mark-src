@@ -26,7 +26,8 @@ public class AddressUtils
         {
             return "内网IP";
         }
-        if (RuoYiConfig.isAddressEnabled())
+        //去掉获取地理位置接口
+     /*   if (RuoYiConfig.isAddressEnabled())
         {
             String rspStr = HttpUtils.sendPost(IP_URL, "ip=" + ip);
             if (StringUtils.isEmpty(rspStr))
@@ -40,6 +41,7 @@ public class AddressUtils
             String city = data.getString("city");
             address = region + " " + city;
         }
-        return address;
+        return address;*/
+        return ip;
     }
 }

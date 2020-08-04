@@ -33,6 +33,18 @@ public class LeaseContractServiceImpl implements ILeaseContractService
     }
 
     /**
+     * 查询租赁合同
+     *
+     * @param code 租赁合同编号
+     * @param id   租赁合同ID
+     * @return 租赁合同
+     */
+    @Override
+    public LeaseContract selectLeaseContractByCode(String code, String id) {
+        return leaseContractMapper.selectLeaseContractByCode(code, id);
+    }
+
+    /**
      * 查询租赁合同列表
      * 
      * @param leaseContract 租赁合同

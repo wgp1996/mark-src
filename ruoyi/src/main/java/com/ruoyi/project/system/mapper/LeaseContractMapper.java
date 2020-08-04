@@ -20,6 +20,15 @@ public interface LeaseContractMapper
     public LeaseContract selectLeaseContractById(String id);
 
     /**
+     * 查询租赁合同
+     *
+     * @param id   租赁合同ID
+     * @param code 租赁合同编号
+     * @return 租赁合同
+     */
+    public LeaseContract selectLeaseContractByCode(String code, String id);
+
+    /**
      * 查询租赁合同列表
      * 
      * @param leaseContract 租赁合同

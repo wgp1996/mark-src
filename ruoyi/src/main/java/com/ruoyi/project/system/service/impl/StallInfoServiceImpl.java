@@ -56,6 +56,17 @@ public class StallInfoServiceImpl implements IStallInfoService {
     }
 
     /**
+     * 合同选择市场摊位信息列表
+     *
+     * @param stallInfo 市场摊位信息
+     * @return 市场摊位信息
+     */
+    @Override
+    public List<StallInfo> selectLeaseStallInfoList(StallInfo stallInfo) {
+        return stallInfoMapper.selectLeaseStallInfoList(stallInfo);
+    }
+
+    /**
      * 查询市场摊位信息列表
      *
      * @param stallInfo 市场摊位信息

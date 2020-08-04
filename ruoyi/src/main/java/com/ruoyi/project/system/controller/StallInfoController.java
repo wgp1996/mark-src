@@ -51,6 +51,15 @@ public class StallInfoController extends BaseController {
     }
 
     /**
+     * 合同选择市场摊位信息列表
+     */
+    @GetMapping("/leaseStallList")
+    public TableDataInfo leaseStallList(StallInfo stallInfo) {
+        startPage();
+        List<StallInfo> list = stallInfoService.selectLeaseStallInfoList(stallInfo);
+        return getDataTable(list);
+    }
+    /**
      * 导出市场摊位信息列表
      */
     @PreAuthorize("@ss.hasPermi('system:stall:export')")

@@ -45,6 +45,14 @@ public interface StallInfoMapper {
     public List<StallInfo> selectStallInfoList(StallInfo stallInfo);
 
     /**
+     * 合同选择市场摊位信息列表
+     *
+     * @param stallInfo 市场摊位信息
+     * @return 市场摊位信息集合
+     */
+    public List<StallInfo> selectLeaseStallInfoList(StallInfo stallInfo);
+
+    /**
      * 新增市场摊位信息
      *
      * @param stallInfo 市场摊位信息

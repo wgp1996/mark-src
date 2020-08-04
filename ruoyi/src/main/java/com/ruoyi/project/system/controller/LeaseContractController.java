@@ -94,6 +94,11 @@ public class LeaseContractController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody LeaseContract leaseContract)
     {
+        //查询合同编号是否重复
+        LeaseContract info = leaseContractService.selectLeaseContractByCode(leaseContract.getContractCode(), "");
+        if (info != null) {
+            return toAjaxByError("合同编号重复!");
+        }
         if(leaseContract.getRows()==""){
             return  toAjaxByError("明细信息不能为空!");
         }
@@ -114,12 +119,19 @@ public class LeaseContractController extends BaseController
 
     /**
      * 修改租赁合同
+     * let nums=data.houseName;
+     * for()
      */
     @PreAuthorize("@ss.hasPermi('system:contract:edit')")
     @Log(title = "租赁合同", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody LeaseContract leaseContract)
     {
+        //查询合同编号是否重复
+        LeaseContract info = leaseContractService.selectLeaseContractByCode(leaseContract.getContractCode(), leaseContract.getId());
+        if (info != null) {
+            return toAjaxByError("合同编号重复!");
+        }
         if(leaseContract.getRows()==""){
             return  toAjaxByError("明细信息不能为空!");
         }
