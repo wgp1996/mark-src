@@ -75,6 +75,8 @@ public class LeaseContractChildController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id)
     {
+        //修改摊位状态
+        leaseContractChildService.updateStallInfoById(id);
         return AjaxResult.success(leaseContractChildService.selectLeaseContractChildById(id));
     }
 
@@ -108,6 +110,10 @@ public class LeaseContractChildController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {
+        for(int i=0;i<ids.length;i++){
+            //修改摊位状态
+            leaseContractChildService.updateStallInfoById(ids[i]);
+        }
         return toAjax(leaseContractChildService.deleteLeaseContractChildByIds(ids));
     }
 }

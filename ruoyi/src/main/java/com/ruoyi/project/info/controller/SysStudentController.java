@@ -9,6 +9,7 @@ import java.util.List;
 import com.ruoyi.framework.config.ServerConfig;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2020-03-31
  */
 @RestController
+@Component("stuTask")
 @RequestMapping("/system/student")
 public class SysStudentController extends BaseController
 {
@@ -35,7 +37,11 @@ public class SysStudentController extends BaseController
     @Autowired
     private ISysStudentService sysStudentService;
 
-
+    public TableDataInfo getList()
+    {
+        List<SysStudent> list = sysStudentService.selectSysStudentList(new SysStudent());
+        return getDataTable(list);
+    }
 
 
     @PostMapping("/upload")

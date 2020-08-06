@@ -65,6 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="ownerName != null  and ownerName != ''">and b.owner_name like concat('%', #{ownerName}, '%')</if>
             <if test="stallName != null  and stallName != ''">and a.stall_name like concat('%', #{stallName}, '%')</if>
             and a.id not in(select ifnull(lease_mx_id,'') from lease_collection)
+            and b.contract_status='已生效'
         </where>
     </select>
     
@@ -154,5 +155,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         )
     </delete>
 
+    <update id="updateStallInfoById" parameterType="String">
+        update stall_info
+        <trim prefix="SET" suffixOverrides=",">
+            stall_status = "0",
+            stall_start_time ="",
+            stall_end_time ="",
+            stall_money = "",
+            stall_leaseholder =""
+        </trim>
+        where stall_code
+        in(
+             select stall_code from  lease_contract_child where  id = #{id}
+        )
+    </update>
+
+    <update id="updateStallInfoByPids" parameterType="String">
+        update stall_info
+        <trim prefix="SET" suffixOverrides=",">
+            stall_status = "0",
+            stall_start_time ="",
+            stall_end_time ="",
+            stall_money = "",
+            stall_leaseholder =""
+        </trim>
+        where stall_code
+        in(
+        select stall_code from  lease_contract_child where  contract_code in (
+        select contract_code from lease_contract where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+        )
+    </update>
     
 </mapper>

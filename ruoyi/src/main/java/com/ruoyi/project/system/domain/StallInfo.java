@@ -88,6 +88,16 @@ public class StallInfo extends BaseEntity {
     @Excel(name = "所属市场")
     private String markChildName;
 
+    private  String stallStatusName;
+
+    public String getStallStatusName() {
+        return stallStatusName;
+    }
+
+    public void setStallStatusName(String stallStatusName) {
+        this.stallStatusName = stallStatusName;
+    }
+
     public String getMarkChildName() {
         return markChildName;
     }

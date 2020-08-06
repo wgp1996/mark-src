@@ -92,6 +92,7 @@ public class LeaseContractPoolController extends BaseController {
         if (info != null) {
             return toAjaxByError("合同编号重复!");
         }
+
         if (leaseContract.getRows() == "") {
             return toAjaxByError("明细信息不能为空!");
         }
@@ -103,6 +104,7 @@ public class LeaseContractPoolController extends BaseController {
             child.setCreateTime(DateUtils.getNowDate());
             leaseContractChildService.insertLeaseContractChild(child);
         }
+        leaseContract.setContractStatus("正操作");
         leaseContract.setCreateBy(SecurityUtils.getUsername());
         leaseContract.setId(StringUtils.getId());
         //leaseContract.setContractCode(StringUtils.getRandomCode("CTA"));
@@ -124,6 +126,10 @@ public class LeaseContractPoolController extends BaseController {
         if (info != null) {
             return toAjaxByError("合同编号重复!");
         }
+        //检查是否为已生效的合同
+        if("已生效".equals(leaseContract.getContractStatus())){
+            return  toAjaxByError("该合同状态禁止修改!");
+        }
         if (leaseContract.getRows() == "") {
             return toAjaxByError("明细信息不能为空!");
         }
@@ -142,6 +148,7 @@ public class LeaseContractPoolController extends BaseController {
                 leaseContractChildService.insertLeaseContractChild(child);
             }
         }
+        leaseContract.setContractStatus("正操作");
         leaseContract.setUpdateBy(SecurityUtils.getUsername());
         return toAjax(leaseContractService.updateLeaseContract(leaseContract));
     }
@@ -153,6 +160,12 @@ public class LeaseContractPoolController extends BaseController {
     @Log(title = "联营合同", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
+        for(int i=0;i<ids.length;i++){
+            LeaseContractPool info = leaseContractService.selectLeaseContractById(ids[i]);
+            if(!"正操作".equals(info.getContractStatus())){
+                return toAjaxByError(info.getContractName()+"：该合同状态禁止删除!");
+            }
+        }
         //删除主表信息
         int result = leaseContractService.deleteLeaseContractByIds(ids);
         if (result > 0) {
@@ -162,5 +175,15 @@ public class LeaseContractPoolController extends BaseController {
         } else {
             return toAjaxByError("删除失败!");
         }
+    }
+    /**
+     * 联营合同生效
+     */
+    @PreAuthorize("@ss.hasPermi('system:pool:effect')")
+    @Log(title = "联营合同", businessType = BusinessType.UPDATE)
+    @DeleteMapping("/effect/{ids}")
+    public AjaxResult effect(@PathVariable String[] ids)
+    {
+        return toAjax(leaseContractService.updateLeaseContractStatus(ids));
     }
 }

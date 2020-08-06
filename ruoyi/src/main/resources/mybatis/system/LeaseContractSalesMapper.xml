@@ -19,18 +19,25 @@
         <result property="updateTime" column="update_time"/>
         <result property="remark" column="remark"/>
         <result property="fileName" column="file_name"/>
+        <result property="contractStatus"    column="contract_status"    />
     </resultMap>
 
     <sql id="selectLeaseContractVo">
         select (select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,
         a.file_name,a.id, a.contract_code, a.contract_name, a.owner_code, a.contract_money, a.sign_address,
-        a.sign_time, a.create_by, a.create_time, a.update_by, a.update_time, a.remark from lease_contract_sales a
+        a.sign_time, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,a.contract_status from lease_contract_sales a
+    </sql>
+
+    <sql id="selectLeaseContractVoByRole">
+        select (select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,
+        a.file_name,a.id, a.contract_code, a.contract_name, a.owner_code, a.contract_money, a.sign_address,
+        a.sign_time, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,a.contract_status from lease_contract_sales a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="selectLeaseContractSalesList" parameterType="LeaseContractSales" resultMap="LeaseContractResult">
-        <include refid="selectLeaseContractVo"/>
+        <include refid="selectLeaseContractVoByRole"/>
         <where>
             <if test="contractCode != null  and contractCode != ''">and contract_code = #{contractCode}</if>
             <if test="contractName != null  and contractName != ''">and contract_name like concat('%', #{contractName},
@@ -73,6 +80,7 @@
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
             <if test="fileName != null  and fileName != ''">file_name,</if>
+            <if test="contractStatus != null  and contractStatus != ''">contract_status,</if>
             create_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -89,6 +97,7 @@
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
             <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            <if test="contractStatus != null  and contractStatus != ''">#{contractStatus},</if>
             sysdate()
         </trim>
     </insert>
@@ -107,6 +116,7 @@
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="contractStatus != null  and contractStatus != ''">contract_status=#{contractStatus},</if>
             file_name = #{fileName},
             update_time = sysdate()
         </trim>
@@ -123,5 +133,10 @@
             #{id}
         </foreach>
     </delete>
-
+    <update id="updateLeaseContractStatus" parameterType="String">
+        update lease_contract_sales set contract_status='已生效'  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
 </mapper>

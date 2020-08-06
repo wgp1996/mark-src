@@ -53,7 +53,7 @@ public class StallInfoController extends BaseController {
     }
 
     /**
-     * 合同选择市场摊位信息列表
+     * 租赁合同选择市场摊位信息列表
      */
     @GetMapping("/leaseStallList")
     public TableDataInfo leaseStallList(StallInfo stallInfo) {
@@ -95,6 +95,7 @@ public class StallInfoController extends BaseController {
         } else {
             stallInfo.setCreateBy(SecurityUtils.getUsername());
             stallInfo.setId(StringUtils.getId());
+            stallInfo.setStallStatus("0");
             //stallInfo.setMarkCode(StringUtils.getRandomCode("MK"));
             stallInfo.setCreateTime(DateUtils.getNowDate());
             return toAjax(stallInfoService.insertStallInfo(stallInfo));
@@ -108,9 +109,12 @@ public class StallInfoController extends BaseController {
     @Log(title = "市场摊位信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody StallInfo stallInfo) {
+        if(!"0".equals(stallInfo.getStallStatus())){
+            return toAjaxByError("该摊位状态禁止修改!");
+        }
         StallInfo info = stallInfoService.selectStallInfoByCode(stallInfo.getStallCode(), stallInfo.getId());
         if (info != null) {
-            return toAjaxByError("该摊位在系统中已存在");
+            return toAjaxByError("该摊位在系统中已存在!");
         } else {
             stallInfo.setUpdateBy(SecurityUtils.getUsername());
             return toAjax(stallInfoService.updateStallInfo(stallInfo));
@@ -133,6 +137,14 @@ public class StallInfoController extends BaseController {
     @Log(title = "市场摊位信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
-        return toAjax(stallInfoService.deleteStallInfoByIds(ids));
+        for(int i=0;i<ids.length;i++){
+            StallInfo info = stallInfoService.selectStallInfoById(ids[i]);
+            if(!"0".equals(info.getStallStatus())){
+                return toAjaxByError(info.getStallName()+"：该状态禁止删除!");
+            }else{
+                stallInfoService.deleteStallInfoById(ids[i]);
+            }
+        }
+        return toAjaxBySuccess("删除成功!");
     }
 }

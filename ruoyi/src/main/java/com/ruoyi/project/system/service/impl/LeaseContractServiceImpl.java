@@ -105,4 +105,15 @@ public class LeaseContractServiceImpl implements ILeaseContractService
     {
         return leaseContractMapper.deleteLeaseContractById(id);
     }
+
+    /**
+     * 批量修改合同状态
+     *
+     * @param ids 需要修改的合同ID
+     * @return 结果
+     */
+    @Override
+    public int updateLeaseContractStatus(String[] ids){
+        return leaseContractMapper.updateLeaseContractStatus(ids);
+    }
 }

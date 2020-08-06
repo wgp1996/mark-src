@@ -102,6 +102,18 @@ public class StallInfoServiceImpl implements IStallInfoService {
     }
 
     /**
+     * 修改市场摊位信息
+     *
+     * @param stallInfo 市场摊位信息
+     * @return 结果
+     */
+    @Override
+    public int updateStallInfoByCode(StallInfo stallInfo) {
+        //stallInfo.setUpdateTime(DateUtils.getNowDate());
+        return stallInfoMapper.updateStallInfoByCode(stallInfo);
+    }
+
+    /**
      * 批量删除市场摊位信息
      *
      * @param ids 需要删除的市场摊位信息ID

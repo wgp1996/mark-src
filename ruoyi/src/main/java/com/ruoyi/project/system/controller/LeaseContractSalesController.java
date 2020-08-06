@@ -11,10 +11,13 @@ import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.page.TableDataInfo;
+import com.ruoyi.project.system.domain.LeaseContract;
 import com.ruoyi.project.system.domain.LeaseContractChildSales;
 import com.ruoyi.project.system.domain.LeaseContractSales;
+import com.ruoyi.project.system.domain.StallInfo;
 import com.ruoyi.project.system.service.ILeaseContractChildSalesService;
 import com.ruoyi.project.system.service.ILeaseContractSalesService;
+import com.ruoyi.project.system.service.IStallInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +37,8 @@ public class LeaseContractSalesController extends BaseController {
     private ILeaseContractChildSalesService leaseContractChildSalesService;
     @Autowired
     private ILeaseContractSalesService leaseContractSalesService;
-
+    @Autowired
+    private IStallInfoService stallInfoService;
     /**
      * 查询销售合同列表
      */
@@ -96,12 +100,22 @@ public class LeaseContractSalesController extends BaseController {
         }
         List<LeaseContractChildSales> childList = JSONArray.parseArray(leaseContract.getRows(), LeaseContractChildSales.class);
         for (LeaseContractChildSales child : childList) {
+            //修改摊位信息
+            StallInfo stallInfo=new StallInfo();
+            stallInfo.setStallCode(child.getStallCode());//摊位编码
+            stallInfo.setStallStatus("2");//已销售
+            stallInfo.setStallStartTime(child.getLeaseTime());//销售日期
+            stallInfo.setStallMoney(child.getRentMoney());//销售金额
+            stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//租赁方
+            stallInfoService.updateStallInfoByCode(stallInfo);
+
             child.setCreateBy(SecurityUtils.getUsername());
             child.setId(StringUtils.getId());
             child.setContractCode(leaseContract.getContractCode());
             child.setCreateTime(DateUtils.getNowDate());
             leaseContractChildSalesService.insertLeaseContractChild(child);
         }
+        leaseContract.setContractStatus("正操作");
         leaseContract.setCreateBy(SecurityUtils.getUsername());
         leaseContract.setId(StringUtils.getId());
         //leaseContract.setContractCode(StringUtils.getRandomCode("CTA"));
@@ -123,11 +137,24 @@ public class LeaseContractSalesController extends BaseController {
         if (info != null) {
             return toAjaxByError("合同编号重复!");
         }
+        //检查是否为已生效的合同
+        if("已生效".equals(leaseContract.getContractStatus())){
+            return  toAjaxByError("该合同状态禁止修改!");
+        }
         if (leaseContract.getRows() == "") {
             return toAjaxByError("明细信息不能为空!");
         }
         List<LeaseContractChildSales> childList = JSONArray.parseArray(leaseContract.getRows(), LeaseContractChildSales.class);
         for (LeaseContractChildSales child : childList) {
+            //修改摊位信息
+            StallInfo stallInfo=new StallInfo();
+            stallInfo.setStallCode(child.getStallCode());//摊位编码
+            stallInfo.setStallStatus("2");//已销售
+            stallInfo.setStallStartTime(child.getLeaseTime());//销售日期
+            stallInfo.setStallMoney(child.getRentMoney());//销售金额
+            stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//租赁方
+            stallInfoService.updateStallInfoByCode(stallInfo);
+
             if (child.getId() != "" && child.getId() != null && !"".equals(child.getId())) {
                 child.setCreateBy(SecurityUtils.getUsername());
                 child.setContractCode(leaseContract.getContractCode());
@@ -141,6 +168,7 @@ public class LeaseContractSalesController extends BaseController {
                 leaseContractChildSalesService.insertLeaseContractChild(child);
             }
         }
+        leaseContract.setContractStatus("正操作");
         leaseContract.setUpdateBy(SecurityUtils.getUsername());
         return toAjax(leaseContractSalesService.updateLeaseContract(leaseContract));
     }
@@ -152,13 +180,32 @@ public class LeaseContractSalesController extends BaseController {
     @Log(title = "销售合同", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
+        for(int i=0;i<ids.length;i++){
+            LeaseContractSales info = leaseContractSalesService.selectLeaseContractById(ids[i]);
+            if(!"正操作".equals(info.getContractStatus())){
+                return toAjaxByError(info.getContractName()+"：该合同状态禁止删除!");
+            }
+        }
         int result = leaseContractSalesService.deleteLeaseContractByIds(ids);
         if (result > 0) {
+            //批量修改摊位信息
+            leaseContractChildSalesService.updateStallInfoByPids(ids);
             //删除子表信息
             leaseContractChildSalesService.deleteLeaseContractChildPid(ids);
             return toAjaxBySuccess("删除成功!");
         } else {
             return toAjaxByError("删除失败!");
         }
+    }
+
+    /**
+     * 销售合同生效
+     */
+    @PreAuthorize("@ss.hasPermi('system:sales:effect')")
+    @Log(title = "销售合同", businessType = BusinessType.DELETE)
+    @DeleteMapping("/effect/{ids}")
+    public AjaxResult effect(@PathVariable String[] ids)
+    {
+        return toAjax(leaseContractSalesService.updateLeaseContractStatus(ids));
     }
 }

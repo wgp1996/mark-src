@@ -111,4 +111,26 @@ public class LeaseContractChildSalesServiceImpl implements ILeaseContractChildSa
     public int deleteLeaseContractChildById(String id) {
         return LeaseContractChildSalesMapper.deleteLeaseContractChildById(id);
     }
+    /**
+     * 根据子表ID修改摊位信息
+     *
+     * @param id 租赁合同子表信息ID
+     * @return 结果
+     */
+    @Override
+    public int updateStallInfoById(String id){
+        return LeaseContractChildSalesMapper.updateStallInfoById(id);
+    };
+
+
+    /**
+     * 根据主表ID修改摊位信息
+     *
+     * @param ids 需要删除的租赁合同主表信息ID
+     * @return 结果
+     */
+    @Override
+    public int updateStallInfoByPids(String[] ids){
+        return LeaseContractChildSalesMapper.updateStallInfoByPids(ids);
+    };
 }

@@ -23,17 +23,24 @@
         <result property="updateTime" column="update_time"/>
         <result property="remark" column="remark"/>
         <result property="markChildName" column="mark_child_name"/>
-
+        <result property="stallStatusName" column="stall_status_name"/>
     </resultMap>
 
     <sql id="selectStallInfoVo">
-        select a.*,(select mark_child_name from mark_child_info where mark_child_code=a.mark_code) as mark_child_name from stall_info a
+        select a.*,case a.stall_status when 0 THEN '空闲' when 1 then '已出租' when 2 then '已销售' end  as stall_status_name,
+        (select mark_child_name from mark_child_info where mark_child_code=a.mark_code) as mark_child_name
+        from stall_info a
+    </sql>
+
+    <sql id="selectStallInfoVoByRole">
+        select a.*,case a.stall_status when 0 THEN '空闲' when 1 then '已出租' when 2 then '已销售' end  as stall_status_name,
+        (select mark_child_name from mark_child_info where mark_child_code=a.mark_code) as mark_child_name from stall_info a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="selectStallInfoList" parameterType="StallInfo" resultMap="StallInfoResult">
-        <include refid="selectStallInfoVo"/>
+        <include refid="selectStallInfoVoByRole"/>
         <where>
             <if test="stallName != null  and stallName != ''">and stall_name like concat('%', #{stallName}, '%')</if>
             <if test="stallCode != null  and stallCode != ''">and stall_code = #{stallCode}</if>
@@ -62,8 +69,10 @@
             <if test="stallStatus != null ">and stall_status = #{stallStatus}</if>
             <if test="stallStartTime != null  and stallStartTime != ''">and stall_start_time = #{stallStartTime}</if>
             <if test="stallEndTime != null  and stallEndTime != ''">and stall_end_time = #{stallEndTime}</if>
-            and stall_code not in(select ifnull(a.stall_code,'') from lease_contract_child a where a.lease_end_time&gt;=
-            DATE_FORMAT(NOW(),'%Y-%m-%d'))
+            and (a.stall_status='0' or a.stall_end_time&lt;=DATE_FORMAT(NOW(),'%Y-%m-%d'))
+           <!--  and stall_code not in(select ifnull(a.stall_code,'') from lease_contract_child a where a.lease_end_time&gt;=
+            DATE_FORMAT(NOW(),'%Y-%m-%d'))-->
+
         </where>
     </select>
 
@@ -150,6 +159,18 @@
             update_time = sysdate()
         </trim>
         where id = #{id}
+    </update>
+
+    <update id="updateStallInfoByCode" parameterType="StallInfo">
+        update stall_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stallStatus != null and stallStatus != ''">stall_status = #{stallStatus},</if>
+            stall_start_time = #{stallStartTime},
+            stall_end_time = #{stallEndTime},
+            stall_money = #{stallMoney},
+            stall_leaseholder = #{stallLeaseholder}
+        </trim>
+        where stall_code = #{stallCode}
     </update>
 
     <delete id="deleteStallInfoById" parameterType="String">

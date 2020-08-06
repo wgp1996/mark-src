@@ -74,6 +74,17 @@ public class LeaseContractSales extends BaseEntity {
        合同子表
      */
     private List<LeaseContractChildSales> childrenList;
+    /*合同状态*/
+    @Excel(name = "合同状态")
+    private String contractStatus;
+
+    public String getContractStatus() {
+        return contractStatus;
+    }
+
+    public void setContractStatus(String contractStatus) {
+        this.contractStatus = contractStatus;
+    }
 
     public List<LeaseContractChildSales> getChildrenList() {
         return childrenList;
@@ -180,6 +191,7 @@ public class LeaseContractSales extends BaseEntity {
                 .append("updateBy", getUpdateBy())
                 .append("updateTime", getUpdateTime())
                 .append("remark", getRemark())
+                .append("contractStatus", getContractStatus())
                 .toString();
     }
 }

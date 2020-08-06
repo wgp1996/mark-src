@@ -122,6 +122,39 @@
         </foreach>
         )
     </delete>
+    <update id="updateStallInfoById" parameterType="String">
+        update stall_info
+        <trim prefix="SET" suffixOverrides=",">
+            stall_status = "0",
+            stall_start_time ="",
+            stall_end_time ="",
+            stall_money = "",
+            stall_leaseholder =""
+        </trim>
+        where stall_code
+        in(
+        select stall_code from  lease_contract_child_sales where  id = #{id}
+        )
+    </update>
 
+    <update id="updateStallInfoByPids" parameterType="String">
+        update stall_info
+        <trim prefix="SET" suffixOverrides=",">
+            stall_status = "0",
+            stall_start_time ="",
+            stall_end_time ="",
+            stall_money = "",
+            stall_leaseholder =""
+        </trim>
+        where stall_code
+        in(
+        select stall_code from  lease_contract_child_sales where  contract_code in (
+        select contract_code from lease_contract_sales where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+        )
+    </update>
 
 </mapper>

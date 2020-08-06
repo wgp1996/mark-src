@@ -66,5 +66,12 @@ public interface LeaseContractPoolMapper {
      * @param ids 需要删除的数据ID
      * @return 结果
      */
-    public int deleteLeaseContractByIds(String[] ids);
+    public int deleteLeaseContractByIds(String[] ids);/**
+     * 批量修改合同状态
+     *
+     * @param ids 需要修改的合同ID
+     * @return 结果
+     */
+    public int updateLeaseContractStatus(String[] ids);
+
 }

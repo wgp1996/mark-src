@@ -68,6 +68,15 @@ public interface IStallInfoService {
     public int updateStallInfo(StallInfo stallInfo);
 
     /**
+     * 修改市场摊位信息
+     *
+     * @param stallInfo 市场摊位信息
+     * @return 结果
+     */
+    public int updateStallInfoByCode(StallInfo stallInfo);
+
+
+    /**
      * 批量删除市场摊位信息
      *
      * @param ids 需要删除的市场摊位信息ID

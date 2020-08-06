@@ -69,6 +69,14 @@ public interface StallInfoMapper {
     public int updateStallInfo(StallInfo stallInfo);
 
     /**
+     * 修改市场摊位信息
+     *
+     * @param stallInfo 市场摊位信息
+     * @return 结果
+     */
+    public int updateStallInfoByCode(StallInfo stallInfo);
+
+    /**
      * 删除市场摊位信息
      *
      * @param id 市场摊位信息ID
