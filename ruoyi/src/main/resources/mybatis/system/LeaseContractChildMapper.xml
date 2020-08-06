@@ -22,6 +22,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
     </resultMap>
 
+    <resultMap type="LeaseContractChild" id="LeaseContractByCollectionResult">
+        <result property="id" column="id"/>
+        <result property="contractCode" column="contract_code"/>
+        <result property="contractName" column="contract_name"/>
+        <result property="stallCode" column="stall_code"/>
+        <result property="stallName" column="stall_name"/>
+        <result property="ownerCode" column="owner_code"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="leaseStartTime" column="lease_start_time"/>
+        <result property="leaseEndTime" column="lease_end_time"/>
+        <result property="rentMoney" column="rent_money"/>
+    </resultMap>
+
     <sql id="selectLeaseContractChildVo">
         select id, contract_code, stall_code, stall_name, stall_area, lease_start_time, lease_end_time, rent_money, pay_type, contract_bz, create_by, create_time, update_by, update_time, remark from lease_contract_child
     </sql>
@@ -38,6 +51,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="rentMoney != null  and rentMoney != ''"> and rent_money = #{rentMoney}</if>
             <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
             <if test="contractBz != null  and contractBz != ''"> and contract_bz = #{contractBz}</if>
+        </where>
+    </select>
+
+    <select id="selectLeaseByCollection" parameterType="LeaseContractChild" resultMap="LeaseContractByCollectionResult">
+        select a.id,a.contract_code,a.stall_code,a.stall_name,a.rent_money,a.lease_start_time,
+        a.lease_end_time,b.owner_code,b.owner_name,b.contract_name from lease_contract_child a join lease_contract b
+        on a.contract_code=b.contract_code
+        <where>
+            <if test="contractName != null  and contractName != ''">and b.contract_name like concat('%',
+                #{contractName}, '%')
+            </if>
+            <if test="ownerName != null  and ownerName != ''">and b.owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="stallName != null  and stallName != ''">and a.stall_name like concat('%', #{stallName}, '%')</if>
+            and a.id not in(select ifnull(lease_mx_id,'') from lease_collection)
         </where>
     </select>
     

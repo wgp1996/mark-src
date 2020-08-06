@@ -28,6 +28,8 @@
 
     <sql id="selectStallInfoVo">
         select a.*,(select mark_child_name from mark_child_info where mark_child_code=a.mark_code) as mark_child_name from stall_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="selectStallInfoList" parameterType="StallInfo" resultMap="StallInfoResult">
@@ -46,6 +48,7 @@
             </if>
             <if test="stallNote != null  and stallNote != ''">and stall_note = #{stallNote}</if>
             <if test="createUser != null  and createUser != ''">and create_user = #{createUser}</if>
+            ${dataScope}
         </where>
     </select>
 

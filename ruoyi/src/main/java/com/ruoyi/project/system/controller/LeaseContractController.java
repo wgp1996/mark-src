@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.LeaseContractChild;
 import com.ruoyi.project.system.service.ILeaseContractChildService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -47,6 +48,7 @@ public class LeaseContractController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:contract:list')")
     @GetMapping("/list")
+    @DataScope(deptAlias = "d", userAlias = "u")
     public TableDataInfo list(LeaseContract leaseContract)
     {
         startPage();

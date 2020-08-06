@@ -36,6 +36,14 @@ public interface LeaseContractChildMapper
     public List<LeaseContractChild> selectLeaseContractChildList(LeaseContractChild leaseContractChild);
 
     /**
+     * 租赁收款查询租赁合同子表信息列表
+     *
+     * @param leaseContractChild 租赁合同子表信息
+     * @return 租赁合同子表信息集合
+     */
+    public List<LeaseContractChild> selectLeaseByCollection(LeaseContractChild leaseContractChild);
+
+    /**
      * 新增租赁合同子表信息
      * 
      * @param leaseContractChild 租赁合同子表信息

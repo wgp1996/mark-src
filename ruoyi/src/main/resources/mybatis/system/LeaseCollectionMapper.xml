@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.LeaseCollectionMapper">
+
+    <resultMap type="LeaseCollection" id="LeaseCollectionResult">
+        <result property="collectionCode" column="collection_code"/>
+        <result property="id" column="id"/>
+        <result property="contractName" column="contract_name"/>
+        <result property="contractCode" column="contract_code"/>
+        <result property="ownerCode" column="owner_code"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="stallCode" column="stall_code"/>
+        <result property="stallName" column="stall_name"/>
+        <result property="contractMoney" column="contract_money"/>
+        <result property="contractStartTime" column="contract_start_time"/>
+        <result property="contractEndTime" column="contract_end_time"/>
+        <result property="collectionMoney" column="collection_money"/>
+        <result property="collectionPayType" column="collection_pay_type"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="leaseMxId" column="lease_mx_id"/>
+    </resultMap>
+
+    <sql id="selectLeaseCollectionVo">
+        select a.* from lease_collection a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectLeaseCollectionList" parameterType="LeaseCollection" resultMap="LeaseCollectionResult">
+        <include refid="selectLeaseCollectionVo"/>
+        <where>
+            <if test="collectionCode != null  and collectionCode != ''">and collection_code = #{collectionCode}</if>
+            <if test="contractName != null  and contractName != ''">and contract_name like concat('%', #{contractName},
+                '%')
+            </if>
+            <if test="contractCode != null  and contractCode != ''">and contract_code = #{contractCode}</if>
+            <if test="ownerCode != null  and ownerCode != ''">and owner_code = #{ownerCode}</if>
+            <if test="ownerName != null  and ownerName != ''">and owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="stallCode != null  and stallCode != ''">and stall_code = #{stallCode}</if>
+            <if test="stallName != null  and stallName != ''">and stall_name like concat('%', #{stallName}, '%')</if>
+            <if test="contractMoney != null  and contractMoney != ''">and contract_money = #{contractMoney}</if>
+            <if test="contractStartTime != null  and contractStartTime != ''">and contract_start_time =
+                #{contractStartTime}
+            </if>
+            <if test="contractEndTime != null  and contractEndTime != ''">and contract_end_time = #{contractEndTime}
+            </if>
+            <if test="collectionMoney != null  and collectionMoney != ''">and collection_money = #{collectionMoney}</if>
+            <if test="collectionPayType != null  and collectionPayType != ''">and collection_pay_type =
+                #{collectionPayType}
+            </if>
+            ${dataScope}
+        </where>
+
+    </select>
+
+    <select id="selectLeaseCollectionById" parameterType="String" resultMap="LeaseCollectionResult">
+        <include refid="selectLeaseCollectionVo"/>
+        where collection_code = #{collectionCode}
+    </select>
+
+    <insert id="insertLeaseCollection" parameterType="LeaseCollection">
+        insert into lease_collection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="collectionCode != null  and collectionCode != ''">collection_code,</if>
+            <if test="id != null  and id != ''">id,</if>
+            <if test="contractName != null  and contractName != ''">contract_name,</if>
+            <if test="contractCode != null  and contractCode != ''">contract_code,</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code,</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name,</if>
+            <if test="stallCode != null  and stallCode != ''">stall_code,</if>
+            <if test="stallName != null  and stallName != ''">stall_name,</if>
+            <if test="contractMoney != null  and contractMoney != ''">contract_money,</if>
+            <if test="contractStartTime != null  and contractStartTime != ''">contract_start_time,</if>
+            <if test="contractEndTime != null  and contractEndTime != ''">contract_end_time,</if>
+            <if test="collectionMoney != null  and collectionMoney != ''">collection_money,</if>
+            <if test="collectionPayType != null  and collectionPayType != ''">collection_pay_type,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="leaseMxId != null  and leaseMxId != ''">lease_mx_id,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="collectionCode != null  and collectionCode != ''">#{collectionCode},</if>
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="contractName != null  and contractName != ''">#{contractName},</if>
+            <if test="contractCode != null  and contractCode != ''">#{contractCode},</if>
+            <if test="ownerCode != null  and ownerCode != ''">#{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">#{ownerName},</if>
+            <if test="stallCode != null  and stallCode != ''">#{stallCode},</if>
+            <if test="stallName != null  and stallName != ''">#{stallName},</if>
+            <if test="contractMoney != null  and contractMoney != ''">#{contractMoney},</if>
+            <if test="contractStartTime != null  and contractStartTime != ''">#{contractStartTime},</if>
+            <if test="contractEndTime != null  and contractEndTime != ''">#{contractEndTime},</if>
+            <if test="collectionMoney != null  and collectionMoney != ''">#{collectionMoney},</if>
+            <if test="collectionPayType != null  and collectionPayType != ''">#{collectionPayType},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="leaseMxId != null  and leaseMxId != ''">#{leaseMxId},</if>
+            sysdate()
+        </trim>
+    </insert>
+
+    <update id="updateLeaseCollection" parameterType="LeaseCollection">
+        update lease_collection
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null  and id != ''">id = #{id},</if>
+            <if test="contractName != null  and contractName != ''">contract_name = #{contractName},</if>
+            <if test="contractCode != null  and contractCode != ''">contract_code = #{contractCode},</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code = #{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name = #{ownerName},</if>
+            <if test="stallCode != null  and stallCode != ''">stall_code = #{stallCode},</if>
+            <if test="stallName != null  and stallName != ''">stall_name = #{stallName},</if>
+            <if test="contractMoney != null  and contractMoney != ''">contract_money = #{contractMoney},</if>
+            <if test="contractStartTime != null  and contractStartTime != ''">contract_start_time =
+                #{contractStartTime},
+            </if>
+            <if test="contractEndTime != null  and contractEndTime != ''">contract_end_time = #{contractEndTime},</if>
+            <if test="collectionMoney != null  and collectionMoney != ''">collection_money = #{collectionMoney},</if>
+            <if test="collectionPayType != null  and collectionPayType != ''">collection_pay_type =
+                #{collectionPayType},
+            </if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="leaseMxId != null  and leaseMxId != ''">lease_mx_id = #{leaseMxId},</if>
+            update_time = sysdate()
+        </trim>
+        where collection_code = #{collectionCode}
+    </update>
+
+    <delete id="deleteLeaseCollectionById" parameterType="String">
+        delete from lease_collection where collection_code = #{collectionCode}
+    </delete>
+
+    <delete id="deleteLeaseCollectionByIds" parameterType="String">
+        delete from lease_collection where collection_code in
+        <foreach item="collectionCode" collection="array" open="(" separator="," close=")">
+            #{collectionCode}
+        </foreach>
+    </delete>
+
+</mapper>

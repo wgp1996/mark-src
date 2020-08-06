@@ -29,7 +29,9 @@
     </resultMap>
 
     <sql id="selectOwnerInfoVo">
-        select id, owner_code, owner_name, owner_org, owner_org_nature, owner_person_id, owner_manger_type, owner_lxr, owner_lxr_phone, owner_lxr_wx, owner_note, create_user, create_by, create_time, update_by, update_time, remark, file_name1, file_title1, file_name2, file_title2 from owner_info
+        select a.* from owner_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="selectOwnerInfoList" parameterType="OwnerInfo" resultMap="OwnerInfoResult">
@@ -51,6 +53,7 @@
             <if test="fileTitle1 != null  and fileTitle1 != ''">and file_title1 = #{fileTitle1}</if>
             <if test="fileName2 != null  and fileName2 != ''">and file_name2 = #{fileName2}</if>
             <if test="fileTitle2 != null  and fileTitle2 != ''">and file_title2 = #{fileTitle2}</if>
+            ${dataScope}
         </where>
     </select>
 

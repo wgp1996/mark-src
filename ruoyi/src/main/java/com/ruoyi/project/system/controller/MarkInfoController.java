@@ -5,6 +5,7 @@ import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,7 @@ public class MarkInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:mark:list')")
     @GetMapping("/list")
+    @DataScope(deptAlias = "d", userAlias = "u")
     public TableDataInfo list(MarkInfo markInfo)
     {
         startPage();

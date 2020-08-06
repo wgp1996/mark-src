@@ -22,7 +22,11 @@
     </resultMap>
 
     <sql id="selectLeaseContractVo">
-        select (select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,file_name,id, contract_code, contract_name, owner_code, contract_money, sign_address, sign_time, create_by, create_time, update_by, update_time, remark from lease_contract_sales
+        select (select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,
+        a.file_name,a.id, a.contract_code, a.contract_name, a.owner_code, a.contract_money, a.sign_address,
+        a.sign_time, a.create_by, a.create_time, a.update_by, a.update_time, a.remark from lease_contract_sales a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="selectLeaseContractSalesList" parameterType="LeaseContractSales" resultMap="LeaseContractResult">
@@ -37,6 +41,7 @@
             <if test="contractMoney != null  and contractMoney != ''">and contract_money = #{contractMoney}</if>
             <if test="signAddress != null  and signAddress != ''">and sign_address = #{signAddress}</if>
             <if test="signTime != null  and signTime != ''">and sign_time = #{signTime}</if>
+            ${dataScope}
         </where>
     </select>
 

@@ -5,6 +5,7 @@ import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.StallInfo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class OwnerInfoController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:owner:list')")
     @GetMapping("/list")
+    @DataScope(deptAlias = "d", userAlias = "u")
     public TableDataInfo list(OwnerInfo ownerInfo) {
         startPage();
         List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(ownerInfo);

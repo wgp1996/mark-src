@@ -55,7 +55,35 @@ public class LeaseContractChild extends BaseEntity
     @Excel(name = "备注")
     private String contractBz;
 
-    public void setId(String id) 
+    private String contractName;
+    private String ownerName;
+    private String ownerCode;
+
+    public String getContractName() {
+        return contractName;
+    }
+
+    public void setContractName(String contractName) {
+        this.contractName = contractName;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getOwnerCode() {
+        return ownerCode;
+    }
+
+    public void setOwnerCode(String ownerCode) {
+        this.ownerCode = ownerCode;
+    }
+
+    public void setId(String id)
     {
         this.id = id;
     }

@@ -5,6 +5,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.controller.BaseController;
@@ -39,6 +40,7 @@ public class LeaseContractSalesController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('system:sales:list')")
     @GetMapping("/list")
+    @DataScope(deptAlias = "d", userAlias = "u")
     public TableDataInfo list(LeaseContractSales leaseContractSales) {
         startPage();
         List<LeaseContractSales> list = leaseContractSalesService.selectLeaseContractSalesList(leaseContractSales);

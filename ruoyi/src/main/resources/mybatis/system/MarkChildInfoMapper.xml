@@ -34,7 +34,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectMarkChildInfoVo">
-        select id, mark_code, mark_child_code, mark_child_name, peration_name, peration_nature, social_credit_code, operate_type, operate_start_time, operate_end_time, operate_money, mark_merchants_count, mark_note, create_user, create_by, create_time, update_by, update_time, remark from mark_child_info
+        select a.* from mark_child_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
     <select id="selectMarkChildInfoList" parameterType="MarkChildInfo" resultMap="MarkChildInfoResult">
@@ -53,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="markMerchantsCount != null  and markMerchantsCount != ''"> and mark_merchants_count = #{markMerchantsCount}</if>
             <if test="markNote != null  and markNote != ''"> and mark_note = #{markNote}</if>
             <if test="createUser != null  and createUser != ''"> and create_user = #{createUser}</if>
+            ${dataScope}
         </where>
     </select>
     
