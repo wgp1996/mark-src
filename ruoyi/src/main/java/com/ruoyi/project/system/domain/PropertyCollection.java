@@ -21,7 +21,13 @@ public class PropertyCollection extends BaseEntity
 
     /** $column.columnComment */
     private String id;
+    /** 合同编号 */
+    @Excel(name = "合同编号")
+    private String contractCode;
 
+    /** 合同名称 */
+    @Excel(name = "合同名称")
+    private String contractName;
     /** 客户编码 */
     @Excel(name = "客户编码")
     private String ownerCode;
@@ -55,6 +61,22 @@ public class PropertyCollection extends BaseEntity
     private String collectionPayType;
 
     private String leaseMxId;
+
+    public String getContractCode() {
+        return contractCode;
+    }
+
+    public void setContractCode(String contractCode) {
+        this.contractCode = contractCode;
+    }
+
+    public String getContractName() {
+        return contractName;
+    }
+
+    public void setContractName(String contractName) {
+        this.contractName = contractName;
+    }
 
     public String getLeaseMxId() {
         return leaseMxId;

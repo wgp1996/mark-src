@@ -50,6 +50,7 @@
             <if test="signTime != null  and signTime != ''">and sign_time = #{signTime}</if>
             ${dataScope}
         </where>
+        order by a.create_time desc
     </select>
 
     <select id="selectLeaseContractById" parameterType="String" resultMap="LeaseContractResult">

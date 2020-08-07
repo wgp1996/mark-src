@@ -11,10 +11,7 @@ import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.page.TableDataInfo;
-import com.ruoyi.project.system.domain.LeaseContractChildPool;
-import com.ruoyi.project.system.domain.LeaseContractChildSales;
-import com.ruoyi.project.system.domain.LeaseContractPool;
-import com.ruoyi.project.system.domain.LeaseContractSales;
+import com.ruoyi.project.system.domain.*;
 import com.ruoyi.project.system.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +32,8 @@ public class LeaseContractPoolController extends BaseController {
     private ILeaseContractChildPoolService leaseContractChildService;
     @Autowired
     private ILeaseContractPoolService leaseContractService;
-
+    @Autowired
+    private IStallInfoService stallInfoService;
     /**
      * 查询联营合同列表
      */
@@ -98,6 +96,15 @@ public class LeaseContractPoolController extends BaseController {
         }
         List<LeaseContractChildPool> childList = JSONArray.parseArray(leaseContract.getRows(), LeaseContractChildPool.class);
         for (LeaseContractChildPool child : childList) {
+            //修改摊位信息
+            StallInfo stallInfo=new StallInfo();
+            stallInfo.setStallCode(child.getStallCode());//摊位编码
+            stallInfo.setStallStatus("3");//已联营
+            stallInfo.setStallStartTime(child.getLeaseTime());//联营日期
+            stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//联营方
+            stallInfoService.updateStallInfoByCode(stallInfo);
+
+
             child.setCreateBy(SecurityUtils.getUsername());
             child.setId(StringUtils.getId());
             child.setContractCode(leaseContract.getContractCode());
@@ -147,6 +154,13 @@ public class LeaseContractPoolController extends BaseController {
                 child.setCreateTime(DateUtils.getNowDate());
                 leaseContractChildService.insertLeaseContractChild(child);
             }
+            //修改摊位信息
+            StallInfo stallInfo=new StallInfo();
+            stallInfo.setStallCode(child.getStallCode());//摊位编码
+            stallInfo.setStallStatus("3");//已联营
+            stallInfo.setStallStartTime(child.getLeaseTime());//联营日期
+            stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//联营方
+            stallInfoService.updateStallInfoByCode(stallInfo);
         }
         leaseContract.setContractStatus("正操作");
         leaseContract.setUpdateBy(SecurityUtils.getUsername());
@@ -169,6 +183,8 @@ public class LeaseContractPoolController extends BaseController {
         //删除主表信息
         int result = leaseContractService.deleteLeaseContractByIds(ids);
         if (result > 0) {
+            //批量修改摊位信息
+            leaseContractChildService.updateStallInfoByPids(ids);
             //删除子表信息
             leaseContractChildService.deleteLeaseContractChildPid(ids);
             return toAjaxBySuccess("删除成功!");

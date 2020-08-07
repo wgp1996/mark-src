@@ -7,6 +7,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="PropertyCollection" id="PropertyCollectionResult">
         <result property="collectionCode"    column="collection_code"    />
         <result property="id"    column="id"    />
+        <result property="contractName" column="contract_name"/>
+        <result property="contractCode" column="contract_code"/>
         <result property="ownerCode"    column="owner_code"    />
         <result property="ownerName"    column="owner_name"    />
         <result property="stallCode"    column="stall_code"    />
@@ -47,6 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="collectionPayType != null  and collectionPayType != ''"> and collection_pay_type = #{collectionPayType}</if>
             ${dataScope}
         </where>
+        order by a.create_time desc
     </select>
     
     <select id="selectPropertyCollectionById" parameterType="String" resultMap="PropertyCollectionResult">
@@ -59,6 +62,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="collectionCode != null  and collectionCode != ''">collection_code,</if>
             <if test="id != null  and id != ''">id,</if>
+            <if test="contractName != null  and contractName != ''">contract_name,</if>
+            <if test="contractCode != null  and contractCode != ''">contract_code,</if>
             <if test="ownerCode != null  and ownerCode != ''">owner_code,</if>
             <if test="ownerName != null  and ownerName != ''">owner_name,</if>
             <if test="stallCode != null  and stallCode != ''">stall_code,</if>
@@ -77,6 +82,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="collectionCode != null  and collectionCode != ''">#{collectionCode},</if>
             <if test="id != null  and id != ''">#{id},</if>
+            <if test="contractName != null  and contractName != ''">#{contractName},</if>
+            <if test="contractCode != null  and contractCode != ''">#{contractCode},</if>
             <if test="ownerCode != null  and ownerCode != ''">#{ownerCode},</if>
             <if test="ownerName != null  and ownerName != ''">#{ownerName},</if>
             <if test="stallCode != null  and stallCode != ''">#{stallCode},</if>
@@ -89,7 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
-            <if test="leaseMxId != null  and leaseMxId != ''">leaseMxId,</if>
+            <if test="leaseMxId != null  and leaseMxId != ''">#{leaseMxId},</if>
             sysdate()
          </trim>
     </insert>
@@ -98,6 +105,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update property_collection
         <trim prefix="SET" suffixOverrides=",">
             <if test="id != null  and id != ''">id = #{id},</if>
+            <if test="contractName != null  and contractName != ''">contract_name = #{contractName},</if>
+            <if test="contractCode != null  and contractCode != ''">contract_code = #{contractCode},</if>
             <if test="ownerCode != null  and ownerCode != ''">owner_code = #{ownerCode},</if>
             <if test="ownerName != null  and ownerName != ''">owner_name = #{ownerName},</if>
             <if test="stallCode != null  and stallCode != ''">stall_code = #{stallCode},</if>

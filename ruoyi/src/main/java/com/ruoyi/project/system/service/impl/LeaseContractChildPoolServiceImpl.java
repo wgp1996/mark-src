@@ -3,6 +3,7 @@ package com.ruoyi.project.system.service.impl;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.project.system.domain.LeaseContractChildPool;
 import com.ruoyi.project.system.mapper.LeaseContractChildPoolMapper;
+import com.ruoyi.project.system.mapper.LeaseContractChildSalesMapper;
 import com.ruoyi.project.system.service.ILeaseContractChildPoolService;
 import com.ruoyi.project.system.service.ILeaseContractChildPoolService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,4 +111,26 @@ public class LeaseContractChildPoolServiceImpl implements ILeaseContractChildPoo
     public int deleteLeaseContractChildById(String id) {
         return LeaseContractChildPoolMapper.deleteLeaseContractChildById(id);
     }
+    /**
+     * 根据子表ID修改摊位信息
+     *
+     * @param id 租赁合同子表信息ID
+     * @return 结果
+     */
+    @Override
+    public int updateStallInfoById(String id){
+        return LeaseContractChildPoolMapper.updateStallInfoById(id);
+    };
+
+
+    /**
+     * 根据主表ID修改摊位信息
+     *
+     * @param ids 需要删除的租赁合同主表信息ID
+     * @return 结果
+     */
+    @Override
+    public int updateStallInfoByPids(String[] ids){
+        return LeaseContractChildPoolMapper.updateStallInfoByPids(ids);
+    };
 }

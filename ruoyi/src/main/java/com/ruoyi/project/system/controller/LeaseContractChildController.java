@@ -46,12 +46,22 @@ public class LeaseContractChildController extends BaseController
     }
 
     /**
-     * 租赁收款查询租赁合同子表信息列表
+     * 租赁收款查询租赁合同信息列表
      */
     @GetMapping("/getLeaseContractlist")
     public TableDataInfo getContractlist(LeaseContractChild leaseContractChild) {
         startPage();
         List<LeaseContractChild> list = leaseContractChildService.selectLeaseByCollection(leaseContractChild);
+        return getDataTable(list);
+    }
+
+    /**
+     * 物业收款查询合同信息列表
+     */
+    @GetMapping("/getLeaseContractListAll")
+    public TableDataInfo getLeaseContractListAll(LeaseContractChild leaseContractChild) {
+        startPage();
+        List<LeaseContractChild> list = leaseContractChildService.selectLeaseByCollectionAll(leaseContractChild);
         return getDataTable(list);
     }
 

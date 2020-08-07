@@ -33,6 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="leaseStartTime" column="lease_start_time"/>
         <result property="leaseEndTime" column="lease_end_time"/>
         <result property="rentMoney" column="rent_money"/>
+        <result property="contractType" column="contract_type"/>
     </resultMap>
 
     <sql id="selectLeaseContractChildVo">
@@ -53,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="contractBz != null  and contractBz != ''"> and contract_bz = #{contractBz}</if>
         </where>
     </select>
-
+    <!--租赁收款选择租赁合同-->
     <select id="selectLeaseByCollection" parameterType="LeaseContractChild" resultMap="LeaseContractByCollectionResult">
         select a.id,a.contract_code,a.stall_code,a.stall_name,a.rent_money,a.lease_start_time,
         a.lease_end_time,b.owner_code,b.owner_name,b.contract_name from lease_contract_child a join lease_contract b
@@ -67,6 +68,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and a.id not in(select ifnull(lease_mx_id,'') from lease_collection)
             and b.contract_status='已生效'
         </where>
+    </select>
+
+    <!--物业收款选择合同-->
+    <select id="selectLeaseByCollectionAll" parameterType="LeaseContractChild" resultMap="LeaseContractByCollectionResult">
+        select a.id,a.contract_code,a.stall_code,a.stall_name,a.rent_money,a.lease_start_time,'租赁合同' as contract_type,
+        b.owner_code,b.owner_name,b.contract_name from lease_contract_child a join lease_contract b
+        on a.contract_code=b.contract_code
+        <where>
+            <if test="contractName != null  and contractName != ''">and b.contract_name like concat('%',
+                #{contractName}, '%')
+            </if>
+            <if test="ownerName != null  and ownerName != ''">and b.owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="stallName != null  and stallName != ''">and a.stall_name like concat('%', #{stallName}, '%')</if>
+            and a.id not in(select ifnull(lease_mx_id,'') from property_collection)
+            and b.contract_status='已生效'
+        </where>
+        union all
+        select a.id,a.contract_code,a.stall_code,a.stall_name,a.rent_money,a.lease_time as lease_start_time,'销售合同' as contract_type,
+        b.owner_code,b.owner_name,b.contract_name from lease_contract_child_sales a join lease_contract_sales b
+        on a.contract_code=b.contract_code
+        <where>
+            <if test="contractName != null  and contractName != ''">and b.contract_name like concat('%',
+                #{contractName}, '%')
+            </if>
+            <if test="ownerName != null  and ownerName != ''">and b.owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="stallName != null  and stallName != ''">and a.stall_name like concat('%', #{stallName}, '%')</if>
+            and a.id not in(select ifnull(lease_mx_id,'') from property_collection)
+            and b.contract_status='已生效'
+        </where>
+
     </select>
     
     <select id="selectLeaseContractChildById" parameterType="String" resultMap="LeaseContractChildResult">

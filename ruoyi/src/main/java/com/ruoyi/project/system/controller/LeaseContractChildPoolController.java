@@ -94,6 +94,10 @@ public class LeaseContractChildPoolController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {
+        for(int i=0;i<ids.length;i++){
+            //修改摊位状态
+            leaseContractChildService.updateStallInfoById(ids[i]);
+        }
         return toAjax(leaseContractChildService.deleteLeaseContractChildByIds(ids));
     }
 }

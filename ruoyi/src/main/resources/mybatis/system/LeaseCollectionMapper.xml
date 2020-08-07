@@ -56,7 +56,7 @@
             </if>
             ${dataScope}
         </where>
-
+        order by a.create_time desc
     </select>
 
     <select id="selectLeaseCollectionById" parameterType="String" resultMap="LeaseCollectionResult">

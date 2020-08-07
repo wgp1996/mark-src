@@ -74,4 +74,21 @@ public interface LeaseContractChildPoolMapper {
      * @return 结果
      */
     public int deleteLeaseContractChildPid(String[] ids);
+    /**
+     * 根据子表ID修改摊位信息
+     *
+     * @param id 租赁合同子表信息ID
+     * @return 结果
+     */
+    public int updateStallInfoById(String id);
+
+
+    /**
+     * 根据主表ID修改摊位信息
+     *
+     * @param ids 需要删除的租赁合同主表信息ID
+     * @return 结果
+     */
+    public int updateStallInfoByPids(String[] ids);
+
 }

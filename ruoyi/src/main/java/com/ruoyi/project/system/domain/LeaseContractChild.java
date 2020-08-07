@@ -58,6 +58,15 @@ public class LeaseContractChild extends BaseEntity
     private String contractName;
     private String ownerName;
     private String ownerCode;
+    private String contractType;
+
+    public String getContractType() {
+        return contractType;
+    }
+
+    public void setContractType(String contractType) {
+        this.contractType = contractType;
+    }
 
     public String getContractName() {
         return contractName;

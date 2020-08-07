@@ -67,6 +67,17 @@ public class LeaseContractChildServiceImpl implements ILeaseContractChildService
     }
 
     /**
+     * 物业收款查询合同信息列表
+     *
+     * @param leaseContractChild 合同信息
+     * @return 合同信息
+     */
+    @Override
+    public List<LeaseContractChild> selectLeaseByCollectionAll(LeaseContractChild leaseContractChild) {
+        return leaseContractChildMapper.selectLeaseByCollectionAll(leaseContractChild);
+    }
+
+    /**
      * 新增租赁合同子表信息
      * 
      * @param leaseContractChild 租赁合同子表信息

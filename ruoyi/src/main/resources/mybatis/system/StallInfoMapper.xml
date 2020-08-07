@@ -27,13 +27,13 @@
     </resultMap>
 
     <sql id="selectStallInfoVo">
-        select a.*,case a.stall_status when 0 THEN '空闲' when 1 then '已出租' when 2 then '已销售' end  as stall_status_name,
+        select a.*,case a.stall_status when 0 THEN '空闲' when 1 then '已出租' when 2 then '已销售' when 3 then '已联营'  end  as stall_status_name,
         (select mark_child_name from mark_child_info where mark_child_code=a.mark_code) as mark_child_name
         from stall_info a
     </sql>
 
     <sql id="selectStallInfoVoByRole">
-        select a.*,case a.stall_status when 0 THEN '空闲' when 1 then '已出租' when 2 then '已销售' end  as stall_status_name,
+        select a.*,case a.stall_status when 0 THEN '空闲' when 1 then '已出租' when 2 then '已销售' when 3 then '已联营' end  as stall_status_name,
         (select mark_child_name from mark_child_info where mark_child_code=a.mark_code) as mark_child_name from stall_info a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
@@ -57,6 +57,7 @@
             <if test="createUser != null  and createUser != ''">and create_user = #{createUser}</if>
             ${dataScope}
         </where>
+        order by a.create_time desc
     </select>
 
     <select id="selectLeaseStallInfoList" parameterType="StallInfo" resultMap="StallInfoResult">

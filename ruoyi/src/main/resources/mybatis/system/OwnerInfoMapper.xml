@@ -55,6 +55,7 @@
             <if test="fileTitle2 != null  and fileTitle2 != ''">and file_title2 = #{fileTitle2}</if>
             ${dataScope}
         </where>
+        order by a.create_time desc
     </select>
 
     <select id="selectOwnerInfoById" parameterType="String" resultMap="OwnerInfoResult">
