@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.StoreInfoMapper">
+    
+    <resultMap type="StoreInfo" id="StoreInfoResult">
+        <result property="id"    column="id"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="storeCode"    column="store_code"    />
+        <result property="storeArea"    column="store_area"    />
+        <result property="storeVolume"    column="store_volume"    />
+        <result property="storeType"    column="store_type"    />
+        <result property="storeAddress"    column="store_address"    />
+        <result property="lat"    column="lat"    />
+        <result property="lng"    column="lng"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectStoreInfoVo">
+        select id, store_name, store_code, store_area, store_volume, store_type, store_address, lat, lng, create_by, create_time, update_by, update_time, remark from store_info
+    </sql>
+    <sql id="selectStoreInfoVoByRole">
+        select a.* from store_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectStoreInfoList" parameterType="StoreInfo" resultMap="StoreInfoResult">
+        <include refid="selectStoreInfoVoByRole"/>
+        <where>  
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
+            <if test="storeArea != null  and storeArea != ''"> and store_area = #{storeArea}</if>
+            <if test="storeVolume != null  and storeVolume != ''"> and store_volume = #{storeVolume}</if>
+            <if test="storeType != null  and storeType != ''"> and store_type = #{storeType}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectStoreInfoById" parameterType="String" resultMap="StoreInfoResult">
+        <include refid="selectStoreInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectStoreInfoByName" parameterType="String" resultMap="StoreInfoResult">
+        <include refid="selectStoreInfoVo"/>
+        where store_name = #{name}
+        <if test="id != null  and id != ''">
+            and id != #{id}
+        </if>
+    </select>
+        
+    <insert id="insertStoreInfo" parameterType="StoreInfo">
+        insert into store_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="storeName != null  and storeName != ''">store_name,</if>
+            <if test="storeCode != null  and storeCode != ''">store_code,</if>
+            <if test="storeArea != null  and storeArea != ''">store_area,</if>
+            <if test="storeVolume != null  and storeVolume != ''">store_volume,</if>
+            <if test="storeType != null  and storeType != ''">store_type,</if>
+            <if test="storeAddress != null  and storeAddress != ''">store_address,</if>
+            <if test="lat != null  and lat != ''">lat,</if>
+            <if test="lng != null  and lng != ''">lng,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="storeName != null  and storeName != ''">#{storeName},</if>
+            <if test="storeCode != null  and storeCode != ''">#{storeCode},</if>
+            <if test="storeArea != null  and storeArea != ''">#{storeArea},</if>
+            <if test="storeVolume != null  and storeVolume != ''">#{storeVolume},</if>
+            <if test="storeType != null  and storeType != ''">#{storeType},</if>
+            <if test="storeAddress != null  and storeAddress != ''">#{storeAddress},</if>
+            <if test="lat != null  and lat != ''">#{lat},</if>
+            <if test="lng != null  and lng != ''">#{lng},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateStoreInfo" parameterType="StoreInfo">
+        update store_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="storeName != null  and storeName != ''">store_name = #{storeName},</if>
+            <if test="storeCode != null  and storeCode != ''">store_code = #{storeCode},</if>
+            <if test="storeArea != null  and storeArea != ''">store_area = #{storeArea},</if>
+            <if test="storeVolume != null  and storeVolume != ''">store_volume = #{storeVolume},</if>
+            <if test="storeType != null  and storeType != ''">store_type = #{storeType},</if>
+            <if test="storeAddress != null  and storeAddress != ''">store_address = #{storeAddress},</if>
+            <if test="lat != null  and lat != ''">lat = #{lat},</if>
+            <if test="lng != null  and lng != ''">lng = #{lng},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStoreInfoById" parameterType="String">
+        delete from store_info where id = #{id}
+    </delete>
+
+    <delete id="deleteStoreInfoByIds" parameterType="String">
+        delete from store_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
