@@ -9,6 +9,8 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.MarkInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +36,7 @@ import com.ruoyi.framework.web.page.TableDataInfo;
  * @author ruoyi
  * @date 2020-07-29
  */
+@Api("摊位管理")
 @RestController
 @RequestMapping("/system/stall")
 public class StallInfoController extends BaseController {
@@ -48,6 +51,17 @@ public class StallInfoController extends BaseController {
     @DataScope(deptAlias = "d", userAlias = "u")
     public TableDataInfo list(StallInfo stallInfo) {
         startPage();
+        List<StallInfo> list = stallInfoService.selectStallInfoList(stallInfo);
+        return getDataTable(list);
+    }
+
+    /**
+     * 摊位下拉列表
+     */
+    @ApiOperation("选择摊位信息")
+    @GetMapping("/getStallAll")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo getStallAll(StallInfo stallInfo) {
         List<StallInfo> list = stallInfoService.selectStallInfoList(stallInfo);
         return getDataTable(list);
     }

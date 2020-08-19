@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CgRkdChildMapper">
+    
+    <resultMap type="CgRkdChild" id="CgRkdChildResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="personName"    column="person_name"    />
+        <result property="personCode"    column="person_code"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="goodsWeight"    column="goods_weight"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="goodsAddress"    column="goods_address"    />
+        <result property="goodsImg"    column="goods_img"    />
+    </resultMap>
+
+    <sql id="selectCgRkdChildVo">
+        select a.*,
+        (select goods_img from goods_info where goods_code=a.goods_code) as goods_img
+        from cg_rkd_child a
+    </sql>
+
+    <select id="selectCgRkdChildList" parameterType="CgRkdChild" resultMap="CgRkdChildResult">
+        <include refid="selectCgRkdChildVo"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="personName != null  and personName != ''"> and person_name like concat('%', #{personName}, '%')</if>
+            <if test="personCode != null  and personCode != ''"> and person_code = #{personCode}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsDw != null  and goodsDw != ''"> and goods_dw = #{goodsDw}</if>
+            <if test="goodsNum != null  and goodsNum != ''"> and goods_num = #{goodsNum}</if>
+            <if test="goodsWeight != null  and goodsWeight != ''"> and goods_weight = #{goodsWeight}</if>
+            <if test="goodsAddress != null  and goodsAddress != ''"> and goods_address = #{goodsAddress}</if>
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectCgRkdChildById" parameterType="String" resultMap="CgRkdChildResult">
+        <include refid="selectCgRkdChildVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectCgRkdChildByNumber" parameterType="String" resultMap="CgRkdChildResult">
+        <include refid="selectCgRkdChildVo"/>
+        where a.dj_number = #{dj_number}
+    </select>
+
+    <insert id="insertCgRkdChild" parameterType="CgRkdChild">
+        insert into cg_rkd_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="personName != null  and personName != ''">person_name,</if>
+            <if test="personCode != null  and personCode != ''">person_code,</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw,</if>
+            <if test="goodsNum != null  and goodsNum != ''">goods_num,</if>
+            <if test="goodsWeight != null  and goodsWeight != ''">goods_weight,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="personName != null  and personName != ''">#{personName},</if>
+            <if test="personCode != null  and personCode != ''">#{personCode},</if>
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="goodsDw != null  and goodsDw != ''">#{goodsDw},</if>
+            <if test="goodsNum != null  and goodsNum != ''">#{goodsNum},</if>
+            <if test="goodsWeight != null  and goodsWeight != ''">#{goodsWeight},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">#{goodsAddress},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCgRkdChild" parameterType="CgRkdChild">
+        update cg_rkd_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="personName != null  and personName != ''">person_name = #{personName},</if>
+            <if test="personCode != null  and personCode != ''">person_code = #{personCode},</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw = #{goodsDw},</if>
+            <if test="goodsNum != null  and goodsNum != ''">goods_num = #{goodsNum},</if>
+            <if test="goodsWeight != null  and goodsWeight != ''">goods_weight = #{goodsWeight},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address = #{goodsAddress},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCgRkdChildById" parameterType="String">
+        delete from cg_rkd_child where id = #{id}
+    </delete>
+
+    <delete id="deleteCgRkdChildByIds" parameterType="String">
+        delete from cg_rkd_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteCgRkdChildByPid" parameterType="String">
+        delete from cg_rkd_child where dj_number in (select dj_number from cg_rkd where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+</mapper>

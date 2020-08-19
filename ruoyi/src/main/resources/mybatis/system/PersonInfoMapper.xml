@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.PersonInfoMapper">
+    
+    <resultMap type="PersonInfo" id="PersonInfoResult">
+        <result property="id"    column="id"    />
+        <result property="personCode"    column="person_code"    />
+        <result property="personName"    column="person_name"    />
+        <result property="personGoodsAddress"    column="person_goods_address"    />
+        <result property="personPhone"    column="person_phone"    />
+        <result property="personWx"    column="person_wx"    />
+        <result property="personAddress"    column="person_address"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectPersonInfoVo">
+        select id, person_code, person_name, person_goods_address, person_phone, person_wx, person_address, create_by, create_time, update_by, update_time, remark from person_info
+    </sql>
+
+    <sql id="selectPersonInfoVoByRole">
+        select a.* from person_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectPersonInfoList" parameterType="PersonInfo" resultMap="PersonInfoResult">
+        <include refid="selectPersonInfoVoByRole"/>
+        <where>  
+            <if test="personCode != null  and personCode != ''"> and person_code = #{personCode}</if>
+            <if test="personName != null  and personName != ''"> and person_name like concat('%', #{personName}, '%')</if>
+            <if test="personGoodsAddress != null  and personGoodsAddress != ''"> and person_goods_address = #{personGoodsAddress}</if>
+            <if test="personPhone != null  and personPhone != ''"> and person_phone = #{personPhone}</if>
+            <if test="personWx != null  and personWx != ''"> and person_wx = #{personWx}</if>
+            <if test="personAddress != null  and personAddress != ''"> and person_address = #{personAddress}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectPersonInfoById" parameterType="int" resultMap="PersonInfoResult">
+        <include refid="selectPersonInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectPersonInfoByName"  resultMap="PersonInfoResult">
+        <include refid="selectPersonInfoVo"/>
+        where person_name = #{name}
+        <if test="id!=-1">
+            and id != #{id}
+        </if>
+    </select>
+        
+    <insert id="insertPersonInfo" parameterType="PersonInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into person_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="personCode != null  and personCode != ''">person_code,</if>
+            <if test="personName != null  and personName != ''">person_name,</if>
+            <if test="personGoodsAddress != null  and personGoodsAddress != ''">person_goods_address,</if>
+            <if test="personPhone != null  and personPhone != ''">person_phone,</if>
+            <if test="personWx != null  and personWx != ''">person_wx,</if>
+            <if test="personAddress != null  and personAddress != ''">person_address,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="personCode != null  and personCode != ''">#{personCode},</if>
+            <if test="personName != null  and personName != ''">#{personName},</if>
+            <if test="personGoodsAddress != null  and personGoodsAddress != ''">#{personGoodsAddress},</if>
+            <if test="personPhone != null  and personPhone != ''">#{personPhone},</if>
+            <if test="personWx != null  and personWx != ''">#{personWx},</if>
+            <if test="personAddress != null  and personAddress != ''">#{personAddress},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updatePersonInfo" parameterType="PersonInfo">
+        update person_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="personCode != null  and personCode != ''">person_code = #{personCode},</if>
+            <if test="personName != null  and personName != ''">person_name = #{personName},</if>
+            <if test="personGoodsAddress != null  and personGoodsAddress != ''">person_goods_address = #{personGoodsAddress},</if>
+            <if test="personPhone != null  and personPhone != ''">person_phone = #{personPhone},</if>
+            <if test="personWx != null  and personWx != ''">person_wx = #{personWx},</if>
+            <if test="personAddress != null  and personAddress != ''">person_address = #{personAddress},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePersonInfoById" parameterType="int">
+        delete from person_info where id = #{id}
+    </delete>
+
+    <delete id="deletePersonInfoByIds" parameterType="String">
+        delete from person_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

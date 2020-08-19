@@ -212,13 +212,13 @@ public class LeaseContractController extends BaseController
                 return toAjaxByError(info.getContractName()+"：该合同状态禁止删除!");
             }
         }
-
-        int result=leaseContractService.deleteLeaseContractByIds(ids);
+        //批量修改摊位信息
+        int result=leaseContractChildService.updateStallInfoByPids(ids);
         if(result>0){
             //删除子表信息
             leaseContractChildService.deleteLeaseContractChildPid(ids);
-            //批量修改摊位信息
-            leaseContractChildService.updateStallInfoByPids(ids);
+            //删除主表信息
+            leaseContractService.deleteLeaseContractByIds(ids);
             return toAjaxBySuccess("删除成功!");
         }else{
             return  toAjaxByError("删除失败!");

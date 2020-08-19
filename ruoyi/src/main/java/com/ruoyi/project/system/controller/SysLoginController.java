@@ -2,6 +2,10 @@ package com.ruoyi.project.system.controller;
 
 import java.util.List;
 import java.util.Set;
+
+import com.ruoyi.common.core.lang.UUID;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +26,7 @@ import com.ruoyi.project.system.service.ISysMenuService;
  * 
  * @author ruoyi
  */
+@Api("用户登录管理")
 @RestController
 public class SysLoginController
 {
@@ -42,7 +47,7 @@ public class SysLoginController
      * 
      * @param username 用户名
      * @param password 密码
-     * @param captcha 验证码
+     * @param code 验证码
      * @param uuid 唯一标识
      * @return 结果
      */
@@ -57,11 +62,31 @@ public class SysLoginController
     }
 
     /**
+     * 登录方法
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return 结果
+     */
+    @ApiOperation("用户登录")
+    @PostMapping("/appLogin")
+    public AjaxResult appLogin(String username, String password)
+    {
+       // String uuid= UUID.randomUUID().toString().replaceAll("-","");
+        AjaxResult ajax = AjaxResult.success();
+        // 生成令牌
+        String token = loginService.login(username, password);
+        ajax.put(Constants.TOKEN, token);
+        return ajax;
+    }
+
+    /**
      * 获取用户信息
      * 
      * @return 用户信息
      */
     @GetMapping("getInfo")
+    @ApiOperation("获取用户信息")
     public AjaxResult getInfo()
     {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());

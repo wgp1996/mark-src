@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CgRkdMapper">
+    
+    <resultMap type="CgRkd" id="CgRkdResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="stallCode"    column="stall_code"    />
+        <result property="djTime"    column="dj_time"    />
+        <result property="stallName"    column="stall_name"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="djStatusName"    column="dj_status_name"    />
+    </resultMap>
+
+    <sql id="selectCgRkdVo">
+        select id, dj_number, stall_code, dj_time, stall_name, status, create_by, create_time, update_by, update_time, remark, file_name from cg_rkd
+    </sql>
+
+    <sql id="selectCgRkdVoByRole">
+        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name from cg_rkd a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectCgRkdList" parameterType="CgRkd" resultMap="CgRkdResult">
+        <include refid="selectCgRkdVoByRole"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="stallCode != null  and stallCode != ''"> and stall_code = #{stallCode}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="stallName != null  and stallName != ''"> and stall_name like concat('%', #{stallName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectCgRkdById" parameterType="String" resultMap="CgRkdResult">
+        <include refid="selectCgRkdVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCgRkd" parameterType="CgRkd">
+        insert into cg_rkd
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="stallCode != null  and stallCode != ''">stall_code,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="stallName != null  and stallName != ''">stall_name,</if>
+            <if test="status != null ">status,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="fileName != null  and fileName != ''">file_name,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="stallCode != null  and stallCode != ''">#{stallCode},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="stallName != null  and stallName != ''">#{stallName},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCgRkd" parameterType="CgRkd">
+        update cg_rkd
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="stallCode != null  and stallCode != ''">stall_code = #{stallCode},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="stallName != null  and stallName != ''">stall_name = #{stallName},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            file_name=#{fileName},
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCgRkdById" parameterType="String">
+        delete from cg_rkd where id = #{id}
+    </delete>
+
+    <delete id="deleteCgRkdByIds" parameterType="String">
+        delete from cg_rkd where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="updateCgRkdStatus" parameterType="String">
+        update cg_rkd set status='1'  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

@@ -50,7 +50,13 @@ public interface LeaseContractChildMapper
      * @return 合同子表信息集合
      */
     public List<LeaseContractChild> selectLeaseByCollectionAll(LeaseContractChild leaseContractChild);
-
+    /**
+     * 销售收款查询销售合同信息列表
+     *
+     * @param leaseContractChild 销售合同子表信息
+     * @return 销售合同子表信息集合
+     */
+    public List<LeaseContractChild> selectLeaseByCollectionSales(LeaseContractChild leaseContractChild);
     /**
      * 新增租赁合同子表信息
      * 

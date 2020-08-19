@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.GoodsTypeMapper">
+    
+    <resultMap type="GoodsType" id="GoodsTypeResult">
+        <result property="goodsTypeId"    column="goods_type_id"    />
+        <result property="goodsTypePid"    column="goods_type_pid"    />
+        <result property="goodsTypeName"    column="goods_type_name"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectGoodsTypeVo">
+        select * from goods_type
+    </sql>
+    <sql id="selectGoodsTypeVoByRole">
+        select a.* from goods_type a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+    <select id="selectGoodsTypeList" parameterType="GoodsType" resultMap="GoodsTypeResult">
+        <include refid="selectGoodsTypeVoByRole"/>
+        <where>  
+            <if test="goodsTypePid != null "> and goods_type_pid = #{goodsTypePid}</if>
+            <if test="goodsTypeName != null  and goodsTypeName != ''"> and goods_type_name like concat('%', #{goodsTypeName}, '%')</if>
+            <if test="orderNum != null "> and order_num = #{orderNum}</if>
+            and `type` =0
+            ${dataScope}
+        </where>
+        order by a.goods_type_pid, a.order_num
+    </select>
+    
+    <select id="selectGoodsTypeById" parameterType="Integer" resultMap="GoodsTypeResult">
+        <include refid="selectGoodsTypeVo"/>
+        where goods_type_id = #{goodsTypeId}
+    </select>
+
+    <select id="selectGoodsTypeByPid" parameterType="Integer" resultMap="GoodsTypeResult">
+        <include refid="selectGoodsTypeVoByRole"/>
+        where a.goods_type_pid = #{goodsTypePid}
+        ${dataScope}
+    </select>
+
+    <select id="selectGoodsTypeByName"  resultMap="GoodsTypeResult">
+        <include refid="selectGoodsTypeVo"/>
+        where goods_type_name = #{name}
+        <if test="id!=-1">
+            and goods_type_id != #{id}
+        </if>
+    </select>
+    <!--查询是否存在子类-->
+    <select id="hasChildGoodsTypeById" parameterType="int" resultType="int">
+		select count(1) from goods_type
+		where `type` = '0' and goods_type_id = #{id}
+	</select>
+    <select id="checkGoodsTypeNameUnique" resultMap="GoodsTypeResult">
+        <include refid="selectGoodsTypeVo"/>
+        where goods_type_name=#{name } and goods_type_pid = #{pid}
+    </select>
+        
+    <insert id="insertGoodsType" parameterType="GoodsType" useGeneratedKeys="true" keyProperty="goodsTypeId">
+        insert into goods_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsTypePid != null ">goods_type_pid,</if>
+            <if test="goodsTypeName != null  and goodsTypeName != ''">goods_type_name,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="type != null ">type,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsTypePid != null ">#{goodsTypePid},</if>
+            <if test="goodsTypeName != null  and goodsTypeName != ''">#{goodsTypeName},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="type != null ">#{type},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateGoodsType" parameterType="GoodsType">
+        update goods_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsTypePid != null ">goods_type_pid = #{goodsTypePid},</if>
+            <if test="goodsTypeName != null  and goodsTypeName != ''">goods_type_name = #{goodsTypeName},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="type != null ">type = #{type},</if>
+            update_time = sysdate()
+        </trim>
+        where goods_type_id = #{goodsTypeId}
+    </update>
+
+    <delete id="deleteGoodsTypeById" parameterType="Integer">
+        delete from goods_type where goods_type_id = #{goodsTypeId}
+    </delete>
+
+    <delete id="deleteGoodsTypeByIds" parameterType="String">
+        delete from goods_type where goods_type_id in 
+        <foreach item="goodsTypeId" collection="array" open="(" separator="," close=")">
+            #{goodsTypeId}
+        </foreach>
+    </delete>
+    
+</mapper>

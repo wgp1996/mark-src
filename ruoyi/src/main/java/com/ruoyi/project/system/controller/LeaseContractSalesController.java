@@ -186,12 +186,13 @@ public class LeaseContractSalesController extends BaseController {
                 return toAjaxByError(info.getContractName()+"：该合同状态禁止删除!");
             }
         }
-        int result = leaseContractSalesService.deleteLeaseContractByIds(ids);
+        //批量修改摊位信息
+        int result = leaseContractChildSalesService.updateStallInfoByPids(ids);
         if (result > 0) {
-            //批量修改摊位信息
-            leaseContractChildSalesService.updateStallInfoByPids(ids);
             //删除子表信息
             leaseContractChildSalesService.deleteLeaseContractChildPid(ids);
+            //删除主表信息
+            leaseContractSalesService.deleteLeaseContractByIds(ids);
             return toAjaxBySuccess("删除成功!");
         } else {
             return toAjaxByError("删除失败!");

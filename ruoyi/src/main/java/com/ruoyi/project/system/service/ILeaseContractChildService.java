@@ -43,6 +43,13 @@ public interface ILeaseContractChildService
      */
     public List<LeaseContractChild> selectLeaseByCollection(LeaseContractChild leaseContractChild);
     /**
+     * 销售收款查询销售合同信息列表
+     *
+     * @param leaseContractChild 销售合同子表信息
+     * @return 销售合同子表信息集合
+     */
+    public List<LeaseContractChild> selectLeaseByCollectionSales(LeaseContractChild leaseContractChild);
+    /**
      * 物业收款查询合同信息列表
      *
      * @param leaseContractChild 合同表信息

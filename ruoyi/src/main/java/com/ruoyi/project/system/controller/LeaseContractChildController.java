@@ -64,6 +64,15 @@ public class LeaseContractChildController extends BaseController
         List<LeaseContractChild> list = leaseContractChildService.selectLeaseByCollectionAll(leaseContractChild);
         return getDataTable(list);
     }
+    /**
+     * 销售合同收款查询合同信息列表
+     */
+    @GetMapping("/getLeaseContractListSales")
+    public TableDataInfo getLeaseContractListSales(LeaseContractChild leaseContractChild) {
+        startPage();
+        List<LeaseContractChild> list = leaseContractChildService.selectLeaseByCollectionSales(leaseContractChild);
+        return getDataTable(list);
+    }
 
     /**
      * 导出租赁合同子表信息列表
