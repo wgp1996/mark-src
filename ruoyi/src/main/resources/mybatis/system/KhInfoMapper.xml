@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.KhInfoMapper">
+    
+    <resultMap type="KhInfo" id="KhInfoResult">
+        <result property="id"    column="id"    />
+        <result property="khCode"    column="kh_code"    />
+        <result property="khName"    column="kh_name"    />
+        <result property="khPhone"    column="kh_phone"    />
+        <result property="khWx"    column="kh_wx"    />
+        <result property="khAddress"    column="kh_address"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectKhInfoVo">
+        select id, kh_code, kh_name, kh_phone, kh_wx, kh_address, create_by, create_time, update_by, update_time, remark from kh_info
+    </sql>
+
+    <sql id="selectKhInfoVoByRole">
+        select a.* from kh_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectKhInfoList" parameterType="KhInfo" resultMap="KhInfoResult">
+        <include refid="selectKhInfoVoByRole"/>
+        <where>  
+            <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
+            <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
+            <if test="khPhone != null  and khPhone != ''"> and kh_phone = #{khPhone}</if>
+            <if test="khWx != null  and khWx != ''"> and kh_wx = #{khWx}</if>
+            <if test="khAddress != null  and khAddress != ''"> and kh_address = #{khAddress}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectKhInfoById" parameterType="Integer" resultMap="KhInfoResult">
+        <include refid="selectKhInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectKhInfoByName"  resultMap="KhInfoResult">
+        <include refid="selectKhInfoVo"/>
+        where kh_name = #{name} and create_by=#{createBy}
+        <if test="id!=-1">
+            and id != #{id}
+        </if>
+    </select>
+        
+    <insert id="insertKhInfo" parameterType="KhInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into kh_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="khCode != null  and khCode != ''">kh_code,</if>
+            <if test="khName != null  and khName != ''">kh_name,</if>
+            <if test="khPhone != null  and khPhone != ''">kh_phone,</if>
+            <if test="khWx != null  and khWx != ''">kh_wx,</if>
+            <if test="khAddress != null  and khAddress != ''">kh_address,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="khCode != null  and khCode != ''">#{khCode},</if>
+            <if test="khName != null  and khName != ''">#{khName},</if>
+            <if test="khPhone != null  and khPhone != ''">#{khPhone},</if>
+            <if test="khWx != null  and khWx != ''">#{khWx},</if>
+            <if test="khAddress != null  and khAddress != ''">#{khAddress},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateKhInfo" parameterType="KhInfo">
+        update kh_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
+            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
+            <if test="khPhone != null  and khPhone != ''">kh_phone = #{khPhone},</if>
+            <if test="khWx != null  and khWx != ''">kh_wx = #{khWx},</if>
+            <if test="khAddress != null  and khAddress != ''">kh_address = #{khAddress},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteKhInfoById" parameterType="Integer">
+        delete from kh_info where id = #{id}
+    </delete>
+
+    <delete id="deleteKhInfoByIds" parameterType="String">
+        delete from kh_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
