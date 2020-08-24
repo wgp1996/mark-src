@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="personGoodsAddress != null  and personGoodsAddress != ''"> and person_goods_address = #{personGoodsAddress}</if>
             <if test="personPhone != null  and personPhone != ''"> and person_phone = #{personPhone}</if>
             <if test="personWx != null  and personWx != ''"> and person_wx = #{personWx}</if>
-            <if test="personAddress != null  and personAddress != ''"> and person_address = #{personAddress}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
             ${dataScope}
         </where>
         order by a.create_time desc
@@ -50,7 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectPersonInfoByName"  resultMap="PersonInfoResult">
         <include refid="selectPersonInfoVo"/>
-        where person_name = #{name}
+        where person_name = #{name} and create_by=#{createBy}
         <if test="id!=-1">
             and id != #{id}
         </if>

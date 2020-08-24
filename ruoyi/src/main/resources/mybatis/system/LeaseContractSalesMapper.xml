@@ -23,13 +23,13 @@
     </resultMap>
 
     <sql id="selectLeaseContractVo">
-        select (select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,
+        select (select c.owner_name from owner_info c where c.owner_code=a.owner_code) as owner_name,
         a.file_name,a.id, a.contract_code, a.contract_name, a.owner_code, a.contract_money, a.sign_address,
         a.sign_time, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,a.contract_status from lease_contract_sales a
     </sql>
 
     <sql id="selectLeaseContractVoByRole">
-        select (select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,
+        select (select c.owner_name from owner_info c where c.owner_code=a.owner_code) as owner_name,
         a.file_name,a.id, a.contract_code, a.contract_name, a.owner_code, a.contract_money, a.sign_address,
         a.sign_time, a.create_by, a.create_time, a.update_by, a.update_time, a.remark,a.contract_status from lease_contract_sales a
         join sys_user u on a.create_by=u.user_name
@@ -39,6 +39,7 @@
     <select id="selectLeaseContractSalesList" parameterType="LeaseContractSales" resultMap="LeaseContractResult">
         <include refid="selectLeaseContractVoByRole"/>
         <where>
+            <if test="contractStatus != null  and contractStatus != ''"> and contract_status = #{contractStatus}</if>
             <if test="contractCode != null  and contractCode != ''">and contract_code = #{contractCode}</if>
             <if test="contractName != null  and contractName != ''">and contract_name like concat('%', #{contractName},
                 '%')

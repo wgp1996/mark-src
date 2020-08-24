@@ -38,8 +38,8 @@ public class PersonInfoServiceImpl implements IPersonInfoService
      * @return 供应商建档
      */
     @Override
-    public PersonInfo selectPersonInfoByName(String name,Integer id){
-        return personInfoMapper.selectPersonInfoByName(name,id);
+    public PersonInfo selectPersonInfoByName(String name,String createBy,Integer id){
+        return personInfoMapper.selectPersonInfoByName(name,createBy,id);
     }
     /**
      * 查询供应商建档列表

@@ -25,7 +25,7 @@ public interface IPersonInfoService
      * @param id 供应商建档ID
      * @return 供应商建档
      */
-    public PersonInfo selectPersonInfoByName(String name,Integer id);
+    public PersonInfo selectPersonInfoByName(String name,String createBy,Integer id);
 
     /**
      * 查询供应商建档列表

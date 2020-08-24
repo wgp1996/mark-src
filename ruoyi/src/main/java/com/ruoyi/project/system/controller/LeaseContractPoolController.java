@@ -97,12 +97,12 @@ public class LeaseContractPoolController extends BaseController {
         List<LeaseContractChildPool> childList = JSONArray.parseArray(leaseContract.getRows(), LeaseContractChildPool.class);
         for (LeaseContractChildPool child : childList) {
             //修改摊位信息
-            StallInfo stallInfo=new StallInfo();
+            /*StallInfo stallInfo=new StallInfo();
             stallInfo.setStallCode(child.getStallCode());//摊位编码
             stallInfo.setStallStatus("3");//已联营
             stallInfo.setStallStartTime(child.getLeaseTime());//联营日期
             stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//联营方
-            stallInfoService.updateStallInfoByCode(stallInfo);
+            stallInfoService.updateStallInfoByCode(stallInfo);*/
 
 
             child.setCreateBy(SecurityUtils.getUsername());
@@ -155,12 +155,12 @@ public class LeaseContractPoolController extends BaseController {
                 leaseContractChildService.insertLeaseContractChild(child);
             }
             //修改摊位信息
-            StallInfo stallInfo=new StallInfo();
+           /* StallInfo stallInfo=new StallInfo();
             stallInfo.setStallCode(child.getStallCode());//摊位编码
             stallInfo.setStallStatus("3");//已联营
             stallInfo.setStallStartTime(child.getLeaseTime());//联营日期
             stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//联营方
-            stallInfoService.updateStallInfoByCode(stallInfo);
+            stallInfoService.updateStallInfoByCode(stallInfo);*/
         }
         leaseContract.setContractStatus("正操作");
         leaseContract.setUpdateBy(SecurityUtils.getUsername());
@@ -180,8 +180,13 @@ public class LeaseContractPoolController extends BaseController {
                 return toAjaxByError(info.getContractName()+"：该合同状态禁止删除!");
             }
         }
+        //删除子表信息
+        leaseContractChildService.deleteLeaseContractChildPid(ids);
+        //删除主表信息
+        leaseContractService.deleteLeaseContractByIds(ids);
+        return toAjaxBySuccess("删除成功!");
         //批量修改摊位信息
-        int result = leaseContractChildService.updateStallInfoByPids(ids);
+        /*int result = leaseContractChildService.updateStallInfoByPids(ids);
         if (result > 0) {
             //删除子表信息
             leaseContractChildService.deleteLeaseContractChildPid(ids);
@@ -190,7 +195,7 @@ public class LeaseContractPoolController extends BaseController {
             return toAjaxBySuccess("删除成功!");
         } else {
             return toAjaxByError("删除失败!");
-        }
+        }*/
     }
     /**
      * 联营合同生效
@@ -200,6 +205,19 @@ public class LeaseContractPoolController extends BaseController {
     @DeleteMapping("/effect/{ids}")
     public AjaxResult effect(@PathVariable String[] ids)
     {
+        for(int i=0;i<ids.length;i++){
+            LeaseContractPool leaseContract=leaseContractService.selectLeaseContractById(ids[i]);
+            List<LeaseContractChildPool> childList=leaseContractChildService.selectLeaseContractChildByCode(leaseContract.getContractCode());
+            for(LeaseContractChildPool child:childList){
+                //修改摊位信息
+                StallInfo stallInfo=new StallInfo();
+                stallInfo.setStallCode(child.getStallCode());//摊位编码
+                stallInfo.setStallStatus("3");//已联营
+                stallInfo.setStallStartTime(child.getLeaseTime());//联营日期
+                stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//联营方
+                stallInfoService.updateStallInfoByCode(stallInfo);
+            }
+        }
         return toAjax(leaseContractService.updateLeaseContractStatus(ids));
     }
 }

@@ -1,12 +1,20 @@
 package com.ruoyi.project.system.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.code.MatrixToImageWriter;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.framework.config.RuoYiConfig;
+import com.ruoyi.framework.config.ServerConfig;
 import com.ruoyi.project.system.domain.GoodsType;
 import com.ruoyi.project.system.domain.MarkInfo;
 import com.ruoyi.project.system.service.IGoodsTypeService;
@@ -38,7 +46,6 @@ import com.ruoyi.framework.web.page.TableDataInfo;
  * @author ruoyi
  * @date 2020-08-14
  */
-@Api("商品档案管理")
 @RestController
 @RequestMapping("/system/goods")
 public class GoodsInfoController extends BaseController
@@ -47,6 +54,8 @@ public class GoodsInfoController extends BaseController
     private IGoodsInfoService goodsInfoService;
     @Autowired
     private IGoodsTypeService goodsTypeService;
+    @Autowired
+    private ServerConfig serverConfig;
 
     /**
      * 查询商品建档列表
@@ -60,52 +69,7 @@ public class GoodsInfoController extends BaseController
         List<GoodsInfo> list = goodsInfoService.selectGoodsInfoList(goodsInfo);
         return getDataTable(list);
     }
-    /**
-     * 查询商品建档列表
-     */
-    @ApiOperation("商品树形")
-    @ApiImplicitParam(name = "code", value = "上级编码(顶级传-1))")
-    @GetMapping("/appGoodsTree/{code}")
-    public TableDataInfo appList(@PathVariable("code") Integer code)
-    {
-        List<HashMap> maps=new ArrayList<HashMap>();
-        GoodsType goodsType=new GoodsType();
-        if(code==-1){
-            goodsType.setGoodsTypePid(0);
-            List<GoodsType> list = goodsTypeService.selectGoodsTypeList(goodsType);
-            for(GoodsType info:list){
-                HashMap map=new HashMap();
-                map.put("id",info.getGoodsTypeId()+"");
-                map.put("pid",info.getGoodsTypePid()+"");
-                map.put("text",info.getGoodsTypeName());
-                map.put("type",0);//0  代表分类
-                maps.add(map);
-            }
-        }else{
-            goodsType.setGoodsTypePid(code);
-            List<GoodsType> list = goodsTypeService.selectGoodsTypeList(goodsType);
-            for(GoodsType info:list){
-                HashMap map=new HashMap();
-                map.put("id",info.getGoodsTypeId()+"");
-                map.put("pid",info.getGoodsTypePid()+"");
-                map.put("text",info.getGoodsTypeName());
-                map.put("type",0);//0  代表分类
-                maps.add(map);
-            }
-            GoodsInfo goodsInfo=new GoodsInfo();
-            goodsInfo.setGoodsType(code);
-            List<GoodsInfo> infoList = goodsInfoService.selectGoodsInfoList(goodsInfo);
-            for(GoodsInfo info:infoList){
-                HashMap map=new HashMap();
-                map.put("id",info.getGoodsCode());
-                map.put("pid",code);
-                map.put("text",info.getGoodsName());
-                map.put("type",1);//1 代表商品
-                maps.add(map);
-            }
-        }
-        return getDataTable(maps);
-    }
+
     /**
      * 导出商品建档列表
      */
@@ -144,6 +108,12 @@ public class GoodsInfoController extends BaseController
             goodsInfo.setType(0);
             goodsInfo.setCreateBy(SecurityUtils.getUsername());
             goodsInfo.setGoodsCode(StringUtils.getRandomCode("SPM"));
+            if(goodsInfo.getGoodsCodeImg()==""){
+                String goodsCodeImg=MatrixToImageWriter.createCodeImg(goodsInfo.getGoodsCode());
+                if(goodsCodeImg!=""){
+                    goodsInfo.setGoodsCodeImg(serverConfig.getUrl()+goodsCodeImg);
+                }
+            }
             return toAjax(goodsInfoService.insertGoodsInfo(goodsInfo));
         }
     }
@@ -160,11 +130,35 @@ public class GoodsInfoController extends BaseController
         if(info!=null) {
             return  toAjaxByError("该商品在系统中已存在");
         }else{
+            if(goodsInfo.getGoodsCodeImg()==""){
+                String goodsCodeImg=MatrixToImageWriter.createCodeImg(goodsInfo.getGoodsCode());
+                if(goodsCodeImg!=""){
+                    goodsInfo.setGoodsCodeImg(serverConfig.getUrl()+goodsCodeImg);
+                }
+            }
             goodsInfo.setUpdateBy(SecurityUtils.getUsername());
             return toAjax(goodsInfoService.updateGoodsInfo(goodsInfo));
         }
     }
 
+    public static void main(String[] args) {
+        try {
+            String content = "test";
+            String path = "F:/新建文件夹";// 二维码保存的路径
+            String codeName = UUID.randomUUID().toString();// 二维码的图片名
+            String imageType = "jpg";// 图片类型
+            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+            Map<EncodeHintType, String> hints = new HashMap<EncodeHintType, String>();
+            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+            BitMatrix bitMatrix = multiFormatWriter.encode(content, BarcodeFormat.QR_CODE, 200, 200, hints);
+            File file1 = new File(path, codeName + "." + imageType);
+            MatrixToImageWriter.writeToFile(bitMatrix, imageType, file1);
+        } catch (WriterException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * 删除商品建档
      */

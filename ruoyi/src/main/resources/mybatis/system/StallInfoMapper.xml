@@ -54,7 +54,7 @@
                 #{stallLeaseholder}
             </if>
             <if test="stallNote != null  and stallNote != ''">and stall_note = #{stallNote}</if>
-            <if test="createUser != null  and createUser != ''">and create_user = #{createUser}</if>
+            <if test="createBy != null  and createBy != ''">and a.create_by = #{createBy}</if>
             ${dataScope}
         </where>
         order by a.create_time desc
@@ -70,7 +70,10 @@
             <if test="stallStatus != null ">and stall_status = #{stallStatus}</if>
             <if test="stallStartTime != null  and stallStartTime != ''">and stall_start_time = #{stallStartTime}</if>
             <if test="stallEndTime != null  and stallEndTime != ''">and stall_end_time = #{stallEndTime}</if>
-            and (a.stall_status='0' or a.stall_end_time&lt;=DATE_FORMAT(NOW(),'%Y-%m-%d'))
+            and a.stall_code not in(select c.stall_code from lease_contract_child c join lease_contract f on f.contract_status!='已过期' and c.lease_end_time&gt;=DATE_FORMAT(NOW(),'%Y-%m-%d'))
+            and a.stall_code not in(select c.stall_code from lease_contract_child_sales c join lease_contract_sales f on f.contract_status!='已过期' )
+            and a.stall_code not in(select c.stall_code from lease_contract_child_pool c join lease_contract_pool f on f.contract_status!='已过期' )
+           /* and (a.stall_status='0' or a.stall_end_time&lt;=DATE_FORMAT(NOW(),'%Y-%m-%d'))*/
            <!--  and stall_code not in(select ifnull(a.stall_code,'') from lease_contract_child a where a.lease_end_time&gt;=
             DATE_FORMAT(NOW(),'%Y-%m-%d'))-->
 
@@ -81,6 +84,15 @@
         <include refid="selectStallInfoVo"/>
         where id = #{id}
     </select>
+    <!--根据业主选择摊位-->
+    <select id="selectStallInfoListByOwner" parameterType="String" resultMap="StallInfoResult">
+            select b.stall_code,b.stall_name from lease_contract a join lease_contract_child b on a.contract_code=b.contract_code
+            join owner_info c on a.owner_code=c.owner_code where c.user_name=#{createBy}
+            UNION ALL
+            select b.stall_code,b.stall_name from lease_contract_sales a join lease_contract_child_sales b on a.contract_code=b.contract_code
+            join owner_info c on a.owner_code=c.owner_code where c.user_name=#{createBy}
+    </select>
+
     <select id="selectStallInfoByCode" parameterType="String" resultMap="StallInfoResult">
         <include refid="selectStallInfoVo"/>
         where stall_code = #{code}

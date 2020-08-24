@@ -55,6 +55,15 @@ public class CgRkdChild extends BaseEntity
     private String goodsAddress;
 
     private String goodsImg;
+    private  String goodsCodeImg;
+
+    public String getGoodsCodeImg() {
+        return goodsCodeImg;
+    }
+
+    public void setGoodsCodeImg(String goodsCodeImg) {
+        this.goodsCodeImg = goodsCodeImg;
+    }
 
     public String getGoodsImg() {
         return goodsImg;

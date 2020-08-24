@@ -55,9 +55,10 @@ public class CgRkd extends BaseEntity
     }
 
     /*
-               子表
-             */
+       子表
+    */
     private List<CgRkdChild> childrenList;
+
     public String getRows() {
         return rows;
     }

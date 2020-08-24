@@ -80,6 +80,12 @@ public class OwnerInfo extends BaseEntity {
     private String ownerNote;
 
     /**
+     * 关联帐号
+     */
+    @Excel(name = "关联帐号")
+    private String userName;
+
+    /**
      * $column.columnComment
      */
     @Excel(name = "备注")
@@ -108,6 +114,14 @@ public class OwnerInfo extends BaseEntity {
      */
     @Excel(name = "标题")
     private String fileTitle2;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public void setId(String id) {
         this.id = id;

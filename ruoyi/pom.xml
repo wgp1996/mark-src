@@ -38,6 +38,12 @@
 	</properties>
 
 	<dependencies>
+        <!-- 二维码生成 -->
+        <dependency>
+                 <groupId>com.google.zxing</groupId>
+                 <artifactId>core</artifactId>
+                 <version>3.3.3</version>
+        </dependency>
         <!--mybatis-plus-->
         <dependency>
             <groupId>com.baomidou</groupId>

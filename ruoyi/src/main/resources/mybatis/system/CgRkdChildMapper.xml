@@ -21,11 +21,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="goodsAddress"    column="goods_address"    />
         <result property="goodsImg"    column="goods_img"    />
+        <result property="goodsCodeImg"    column="goods_code_img"    />
     </resultMap>
 
     <sql id="selectCgRkdChildVo">
         select a.*,
-        (select goods_img from goods_info where goods_code=a.goods_code) as goods_img
+        (select goods_img from goods_info_owner where goods_code=a.goods_code) as goods_img,
+        (select goods_code_img from goods_info_owner where goods_code=a.goods_code) as goods_code_img
         from cg_rkd_child a
     </sql>
 
@@ -52,6 +54,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectCgRkdChildByNumber" parameterType="String" resultMap="CgRkdChildResult">
         <include refid="selectCgRkdChildVo"/>
         where a.dj_number = #{dj_number}
+    </select>
+
+    <select id="appRkdChildListByStall" parameterType="String" resultMap="CgRkdChildResult">
+        select a.*,
+        (select goods_img from goods_info_owner where goods_code=a.goods_code) as goods_img,
+        (select goods_code_img from goods_info_owner where goods_code=a.goods_code) as goods_code_img
+        from cg_rkd_child a join cg_rkd b on a.dj_number=b.dj_number
+        where b.stall_code = #{stallCode} order  by a.create_time desc
     </select>
 
     <insert id="insertCgRkdChild" parameterType="CgRkdChild">

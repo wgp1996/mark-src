@@ -77,6 +77,16 @@ public class SysUserServiceImpl implements ISysUserService
     {
         return userMapper.selectUserByUserName(userName);
     }
+    /**
+     * 通过用户名查询用户
+     *
+     * @param userName 用户名
+     * @return 用户对象信息
+     */
+    @Override
+    public SysUser selectUserByUserNameAndPwd(String userName,String passWord){
+        return userMapper.selectUserByUserNameAndPwd(userName,passWord);
+    }
 
     /**
      * 通过用户ID查询用户

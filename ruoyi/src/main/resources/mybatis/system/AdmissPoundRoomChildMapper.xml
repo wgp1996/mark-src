@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.AdmissPoundRoomChildMapper">
+    
+    <resultMap type="AdmissPoundRoomChild" id="AdmissPoundRoomChildResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="ownerCode"    column="owner_code"    />
+        <result property="ownerName"    column="owner_name"    />
+        <result property="personName"    column="person_name"    />
+        <result property="personCode"    column="person_code"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="goodsWeight"    column="goods_weight"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="goodsAddress"    column="goods_address"    />
+    </resultMap>
+
+    <sql id="selectAdmissPoundRoomChildVo">
+        select * from admiss_pound_room_child
+    </sql>
+
+    <select id="selectAdmissPoundRoomChildList" parameterType="AdmissPoundRoomChild" resultMap="AdmissPoundRoomChildResult">
+        <include refid="selectAdmissPoundRoomChildVo"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="personName != null  and personName != ''"> and person_name like concat('%', #{personName}, '%')</if>
+            <if test="personCode != null  and personCode != ''"> and person_code = #{personCode}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsDw != null  and goodsDw != ''"> and goods_dw = #{goodsDw}</if>
+            <if test="goodsNum != null  and goodsNum != ''"> and goods_num = #{goodsNum}</if>
+            <if test="goodsWeight != null  and goodsWeight != ''"> and goods_weight = #{goodsWeight}</if>
+            <if test="goodsAddress != null  and goodsAddress != ''"> and goods_address = #{goodsAddress}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectAdmissPoundRoomChildById" parameterType="String" resultMap="AdmissPoundRoomChildResult">
+        <include refid="selectAdmissPoundRoomChildVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAdmissPoundRoomChild" parameterType="AdmissPoundRoomChild">
+        insert into admiss_pound_room_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code,</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name,</if>
+            <if test="personName != null  and personName != ''">person_name,</if>
+            <if test="personCode != null  and personCode != ''">person_code,</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw,</if>
+            <if test="goodsNum != null  and goodsNum != ''">goods_num,</if>
+            <if test="goodsWeight != null  and goodsWeight != ''">goods_weight,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="ownerCode != null  and ownerCode != ''">#{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">#{ownerName},</if>
+            <if test="personName != null  and personName != ''">#{personName},</if>
+            <if test="personCode != null  and personCode != ''">#{personCode},</if>
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="goodsDw != null  and goodsDw != ''">#{goodsDw},</if>
+            <if test="goodsNum != null  and goodsNum != ''">#{goodsNum},</if>
+            <if test="goodsWeight != null  and goodsWeight != ''">#{goodsWeight},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">#{goodsAddress},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateAdmissPoundRoomChild" parameterType="AdmissPoundRoomChild">
+        update admiss_pound_room_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code = #{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name = #{ownerName},</if>
+            <if test="personName != null  and personName != ''">person_name = #{personName},</if>
+            <if test="personCode != null  and personCode != ''">person_code = #{personCode},</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw = #{goodsDw},</if>
+            <if test="goodsNum != null  and goodsNum != ''">goods_num = #{goodsNum},</if>
+            <if test="goodsWeight != null  and goodsWeight != ''">goods_weight = #{goodsWeight},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address = #{goodsAddress},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAdmissPoundRoomChildById" parameterType="String">
+        delete from admiss_pound_room_child where id = #{id}
+    </delete>
+
+    <delete id="deleteAdmissPoundRoomChildByIds" parameterType="String">
+        delete from admiss_pound_room_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAdmissPoundRoomChildByPid" parameterType="String">
+        delete from admiss_pound_room_child where dj_number in (select dj_number from admiss_pound_room where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    
+</mapper>

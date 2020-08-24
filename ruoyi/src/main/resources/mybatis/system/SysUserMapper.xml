@@ -85,8 +85,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    <include refid="selectUserVo"/>
 		where u.user_name = #{userName}
 	</select>
-	
-	<select id="selectUserById" parameterType="Long" resultMap="SysUserResult">
+
+    <select id="selectUserByUserNameAndPwd" parameterType="String" resultMap="SysUserResult">
+       select u.* from sys_user u
+       where u.user_name = #{userName} and u.password=#{passWord}
+    </select>
+
+
+    <select id="selectUserById" parameterType="Long" resultMap="SysUserResult">
 		<include refid="selectUserVo"/>
 		where u.user_id = #{userId}
 	</select>

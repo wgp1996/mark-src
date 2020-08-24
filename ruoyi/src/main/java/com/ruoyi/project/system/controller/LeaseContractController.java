@@ -112,14 +112,14 @@ public class LeaseContractController extends BaseController
         List<LeaseContractChild> childList= JSONArray.parseArray(leaseContract.getRows(),LeaseContractChild.class);
         for(LeaseContractChild child:childList){
             //修改摊位信息
-            StallInfo stallInfo=new StallInfo();
+            /*StallInfo stallInfo=new StallInfo();
             stallInfo.setStallCode(child.getStallCode());//摊位编码
             stallInfo.setStallStatus("1");//已出租
             stallInfo.setStallStartTime(child.getLeaseStartTime());//开始日期
             stallInfo.setStallEndTime(child.getLeaseEndTime());//结束日期
             stallInfo.setStallMoney(child.getRentMoney());//租金
             stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//租赁方
-            stallInfoService.updateStallInfoByCode(stallInfo);
+            stallInfoService.updateStallInfoByCode(stallInfo);*/
 
             child.setCreateBy(SecurityUtils.getUsername());
             child.setId(StringUtils.getId());
@@ -160,14 +160,14 @@ public class LeaseContractController extends BaseController
         List<LeaseContractChild> childList= JSONArray.parseArray(leaseContract.getRows(),LeaseContractChild.class);
         for(LeaseContractChild child:childList){
             //修改摊位信息
-            StallInfo stallInfo=new StallInfo();
+            /*StallInfo stallInfo=new StallInfo();
             stallInfo.setStallCode(child.getStallCode());//摊位编码
             stallInfo.setStallStatus("1");//已出租
             stallInfo.setStallStartTime(child.getLeaseStartTime());//开始日期
             stallInfo.setStallEndTime(child.getLeaseEndTime());//结束日期
             stallInfo.setStallMoney(child.getRentMoney());//租金
             stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//租赁方
-            stallInfoService.updateStallInfoByCode(stallInfo);
+            stallInfoService.updateStallInfoByCode(stallInfo);*/
 
             if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
                 child.setCreateBy(SecurityUtils.getUsername());
@@ -195,6 +195,21 @@ public class LeaseContractController extends BaseController
     @DeleteMapping("/effect/{ids}")
     public AjaxResult effect(@PathVariable String[] ids)
     {
+        for(int i=0;i<ids.length;i++){
+            LeaseContract leaseContract=leaseContractService.selectLeaseContractById(ids[i]);
+            List<LeaseContractChild> childList=leaseContractChildService.selectLeaseContractChildByCode(leaseContract.getContractCode());
+            for(LeaseContractChild child:childList){
+                //修改摊位信息
+                StallInfo stallInfo=new StallInfo();
+                stallInfo.setStallCode(child.getStallCode());//摊位编码
+                stallInfo.setStallStatus("1");//已出租
+                stallInfo.setStallStartTime(child.getLeaseStartTime());//开始日期
+                stallInfo.setStallEndTime(child.getLeaseEndTime());//结束日期
+                stallInfo.setStallMoney(child.getRentMoney());//租金
+                stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//租赁方
+                stallInfoService.updateStallInfoByCode(stallInfo);
+            }
+        }
         return toAjax(leaseContractService.updateLeaseContractStatus(ids));
     }
 
@@ -212,8 +227,13 @@ public class LeaseContractController extends BaseController
                 return toAjaxByError(info.getContractName()+"：该合同状态禁止删除!");
             }
         }
+        //删除子表信息
+        leaseContractChildService.deleteLeaseContractChildPid(ids);
+        //删除主表信息
+        leaseContractService.deleteLeaseContractByIds(ids);
+        return toAjaxBySuccess("删除成功!");
         //批量修改摊位信息
-        int result=leaseContractChildService.updateStallInfoByPids(ids);
+       /* int result=leaseContractChildService.updateStallInfoByPids(ids);
         if(result>0){
             //删除子表信息
             leaseContractChildService.deleteLeaseContractChildPid(ids);
@@ -222,6 +242,6 @@ public class LeaseContractController extends BaseController
             return toAjaxBySuccess("删除成功!");
         }else{
             return  toAjaxByError("删除失败!");
-        }
+        }*/
     }
 }

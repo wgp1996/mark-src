@@ -35,7 +35,6 @@ import com.ruoyi.framework.web.page.TableDataInfo;
  * @author ruoyi
  * @date 2020-08-14
  */
-@Api("供应商档案管理")
 @RestController
 @RequestMapping("/system/person")
 public class PersonInfoController extends BaseController
@@ -56,17 +55,7 @@ public class PersonInfoController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * APP查询供应商建档列表
-     */
-    @ApiOperation("APP供应商档案")
-    @GetMapping("/appPersonList")
-    @DataScope(deptAlias = "d", userAlias = "u")
-    public TableDataInfo appPersonList(PersonInfo personInfo)
-    {
-        List<PersonInfo> list = personInfoService.selectPersonInfoList(personInfo);
-        return getDataTable(list);
-    }
+
 
     /**
      * 供应商下拉列表
@@ -108,11 +97,11 @@ public class PersonInfoController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody PersonInfo personInfo)
     {
-        PersonInfo info=personInfoService.selectPersonInfoByName(personInfo.getPersonName(),-1);
+        personInfo.setCreateBy(SecurityUtils.getUsername());
+        PersonInfo info=personInfoService.selectPersonInfoByName(personInfo.getPersonName(),personInfo.getCreateBy(),-1);
         if(info!=null) {
             return  toAjaxByError("该供应商在系统中已存在");
         }else {
-            personInfo.setCreateBy(SecurityUtils.getUsername());
             personInfo.setPersonCode(StringUtils.getRandomCode("PCM"));
             return toAjax(personInfoService.insertPersonInfo(personInfo));
         }
@@ -126,7 +115,7 @@ public class PersonInfoController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody PersonInfo personInfo)
     {
-        PersonInfo info=personInfoService.selectPersonInfoByName(personInfo.getPersonName(),personInfo.getId());
+        PersonInfo info=personInfoService.selectPersonInfoByName(personInfo.getPersonName(),personInfo.getCreateBy(),personInfo.getId());
         if(info!=null) {
             return  toAjaxByError("该供应商在系统中已存在");
         }else {

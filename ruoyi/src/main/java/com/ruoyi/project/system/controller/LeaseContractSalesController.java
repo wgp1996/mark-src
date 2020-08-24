@@ -11,10 +11,7 @@ import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.page.TableDataInfo;
-import com.ruoyi.project.system.domain.LeaseContract;
-import com.ruoyi.project.system.domain.LeaseContractChildSales;
-import com.ruoyi.project.system.domain.LeaseContractSales;
-import com.ruoyi.project.system.domain.StallInfo;
+import com.ruoyi.project.system.domain.*;
 import com.ruoyi.project.system.service.ILeaseContractChildSalesService;
 import com.ruoyi.project.system.service.ILeaseContractSalesService;
 import com.ruoyi.project.system.service.IStallInfoService;
@@ -101,13 +98,13 @@ public class LeaseContractSalesController extends BaseController {
         List<LeaseContractChildSales> childList = JSONArray.parseArray(leaseContract.getRows(), LeaseContractChildSales.class);
         for (LeaseContractChildSales child : childList) {
             //修改摊位信息
-            StallInfo stallInfo=new StallInfo();
+           /* StallInfo stallInfo=new StallInfo();
             stallInfo.setStallCode(child.getStallCode());//摊位编码
             stallInfo.setStallStatus("2");//已销售
             stallInfo.setStallStartTime(child.getLeaseTime());//销售日期
             stallInfo.setStallMoney(child.getRentMoney());//销售金额
             stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//租赁方
-            stallInfoService.updateStallInfoByCode(stallInfo);
+            stallInfoService.updateStallInfoByCode(stallInfo);*/
 
             child.setCreateBy(SecurityUtils.getUsername());
             child.setId(StringUtils.getId());
@@ -147,13 +144,13 @@ public class LeaseContractSalesController extends BaseController {
         List<LeaseContractChildSales> childList = JSONArray.parseArray(leaseContract.getRows(), LeaseContractChildSales.class);
         for (LeaseContractChildSales child : childList) {
             //修改摊位信息
-            StallInfo stallInfo=new StallInfo();
+          /*  StallInfo stallInfo=new StallInfo();
             stallInfo.setStallCode(child.getStallCode());//摊位编码
             stallInfo.setStallStatus("2");//已销售
             stallInfo.setStallStartTime(child.getLeaseTime());//销售日期
             stallInfo.setStallMoney(child.getRentMoney());//销售金额
             stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//租赁方
-            stallInfoService.updateStallInfoByCode(stallInfo);
+            stallInfoService.updateStallInfoByCode(stallInfo);*/
 
             if (child.getId() != "" && child.getId() != null && !"".equals(child.getId())) {
                 child.setCreateBy(SecurityUtils.getUsername());
@@ -186,8 +183,13 @@ public class LeaseContractSalesController extends BaseController {
                 return toAjaxByError(info.getContractName()+"：该合同状态禁止删除!");
             }
         }
+        //删除子表信息
+        leaseContractChildSalesService.deleteLeaseContractChildPid(ids);
+        //删除主表信息
+        leaseContractSalesService.deleteLeaseContractByIds(ids);
+        return toAjaxBySuccess("删除成功!");
         //批量修改摊位信息
-        int result = leaseContractChildSalesService.updateStallInfoByPids(ids);
+       /* int result = leaseContractChildSalesService.updateStallInfoByPids(ids);
         if (result > 0) {
             //删除子表信息
             leaseContractChildSalesService.deleteLeaseContractChildPid(ids);
@@ -196,7 +198,7 @@ public class LeaseContractSalesController extends BaseController {
             return toAjaxBySuccess("删除成功!");
         } else {
             return toAjaxByError("删除失败!");
-        }
+        }*/
     }
 
     /**
@@ -207,6 +209,20 @@ public class LeaseContractSalesController extends BaseController {
     @DeleteMapping("/effect/{ids}")
     public AjaxResult effect(@PathVariable String[] ids)
     {
+        for(int i=0;i<ids.length;i++){
+            LeaseContractSales leaseContract=leaseContractSalesService.selectLeaseContractById(ids[i]);
+            List<LeaseContractChildSales> childList=leaseContractChildSalesService.selectLeaseContractChildByCode(leaseContract.getContractCode());
+            for(LeaseContractChildSales child:childList){
+                //修改摊位信息
+                StallInfo stallInfo=new StallInfo();
+                stallInfo.setStallCode(child.getStallCode());//摊位编码
+                stallInfo.setStallStatus("2");//已销售
+                stallInfo.setStallStartTime(child.getLeaseTime());//销售日期
+                stallInfo.setStallMoney(child.getRentMoney());//销售金额
+                stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//租赁方
+                stallInfoService.updateStallInfoByCode(stallInfo);
+            }
+        }
         return toAjax(leaseContractSalesService.updateLeaseContractStatus(ids));
     }
 }

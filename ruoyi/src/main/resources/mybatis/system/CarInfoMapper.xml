@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CarInfoMapper">
+    
+    <resultMap type="CarInfo" id="CarInfoResult">
+        <result property="id"    column="id"    />
+        <result property="carNumber"    column="car_number"    />
+        <result property="carWeight"    column="car_weight"    />
+        <result property="carVolume"    column="car_volume"    />
+        <result property="carCode"    column="car_code"    />
+        <result property="carOwner"    column="car_owner"    />
+        <result property="carOwnerPhone"    column="car_owner_phone"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCarInfoVo">
+        select id, car_number, car_weight, car_volume, car_code, car_owner, car_owner_phone, create_by, create_time, update_by, update_time, remark from car_info
+    </sql>
+
+    <sql id="selectCarInfoVoByRole">
+        select a.* from car_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectCarInfoList" parameterType="CarInfo" resultMap="CarInfoResult">
+        <include refid="selectCarInfoVoByRole"/>
+        <where>  
+            <if test="carNumber != null  and carNumber != ''"> and car_number = #{carNumber}</if>
+            <if test="carWeight != null  and carWeight != ''"> and car_weight = #{carWeight}</if>
+            <if test="carVolume != null  and carVolume != ''"> and car_volume = #{carVolume}</if>
+            <if test="carCode != null  and carCode != ''"> and car_code = #{carCode}</if>
+            <if test="carOwner != null  and carOwner != ''"> and car_owner = #{carOwner}</if>
+            <if test="carOwnerPhone != null  and carOwnerPhone != ''"> and car_owner_phone = #{carOwnerPhone}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectCarInfoById" parameterType="Integer" resultMap="CarInfoResult">
+        <include refid="selectCarInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectCarInfoByName" resultMap="CarInfoResult">
+        <include refid="selectCarInfoVo"/>
+        where car_number=#{carNumber} and create_by=#{createBy}
+        <if test="id!=-1">
+            and id != #{id}
+        </if>
+    </select>
+        
+    <insert id="insertCarInfo" parameterType="CarInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into car_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="carNumber != null  and carNumber != ''">car_number,</if>
+            <if test="carWeight != null  and carWeight != ''">car_weight,</if>
+            <if test="carVolume != null  and carVolume != ''">car_volume,</if>
+            <if test="carCode != null  and carCode != ''">car_code,</if>
+            <if test="carOwner != null  and carOwner != ''">car_owner,</if>
+            <if test="carOwnerPhone != null  and carOwnerPhone != ''">car_owner_phone,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="carNumber != null  and carNumber != ''">#{carNumber},</if>
+            <if test="carWeight != null  and carWeight != ''">#{carWeight},</if>
+            <if test="carVolume != null  and carVolume != ''">#{carVolume},</if>
+            <if test="carCode != null  and carCode != ''">#{carCode},</if>
+            <if test="carOwner != null  and carOwner != ''">#{carOwner},</if>
+            <if test="carOwnerPhone != null  and carOwnerPhone != ''">#{carOwnerPhone},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCarInfo" parameterType="CarInfo">
+        update car_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carNumber != null  and carNumber != ''">car_number = #{carNumber},</if>
+            <if test="carWeight != null  and carWeight != ''">car_weight = #{carWeight},</if>
+            <if test="carVolume != null  and carVolume != ''">car_volume = #{carVolume},</if>
+            <if test="carCode != null  and carCode != ''">car_code = #{carCode},</if>
+            <if test="carOwner != null  and carOwner != ''">car_owner = #{carOwner},</if>
+            <if test="carOwnerPhone != null  and carOwnerPhone != ''">car_owner_phone = #{carOwnerPhone},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCarInfoById" parameterType="Integer">
+        delete from car_info where id = #{id}
+    </delete>
+
+    <delete id="deleteCarInfoByIds" parameterType="String">
+        delete from car_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

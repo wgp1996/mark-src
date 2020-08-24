@@ -11,6 +11,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="goodsGg"    column="goods_gg"    />
         <result property="goodsDw"    column="goods_dw"    />
         <result property="goodsImg"    column="goods_img"    />
+        <result property="goodsCodeImg"    column="goods_code_img"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -70,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="goodsGg != null  and goodsGg != ''">goods_gg,</if>
             <if test="goodsDw != null  and goodsDw != ''">goods_dw,</if>
             <if test="goodsImg != null  and goodsImg != ''">goods_img,</if>
+            <if test="goodsCodeImg != null  and goodsImg != ''">goods_code_img,</if>
             <if test="createBy != null  and createBy != ''">create_by,</if>
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
@@ -85,6 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="goodsGg != null  and goodsGg != ''">#{goodsGg},</if>
             <if test="goodsDw != null  and goodsDw != ''">#{goodsDw},</if>
             <if test="goodsImg != null  and goodsImg != ''">#{goodsImg},</if>
+            <if test="goodsCodeImg != null  and goodsImg != ''">#{goodsCodeImg},</if>
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
@@ -104,6 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="goodsGg != null  and goodsGg != ''">goods_gg = #{goodsGg},</if>
             <if test="goodsDw != null  and goodsDw != ''">goods_dw = #{goodsDw},</if>
             <if test="goodsImg != null  and goodsImg != ''">goods_img = #{goodsImg},</if>
+            <if test="goodsCodeImg != null  and goodsCodeImg != ''">goods_code_img = #{goodsCodeImg},</if>
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>

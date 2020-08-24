@@ -6,7 +6,11 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.project.system.domain.LeaseContract;
 import com.ruoyi.project.system.domain.StallInfo;
+import com.ruoyi.project.system.service.ILeaseContractPoolService;
+import com.ruoyi.project.system.service.ILeaseContractSalesService;
+import com.ruoyi.project.system.service.ILeaseContractService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +41,12 @@ import com.ruoyi.framework.web.page.TableDataInfo;
 public class OwnerInfoController extends BaseController {
     @Autowired
     private IOwnerInfoService ownerInfoService;
+    @Autowired
+    private ILeaseContractService leaseContractService;
+    @Autowired
+    private ILeaseContractSalesService leaseContractSalesService;
+    @Autowired
+    private ILeaseContractPoolService leaseContractPoolService;
     /**
      * 获取主市场信息
      */
@@ -85,6 +95,15 @@ public class OwnerInfoController extends BaseController {
     @Log(title = "业户信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody OwnerInfo ownerInfo) {
+        if(ownerInfo.getUserName()!=null&&ownerInfo.getUserName()!=""){
+            //查询分配的帐号是否存在
+            OwnerInfo info=new OwnerInfo();
+            info.setUserName(ownerInfo.getUserName());
+            List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(info);
+            if(list!=null&&list.size()>0){
+                return  toAjaxByError("该账户已被关联!");
+            }
+        }
         OwnerInfo info = ownerInfoService.selectOwnerInfoByCode(ownerInfo.getOwnerCode(), "");
         if (info != null) {
             return toAjaxByError("该业户在系统中已存在");
@@ -104,6 +123,15 @@ public class OwnerInfoController extends BaseController {
     @Log(title = "业户信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody OwnerInfo ownerInfo) {
+        if(ownerInfo.getUserName()!=null&&ownerInfo.getUserName()!=""){
+            //查询分配的帐号是否存在
+            OwnerInfo info=new OwnerInfo();
+            info.setUserName(ownerInfo.getUserName());
+            List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(info);
+            if(list!=null&&list.size()>0){
+                return  toAjaxByError("该账户已被关联!");
+            }
+        }
         OwnerInfo info = ownerInfoService.selectOwnerInfoByCode(ownerInfo.getOwnerCode(), ownerInfo.getId());
         if (info != null) {
             return toAjaxByError("该业户在系统中已存在");
@@ -120,6 +148,13 @@ public class OwnerInfoController extends BaseController {
     @Log(title = "业户信息", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
+        //查询是该业户下是否存在已生效合同
+//        LeaseContract LeaseContract=new LeaseContract();
+//        LeaseContract.setContractStatus("已生效");
+//        List<LeaseContract> LeaseContractList=leaseContractService.selectLeaseContractList(LeaseContract);
+//        if(LeaseContractList!=null&&LeaseContractList.size()>0){
+//            return toAjaxByError("该业户在系统中存在销售合同");
+//        }
         return toAjax(ownerInfoService.deleteOwnerInfoByIds(ids));
     }
 }

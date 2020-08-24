@@ -35,7 +35,6 @@ import com.ruoyi.framework.web.page.TableDataInfo;
  * @author ruoyi
  * @date 2020-08-17
  */
-@Api("进货单管理")
 @RestController
 @RequestMapping("/system/cgrkd")
 public class CgRkdController extends BaseController
@@ -179,123 +178,7 @@ public class CgRkdController extends BaseController
     }
 
 
-    /*APP接口功能*/
-    /**
-     * 查询进货单列表
-     */
-    @ApiOperation("APP进货单列表")
-    @GetMapping("/appRkdList")
-    @DataScope(deptAlias = "d", userAlias = "u")
-    public TableDataInfo appList(CgRkd cgRkd)
-    {
-        List<CgRkd> list = cgRkdService.selectCgRkdList(cgRkd);
-//        for(CgRkd info:list){
-//            info.setChildrenList(cgRkdChildService.selectCgRkdChildByNumber(info.getDjNumber()));
-//        }
-        return getDataTable(list);
-    }
-    /**
-     * 获取进货单详细信息
-     */
-    @ApiOperation("APP进货单单个明细")
-    @GetMapping(value = "appRkdInfo/{id}")
-    public AjaxResult appRkdInfo(@PathVariable("id") String id)
-    {
-        return AjaxResult.success(cgRkdService.selectCgRkdById(id));
-    }
 
-    /**
-     * 获取进货单详细信息
-     */
-    @ApiOperation("APP进货单明细信息")
-    @GetMapping(value = "appRkdChildList/{dj_number}")
-    public AjaxResult appRkdChildList(@PathVariable("dj_number") String dj_number)
-    {
-        return AjaxResult.success(cgRkdChildService.selectCgRkdChildByNumber(dj_number));
-    }
-
-    /**
-     * APP新增进货单
-     */
-    @ApiOperation("APP进货单新增")
-    @Log(title = "进货单", businessType = BusinessType.INSERT)
-    @PostMapping("/appRkdAdd")
-    public AjaxResult rkdAdd(@RequestBody CgRkd cgRkd)
-    {
-        if(cgRkd.getRows()==""){
-            return  toAjaxByError("明细信息不能为空!");
-        }
-        cgRkd.setDjNumber(StringUtils.getRandomCode("RKD"));
-        cgRkd.setStatus(0);
-        cgRkd.setCreateBy(SecurityUtils.getUsername());
-        cgRkd.setId(StringUtils.getId());
-        List<CgRkdChild> childList= JSONArray.parseArray(cgRkd.getRows(),CgRkdChild.class);
-        for(CgRkdChild child:childList){
-            child.setCreateBy(SecurityUtils.getUsername());
-            child.setId(StringUtils.getId());
-            child.setDjNumber(cgRkd.getDjNumber());
-            child.setCreateTime(DateUtils.getNowDate());
-            cgRkdChildService.insertCgRkdChild(child);
-        }
-        return toAjax(cgRkdService.insertCgRkd(cgRkd));
-    }
-
-    /**
-     * 修改进货单
-     */
-    @Log(title = "进货单", businessType = BusinessType.UPDATE)
-    @ApiOperation("APP进货单修改")
-    @PostMapping("/appRkdEdit")
-    public AjaxResult rkdEdit(@RequestBody CgRkd cgRkd)
-    {
-        //检查是否为已生效的合同
-        if(cgRkd.getStatus()==1){
-            return  toAjaxByError("该状态禁止修改!");
-        }
-        if(cgRkd.getRows()==""){
-            return  toAjaxByError("明细信息不能为空!");
-        }
-        cgRkd.setUpdateBy(SecurityUtils.getUsername());
-        List<CgRkdChild> childList= JSONArray.parseArray(cgRkd.getRows(),CgRkdChild.class);
-        for(CgRkdChild child:childList){
-            if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
-                child.setCreateBy(SecurityUtils.getUsername());
-                child.setDjNumber(cgRkd.getDjNumber());
-                cgRkdChildService.updateCgRkdChild(child);
-            }else{
-                child.setCreateBy(SecurityUtils.getUsername());
-                child.setId(StringUtils.getId());
-                child.setDjNumber(cgRkd.getDjNumber());
-                child.setCreateTime(DateUtils.getNowDate());
-                cgRkdChildService.insertCgRkdChild(child);
-            }
-        }
-        return toAjax(cgRkdService.updateCgRkd(cgRkd));
-    }
-
-    /**
-     * 删除进货单
-     */
-    @ApiOperation("APP进货单删除")
-    @Log(title = "进货单", businessType = BusinessType.DELETE)
-    @DeleteMapping("appRkdRemove/{ids}")
-    public AjaxResult rkdRemove(@PathVariable String[] ids)
-    {
-        for(int i=0;i<ids.length;i++){
-            CgRkd info = cgRkdService.selectCgRkdById(ids[i]);
-            if(info.getStatus()!=0){
-                return toAjaxByError(info.getDjNumber()+"：该单据状态禁止删除!");
-            }
-        }
-        //删除子表信息
-        int result=cgRkdChildService.deleteCgRkdChildByPid(ids);
-        if(result>0){
-            cgRkdService.deleteCgRkdByIds(ids);
-            return toAjaxBySuccess("删除成功!");
-        }else{
-            return  toAjaxByError("删除失败!");
-        }
-    }
 
 
 }

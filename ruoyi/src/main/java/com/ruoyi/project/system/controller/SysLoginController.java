@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.ruoyi.common.core.lang.UUID;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.project.system.service.ISysUserService;
+import com.ruoyi.project.system.service.impl.SysUserServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,9 @@ public class SysLoginController
 {
     @Autowired
     private SysLoginService loginService;
+
+    @Autowired
+    private ISysUserService userService;
 
     @Autowired
     private ISysMenuService menuService;
@@ -72,12 +78,24 @@ public class SysLoginController
     @PostMapping("/appLogin")
     public AjaxResult appLogin(String username, String password)
     {
-       // String uuid= UUID.randomUUID().toString().replaceAll("-","");
-        AjaxResult ajax = AjaxResult.success();
-        // 生成令牌
-        String token = loginService.login(username, password);
-        ajax.put(Constants.TOKEN, token);
-        return ajax;
+        SysUser user=userService.selectUserByUserName(username);
+        if(user==null){
+            return AjaxResult.error("用户不存在!");
+        }else{
+            if(SecurityUtils.matchesPassword(password,user.getPassword())){
+                AjaxResult ajax = AjaxResult.success();
+                ajax.put("user", user);
+                return  ajax;
+            }else{
+                return AjaxResult.error("密码错误!");
+            }
+        }
+        //matchesPassword
+//        AjaxResult ajax = AjaxResult.success();
+//        // 生成令牌
+//        String token = loginService.login(username, password);
+//        ajax.put(Constants.TOKEN, token);
+//        return ajax;
     }
 
     /**

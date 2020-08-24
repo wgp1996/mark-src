@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.AdmissPoundRoomMapper">
+    
+    <resultMap type="AdmissPoundRoom" id="AdmissPoundRoomResult">
+        <result property="id"    column="id"    />
+        <result property="carNumber"    column="car_number"    />
+        <result property="ownerCode"    column="owner_code"    />
+        <result property="ownerName"    column="owner_name"    />
+        <result property="roomAddress"    column="room_address"    />
+        <result property="roomNum"    column="room_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="status"    column="status"    />
+        <result property="type"    column="type"    />
+        <result property="djStatusName"    column="dj_status_name"    />
+    </resultMap>
+
+    <sql id="selectAdmissPoundRoomVo">
+        select id, car_number, owner_code, owner_name, room_address, room_num, create_by, create_time, update_by, update_time, remark, dj_number, status from admiss_pound_room
+    </sql>
+
+    <sql id="selectAdmissPoundRoomVoByRole">
+        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name from admiss_pound_room a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectAdmissPoundRoomList" parameterType="AdmissPoundRoom" resultMap="AdmissPoundRoomResult">
+        <include refid="selectAdmissPoundRoomVoByRole"/>
+        <where>  
+            <if test="carNumber != null  and carNumber != ''"> and car_number = #{carNumber}</if>
+            <if test="ownerCode != null  and ownerCode != ''"> and owner_code = #{ownerCode}</if>
+            <if test="ownerName != null  and ownerName != ''"> and owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="roomAddress != null  and roomAddress != ''"> and room_address = #{roomAddress}</if>
+            <if test="roomNum != null  and roomNum != ''"> and room_num = #{roomNum}</if>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="type != null "> and type = #{type}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectAdmissPoundRoomById" parameterType="String" resultMap="AdmissPoundRoomResult">
+        <include refid="selectAdmissPoundRoomVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAdmissPoundRoom" parameterType="AdmissPoundRoom">
+        insert into admiss_pound_room
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="carNumber != null  and carNumber != ''">car_number,</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code,</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name,</if>
+            <if test="roomAddress != null  and roomAddress != ''">room_address,</if>
+            <if test="roomNum != null  and roomNum != ''">room_num,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="status != null ">status,</if>
+            <if test="type != null ">type,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="carNumber != null  and carNumber != ''">#{carNumber},</if>
+            <if test="ownerCode != null  and ownerCode != ''">#{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">#{ownerName},</if>
+            <if test="roomAddress != null  and roomAddress != ''">#{roomAddress},</if>
+            <if test="roomNum != null  and roomNum != ''">#{roomNum},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="type != null ">#{type},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateAdmissPoundRoom" parameterType="AdmissPoundRoom">
+        update admiss_pound_room
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carNumber != null  and carNumber != ''">car_number = #{carNumber},</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code = #{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name = #{ownerName},</if>
+            <if test="roomAddress != null  and roomAddress != ''">room_address = #{roomAddress},</if>
+            <if test="roomNum != null  and roomNum != ''">room_num = #{roomNum},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="type != null ">type=#{type},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAdmissPoundRoomById" parameterType="String">
+        delete from admiss_pound_room where id = #{id}
+    </delete>
+
+    <delete id="deleteAdmissPoundRoomByIds" parameterType="String">
+        delete from admiss_pound_room where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateAdmissPoundRoomServiceStatus" parameterType="String">
+        update admiss_pound_room set status='1'  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    
+</mapper>

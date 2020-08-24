@@ -6,6 +6,8 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.project.system.domain.MarkChildInfo;
+import com.ruoyi.project.system.service.IMarkChildInfoService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +39,8 @@ public class MarkInfoController extends BaseController
 {
     @Autowired
     private IMarkInfoService markInfoService;
+    @Autowired
+    private IMarkChildInfoService markChildInfoService;
 
     /**
      * 查询【市场信息】列表
@@ -119,6 +123,16 @@ public class MarkInfoController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {
+        for(int i=0;i<ids.length;i++){
+            MarkInfo info=markInfoService.selectMarkInfoById(ids[i]);
+            //根据主市场编码查询是否存在二级市场信息
+            MarkChildInfo childInfo=new MarkChildInfo();
+            childInfo.setMarkCode(info.getMarkCode());
+            List<MarkChildInfo> markChildInfos=markChildInfoService.selectMarkChildInfoList(childInfo);
+            if(markChildInfos!=null&&markChildInfos.size()>0){
+                return AjaxResult.error(info.getMarkName()+"下存在二级市场信息,禁止删除!");
+            }
+        }
         return toAjax(markInfoService.deleteMarkInfoByIds(ids));
     }
 }

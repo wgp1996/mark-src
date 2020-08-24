@@ -41,6 +41,10 @@ public class GoodsInfo extends BaseEntity
     @Excel(name = "图片地址")
     private String goodsImg;
 
+    /** 二维码地址 */
+    @Excel(name = "二维码地址")
+    private String goodsCodeImg;
+
     /** 档案类型 0业户 1市场 */
     @Excel(name = "档案类型 0业户 1市场")
     private Integer type;
@@ -140,6 +144,14 @@ public class GoodsInfo extends BaseEntity
         this.goodsAddress = goodsAddress;
     }
 
+    public String getGoodsCodeImg() {
+        return goodsCodeImg;
+    }
+
+    public void setGoodsCodeImg(String goodsCodeImg) {
+        this.goodsCodeImg = goodsCodeImg;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -149,6 +161,7 @@ public class GoodsInfo extends BaseEntity
             .append("goodsGg", getGoodsGg())
             .append("goodsDw", getGoodsDw())
             .append("goodsImg", getGoodsImg())
+            .append("goodsCodeImg", getGoodsCodeImg())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

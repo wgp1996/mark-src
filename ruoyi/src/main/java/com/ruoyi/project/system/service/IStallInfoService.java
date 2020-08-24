@@ -29,6 +29,14 @@ public interface IStallInfoService {
     public StallInfo selectStallInfoByCode(String code, String id);
 
     /**
+     * 根据业主选择摊位
+     *
+     * @param createBy 帐号信息
+     * @return 市场摊位信息集合
+     */
+    public List<StallInfo> selectStallInfoListByOwner(String createBy);
+
+    /**
      * 查询市场摊位信息列表
      *
      * @param stallInfo 市场摊位信息

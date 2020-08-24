@@ -36,7 +36,6 @@ import com.ruoyi.framework.web.page.TableDataInfo;
  * @author ruoyi
  * @date 2020-07-29
  */
-@Api("摊位管理")
 @RestController
 @RequestMapping("/system/stall")
 public class StallInfoController extends BaseController {
@@ -58,13 +57,12 @@ public class StallInfoController extends BaseController {
     /**
      * 摊位下拉列表
      */
-    @ApiOperation("选择摊位信息")
     @GetMapping("/getStallAll")
-    @DataScope(deptAlias = "d", userAlias = "u")
-    public TableDataInfo getStallAll(StallInfo stallInfo) {
-        List<StallInfo> list = stallInfoService.selectStallInfoList(stallInfo);
+    public TableDataInfo getStallAll() {
+        List<StallInfo> list = stallInfoService.selectStallInfoListByOwner(SecurityUtils.getUsername());
         return getDataTable(list);
     }
+
 
     /**
      * 租赁合同选择市场摊位信息列表

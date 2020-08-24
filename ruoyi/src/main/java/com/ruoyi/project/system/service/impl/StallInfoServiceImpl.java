@@ -43,7 +43,16 @@ public class StallInfoServiceImpl implements IStallInfoService {
     }
 
     ;
-
+    /**
+     * 根据业主选择摊位
+     *
+     * @param createBy 帐号信息
+     * @return 市场摊位信息集合
+     */
+    @Override
+    public List<StallInfo> selectStallInfoListByOwner(String createBy){
+        return stallInfoMapper.selectStallInfoListByOwner(createBy);
+    }
     /**
      * 查询市场摊位信息
      *

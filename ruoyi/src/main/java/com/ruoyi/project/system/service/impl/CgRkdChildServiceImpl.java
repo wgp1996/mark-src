@@ -42,6 +42,16 @@ public class CgRkdChildServiceImpl implements ICgRkdChildService
         return cgRkdChildMapper.selectCgRkdChildByNumber(dj_number);
     }
     /**
+     * 查询进货单子表
+     *
+     * @param stallCode 主表摊位编码
+     * @return 进货单子表
+     */
+    public List<CgRkdChild> appRkdChildListByStall(String stallCode){
+        return cgRkdChildMapper.appRkdChildListByStall(stallCode);
+    }
+
+    /**
      * 查询进货单子表列表
      * 
      * @param cgRkdChild 进货单子表

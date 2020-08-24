@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.GoodsInfoOwnerMapper">
+    
+    <resultMap type="GoodsInfoOwner" id="GoodsInfoOwnerResult">
+        <result property="id"    column="id"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsViceDw"    column="goods_vice_dw"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsImg"    column="goods_img"    />
+        <result property="goodsCodeImg"    column="goods_code_img"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="goodsType"    column="goods_type"    />
+        <result property="goodsAddress"    column="goods_address"    />
+        <result property="goodsGg"    column="goods_gg"    />
+        <result property="isSend"    column="is_send"    />
+    </resultMap>
+
+    <sql id="selectGoodsInfoOwnerVo">
+        select id, goods_code, goods_name, goods_vice_dw, goods_dw, goods_img, create_by, create_time, update_by, update_time, remark, goods_type, goods_address, goods_gg, is_send from goods_info_owner
+    </sql>
+
+    <sql id="selectGoodsInfoOwnerVoByRole">
+        select a.* from goods_info_owner a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectGoodsInfoOwnerList" parameterType="GoodsInfoOwner" resultMap="GoodsInfoOwnerResult">
+        <include refid="selectGoodsInfoOwnerVoByRole"/>
+        <where>  
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsViceDw != null  and goodsViceDw != ''"> and goods_vice_dw = #{goodsViceDw}</if>
+            <if test="goodsDw != null  and goodsDw != ''"> and goods_dw = #{goodsDw}</if>
+            <if test="goodsImg != null  and goodsImg != ''"> and goods_img = #{goodsImg}</if>
+            <if test="goodsType != null "> and goods_type = #{goodsType}</if>
+            <if test="goodsAddress != null  and goodsAddress != ''"> and goods_address = #{goodsAddress}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="isSend != null "> and is_send = #{isSend}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectGoodsInfoOwnerById" parameterType="Integer" resultMap="GoodsInfoOwnerResult">
+        <include refid="selectGoodsInfoOwnerVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectGoodsInfoOwnerByName" resultMap="GoodsInfoOwnerResult">
+        <include refid="selectGoodsInfoOwnerVo"/>
+        where goods_name=#{goodsName} and create_by=#{createBy}
+        <if test="id!=-1">
+            and id != #{id}
+        </if>
+    </select>
+        
+    <insert id="insertGoodsInfoOwner" parameterType="GoodsInfoOwner" useGeneratedKeys="true" keyProperty="id">
+        insert into goods_info_owner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="goodsViceDw != null  and goodsViceDw != ''">goods_vice_dw,</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw,</if>
+            <if test="goodsImg != null  and goodsImg != ''">goods_img,</if>
+            <if test="goodsCodeImg != null  and goodsImg != ''">goods_code_img,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="goodsType != null ">goods_type,</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address,</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg,</if>
+            <if test="isSend != null ">is_send,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="goodsViceDw != null  and goodsViceDw != ''">#{goodsViceDw},</if>
+            <if test="goodsDw != null  and goodsDw != ''">#{goodsDw},</if>
+            <if test="goodsImg != null  and goodsImg != ''">#{goodsImg},</if>
+            <if test="goodsCodeImg != null  and goodsImg != ''">#{goodsCodeImg},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="goodsType != null ">#{goodsType},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">#{goodsAddress},</if>
+            <if test="goodsGg != null  and goodsGg != ''">#{goodsGg},</if>
+            <if test="isSend != null ">#{isSend},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateGoodsInfoOwner" parameterType="GoodsInfoOwner">
+        update goods_info_owner
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsViceDw != null  and goodsViceDw != ''">goods_vice_dw = #{goodsViceDw},</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw = #{goodsDw},</if>
+            <if test="goodsImg != null  and goodsImg != ''">goods_img = #{goodsImg},</if>
+            <if test="goodsCodeImg != null  and goodsCodeImg != ''">goods_code_img = #{goodsCodeImg},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="goodsType != null ">goods_type = #{goodsType},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address = #{goodsAddress},</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg = #{goodsGg},</if>
+            <if test="isSend != null ">is_send = #{isSend},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGoodsInfoOwnerById" parameterType="Integer">
+        delete from goods_info_owner where id = #{id}
+    </delete>
+
+    <delete id="deleteGoodsInfoOwnerByIds" parameterType="String">
+        delete from goods_info_owner where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

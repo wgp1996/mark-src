@@ -23,13 +23,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectLeaseContractVo">
-        select a.file_name,(select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,id,
+        select a.file_name,(select c.owner_name from owner_info c where c.owner_code=a.owner_code) as owner_name,id,
         a.contract_code, a.contract_name, a.owner_code,a.contract_money, a.sign_address, a.sign_time, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark,a.contract_status from lease_contract a
     </sql>
 
     <sql id="selectLeaseContractVoByRole">
-        select a.file_name,(select a.owner_name from owner_info a where a.owner_code=owner_code) as owner_name,id,
+        select a.file_name,(select c.owner_name from owner_info c where c.owner_code=a.owner_code) as owner_name,id,
         a.contract_code, a.contract_name, a.owner_code,a.contract_money, a.sign_address, a.sign_time, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark,a.contract_status from lease_contract a
         join sys_user u on a.create_by=u.user_name
@@ -39,6 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectLeaseContractList" parameterType="LeaseContract" resultMap="LeaseContractResult">
         <include refid="selectLeaseContractVoByRole"/>
         <where>  
+            <if test="contractStatus != null  and contractStatus != ''"> and contract_status = #{contractStatus}</if>
             <if test="contractCode != null  and contractCode != ''"> and contract_code = #{contractCode}</if>
             <if test="contractName != null  and contractName != ''"> and contract_name like concat('%', #{contractName}, '%')</if>
             <if test="ownerCode != null  and ownerCode != ''"> and owner_code = #{ownerCode}</if>

@@ -27,6 +27,14 @@ public interface ICgRkdChildService
      */
     public List<CgRkdChild> selectCgRkdChildByNumber(String dj_number);
 
+       /**
+     * 查询进货单子表
+     *
+     * @param stallCode 主表摊位编码
+     * @return 进货单子表
+     */
+    public List<CgRkdChild> appRkdChildListByStall(String stallCode);
+
     /**
      * 查询进货单子表列表
      * 
