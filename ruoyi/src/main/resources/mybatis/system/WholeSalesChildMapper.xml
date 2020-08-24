@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.WholeSalesChildMapper">
+    
+    <resultMap type="WholeSalesChild" id="WholeSalesChildResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="khName"    column="kh_name"    />
+        <result property="khCode"    column="kh_code"    />
+        <result property="wholeNum"    column="whole_num"    />
+        <result property="wholeDw"    column="whole_dw"    />
+        <result property="wholePrice"    column="whole_price"    />
+        <result property="wholeBz"    column="whole_bz"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectWholeSalesChildVo">
+        select id, dj_number, kh_name, kh_code, whole_num, whole_dw, whole_price, whole_bz, create_by, create_time, update_by, update_time, remark from whole_sales_child
+    </sql>
+
+    <select id="selectWholeSalesChildList" parameterType="WholeSalesChild" resultMap="WholeSalesChildResult">
+        <include refid="selectWholeSalesChildVo"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
+            <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
+            <if test="wholeNum != null  and wholeNum != ''"> and whole_num = #{wholeNum}</if>
+            <if test="wholeDw != null  and wholeDw != ''"> and whole_dw = #{wholeDw}</if>
+            <if test="wholePrice != null  and wholePrice != ''"> and whole_price = #{wholePrice}</if>
+            <if test="wholeBz != null  and wholeBz != ''"> and whole_bz = #{wholeBz}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectWholeSalesChildById" parameterType="String" resultMap="WholeSalesChildResult">
+        <include refid="selectWholeSalesChildVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWholeSalesChild" parameterType="WholeSalesChild">
+        insert into whole_sales_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="khName != null  and khName != ''">kh_name,</if>
+            <if test="khCode != null  and khCode != ''">kh_code,</if>
+            <if test="wholeNum != null  and wholeNum != ''">whole_num,</if>
+            <if test="wholeDw != null  and wholeDw != ''">whole_dw,</if>
+            <if test="wholePrice != null  and wholePrice != ''">whole_price,</if>
+            <if test="wholeBz != null  and wholeBz != ''">whole_bz,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="khName != null  and khName != ''">#{khName},</if>
+            <if test="khCode != null  and khCode != ''">#{khCode},</if>
+            <if test="wholeNum != null  and wholeNum != ''">#{wholeNum},</if>
+            <if test="wholeDw != null  and wholeDw != ''">#{wholeDw},</if>
+            <if test="wholePrice != null  and wholePrice != ''">#{wholePrice},</if>
+            <if test="wholeBz != null  and wholeBz != ''">#{wholeBz},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateWholeSalesChild" parameterType="WholeSalesChild">
+        update whole_sales_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
+            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
+            <if test="wholeNum != null  and wholeNum != ''">whole_num = #{wholeNum},</if>
+            <if test="wholeDw != null  and wholeDw != ''">whole_dw = #{wholeDw},</if>
+            <if test="wholePrice != null  and wholePrice != ''">whole_price = #{wholePrice},</if>
+            <if test="wholeBz != null  and wholeBz != ''">whole_bz = #{wholeBz},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWholeSalesChildById" parameterType="String">
+        delete from whole_sales_child where id = #{id}
+    </delete>
+
+    <delete id="deleteWholeSalesChildByIds" parameterType="String">
+        delete from whole_sales_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteWholeSalesChildByPid" parameterType="String">
+        delete from whole_sales_child where dj_number in (select dj_number from whole_sales where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+</mapper>
