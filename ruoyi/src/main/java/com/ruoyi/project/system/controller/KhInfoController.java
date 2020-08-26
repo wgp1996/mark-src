@@ -3,6 +3,7 @@ package com.ruoyi.project.system.controller;
 import java.util.List;
 
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.PersonInfo;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -86,6 +87,7 @@ public class KhInfoController extends BaseController
         if(info!=null) {
             return  toAjaxByError("该客户在系统中已存在");
         }else {
+            khInfo.setKhCode(StringUtils.getRandomCode("KH"));
             return toAjax(khInfoService.insertKhInfo(khInfo));
         }
     }

@@ -1,7 +1,9 @@
 package com.ruoyi.project.system.mapper;
 
-import java.util.List;
+import com.ruoyi.project.system.domain.WholeRetailChild;
 import com.ruoyi.project.system.domain.WholeSalesChild;
+
+import java.util.List;
 
 /**
  * 批发销货一票通子表Mapper接口
@@ -9,7 +11,7 @@ import com.ruoyi.project.system.domain.WholeSalesChild;
  * @author ruoyi
  * @date 2020-08-24
  */
-public interface WholeSalesChildMapper 
+public interface WholeRetailChildMapper 
 {
     /**
      * 查询批发销货一票通子表
@@ -17,36 +19,36 @@ public interface WholeSalesChildMapper
      * @param id 批发销货一票通子表ID
      * @return 批发销货一票通子表
      */
-    public WholeSalesChild selectWholeSalesChildById(String id);
+    public WholeRetailChild selectWholeRetailChildById(String id);
 
     /**
      * 查询批发销货一票通子表列表
      * 
-     * @param wholeSalesChild 批发销货一票通子表
+     * @param WholeRetailChild 批发销货一票通子表
      * @return 批发销货一票通子表集合
      */
-    public List<WholeSalesChild> selectWholeSalesChildList(WholeSalesChild wholeSalesChild);
+    public List<WholeRetailChild> selectWholeRetailChildList(WholeRetailChild WholeRetailChild);
     /**
      * 条件查询批发销货单子表列表
      *
      * @return 批发销货单子表集合
      */
-    public List<WholeSalesChild> selectWholeSalesChildListByWhere( String createBy,  Integer dateType, String date, String goodsName,  String khName);
+    public List<WholeRetailChild> selectWholeRetailChildListByWhere(String createBy, Integer dateType,String date, String goodsName, String khName);
     /**
      * 新增批发销货一票通子表
      * 
-     * @param wholeSalesChild 批发销货一票通子表
+     * @param WholeRetailChild 批发销货一票通子表
      * @return 结果
      */
-    public int insertWholeSalesChild(WholeSalesChild wholeSalesChild);
+    public int insertWholeRetailChild(WholeRetailChild WholeRetailChild);
 
     /**
      * 修改批发销货一票通子表
      * 
-     * @param wholeSalesChild 批发销货一票通子表
+     * @param WholeRetailChild 批发销货一票通子表
      * @return 结果
      */
-    public int updateWholeSalesChild(WholeSalesChild wholeSalesChild);
+    public int updateWholeRetailChild(WholeRetailChild WholeRetailChild);
 
     /**
      * 删除批发销货一票通子表
@@ -54,7 +56,7 @@ public interface WholeSalesChildMapper
      * @param id 批发销货一票通子表ID
      * @return 结果
      */
-    public int deleteWholeSalesChildById(String id);
+    public int deleteWholeRetailChildById(String id);
 
     /**
      * 批量删除批发销货一票通子表
@@ -62,12 +64,12 @@ public interface WholeSalesChildMapper
      * @param ids 需要删除的数据ID
      * @return 结果
      */
-    public int deleteWholeSalesChildByIds(String[] ids);
+    public int deleteWholeRetailChildByIds(String[] ids);
     /**
      * 根据主表ID批量删除单据子表
      *
      * @param ids 需要删除的进货单子表ID
      * @return 结果
      */
-    public int deleteWholeSalesChildByPid(String[] ids);
+    public int deleteWholeRetailChildByPid(String[] ids);
 }

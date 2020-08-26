@@ -34,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCgRkdVoByRole"/>
         <where>  
             <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
             <if test="stallCode != null  and stallCode != ''"> and stall_code = #{stallCode}</if>
             <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
             <if test="stallName != null  and stallName != ''"> and stall_name like concat('%', #{stallName}, '%')</if>

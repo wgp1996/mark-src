@@ -38,6 +38,7 @@
     <select id="selectOwnerInfoList" parameterType="OwnerInfo" resultMap="OwnerInfoResult">
         <include refid="selectOwnerInfoVo"/>
         <where>
+            <if test="id != null  and id != ''">and id != #{id}</if>
             <if test="ownerCode != null  and ownerCode != ''">and owner_code = #{ownerCode}</if>
             <if test="ownerName != null  and ownerName != ''">and owner_name like concat('%', #{ownerName}, '%')</if>
             <if test="ownerOrg != null  and ownerOrg != ''">and owner_org = #{ownerOrg}</if>
@@ -58,7 +59,7 @@
             <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
             ${dataScope}
         </where>
-        order by a.create_time desc
+        order by a.owner_code,a.create_time desc
     </select>
 
     <select id="selectOwnerInfoById" parameterType="String" resultMap="OwnerInfoResult">

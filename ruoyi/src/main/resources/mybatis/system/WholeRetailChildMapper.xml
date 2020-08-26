@@ -2,13 +2,13 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.project.system.mapper.WholeSalesChildMapper">
+<mapper namespace="com.ruoyi.project.system.mapper.WholeRetailChildMapper">
     
-    <resultMap type="WholeSalesChild" id="WholeSalesChildResult">
+    <resultMap type="WholeRetailChild" id="WholeRetailChildResult">
         <result property="id"    column="id"    />
         <result property="djNumber"    column="dj_number"    />
-        <result property="khName"    column="kh_name"    />
-        <result property="khCode"    column="kh_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsCode"    column="goods_code"    />
         <result property="wholeNum"    column="whole_num"    />
         <result property="wholeDw"    column="whole_dw"    />
         <result property="wholePrice"    column="whole_price"    />
@@ -18,20 +18,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
-        <result property="goodsName"    column="goods_name"    />
+        <result property="khName"    column="kh_name"    />
         <result property="status"    column="status"    />
     </resultMap>
 
-    <sql id="selectWholeSalesChildVo">
-        select id, dj_number, kh_name, kh_code, whole_num, whole_dw, whole_price, whole_bz, create_by, create_time, update_by, update_time, remark from whole_sales_child
+    <sql id="selectWholeRetailChildVo">
+        select id, dj_number, goods_name, goods_code, whole_num, whole_dw, whole_price, whole_bz, create_by, create_time, update_by, update_time, remark from whole_retail_child
     </sql>
 
-    <select id="selectWholeSalesChildList" parameterType="WholeSalesChild" resultMap="WholeSalesChildResult">
-        <include refid="selectWholeSalesChildVo"/>
+    <select id="selectWholeRetailChildList" parameterType="WholeRetailChild" resultMap="WholeRetailChildResult">
+        <include refid="selectWholeRetailChildVo"/>
         <where>  
             <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
-            <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
-            <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
             <if test="wholeNum != null  and wholeNum != ''"> and whole_num = #{wholeNum}</if>
             <if test="wholeDw != null  and wholeDw != ''"> and whole_dw = #{wholeDw}</if>
             <if test="wholePrice != null  and wholePrice != ''"> and whole_price = #{wholePrice}</if>
@@ -40,8 +40,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by create_time desc
     </select>
 
-    <select id="selectWholeSalesChildListByWhere" resultMap="WholeSalesChildResult">
-        select a.*,b.goods_name,b.status from whole_sales_child a join whole_sales b on a.dj_number=b.dj_number
+    <select id="selectWholeRetailChildListByWhere"  resultMap="WholeRetailChildResult">
+        select a.*,b.kh_name,b.status from whole_retail_child a join whole_retail b on a.dj_number=b.dj_number
         <where>
             <if test="date != null and date != '' and date!='-1'">
                 and b.create_time &lt;= #{date}
@@ -61,25 +61,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and b.create_time&gt;=concat(year(curdate()),'-01-01')
                 and b.create_time&lt;=concat(year(curdate()),'-12-31')
             </if>
-            <if test="khName != null  and khName != '' and khName != '-1'"> and a.kh_name like concat('%', #{khName}, '%')</if>
-            <if test="goodsName != null  and goodsName != '' and goodsName != '-1'"> and b.goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="khName != null  and khName != '' and khName != '-1'"> and b.kh_name like concat('%', #{khName}, '%')</if>
+            <if test="goodsName != null  and goodsName != '' and goodsName != '-1'"> and a.goods_name like concat('%', #{goodsName}, '%')</if>
             and b.create_by = #{createBy}
         </where>
         order by b.create_time,b.dj_number,a.create_time desc
     </select>
     
-    <select id="selectWholeSalesChildById" parameterType="String" resultMap="WholeSalesChildResult">
-        <include refid="selectWholeSalesChildVo"/>
+    <select id="selectWholeRetailChildById" parameterType="String" resultMap="WholeRetailChildResult">
+        <include refid="selectWholeRetailChildVo"/>
         where id = #{id}
     </select>
         
-    <insert id="insertWholeSalesChild" parameterType="WholeSalesChild">
-        insert into whole_sales_child
+    <insert id="insertWholeRetailChild" parameterType="WholeRetailChild">
+        insert into whole_retail_child
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">id,</if>
             <if test="djNumber != null  and djNumber != ''">dj_number,</if>
-            <if test="khName != null  and khName != ''">kh_name,</if>
-            <if test="khCode != null  and khCode != ''">kh_code,</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
             <if test="wholeNum != null  and wholeNum != ''">whole_num,</if>
             <if test="wholeDw != null  and wholeDw != ''">whole_dw,</if>
             <if test="wholePrice != null  and wholePrice != ''">whole_price,</if>
@@ -93,8 +93,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">#{id},</if>
             <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
-            <if test="khName != null  and khName != ''">#{khName},</if>
-            <if test="khCode != null  and khCode != ''">#{khCode},</if>
+            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
             <if test="wholeNum != null  and wholeNum != ''">#{wholeNum},</if>
             <if test="wholeDw != null  and wholeDw != ''">#{wholeDw},</if>
             <if test="wholePrice != null  and wholePrice != ''">#{wholePrice},</if>
@@ -107,12 +107,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateWholeSalesChild" parameterType="WholeSalesChild">
-        update whole_sales_child
+    <update id="updateWholeRetailChild" parameterType="WholeRetailChild">
+        update whole_retail_child
         <trim prefix="SET" suffixOverrides=",">
             <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
-            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
-            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
             <if test="wholeNum != null  and wholeNum != ''">whole_num = #{wholeNum},</if>
             <if test="wholeDw != null  and wholeDw != ''">whole_dw = #{wholeDw},</if>
             <if test="wholePrice != null  and wholePrice != ''">whole_price = #{wholePrice},</if>
@@ -126,18 +126,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteWholeSalesChildById" parameterType="String">
-        delete from whole_sales_child where id = #{id}
+    <delete id="deleteWholeRetailChildById" parameterType="String">
+        delete from whole_retail_child where id = #{id}
     </delete>
 
-    <delete id="deleteWholeSalesChildByIds" parameterType="String">
-        delete from whole_sales_child where id in 
+    <delete id="deleteWholeRetailChildByIds" parameterType="String">
+        delete from whole_retail_child where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    <delete id="deleteWholeSalesChildByPid" parameterType="String">
-        delete from whole_sales_child where dj_number in (select dj_number from whole_sales where id in
+    <delete id="deleteWholeRetailChildByPid" parameterType="String">
+        delete from whole_retail_child where dj_number in (select dj_number from whole_retail where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

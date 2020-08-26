@@ -31,6 +31,14 @@ public class WholeSalesChildServiceImpl implements IWholeSalesChildService
     {
         return wholeSalesChildMapper.selectWholeSalesChildById(id);
     }
+    /**
+     * 条件查询批发销货单子表列表
+     *
+     * @return 批发销货单子表集合
+     */
+    public List<WholeSalesChild> selectWholeSalesChildListByWhere( String createBy,  Integer dateType,String date,  String goodsName,  String khName){
+        return wholeSalesChildMapper.selectWholeSalesChildListByWhere(createBy,dateType,date,goodsName,khName);
+    }
 
     /**
      * 查询批批发销货单子表列表

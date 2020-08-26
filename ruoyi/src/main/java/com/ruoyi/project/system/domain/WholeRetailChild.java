@@ -1,9 +1,9 @@
 package com.ruoyi.project.system.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.framework.aspectj.lang.annotation.Excel;
 import com.ruoyi.framework.web.domain.BaseEntity;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 批发销货一票通子表对象 whole_sales_child
@@ -11,7 +11,7 @@ import com.ruoyi.framework.web.domain.BaseEntity;
  * @author ruoyi
  * @date 2020-08-24
  */
-public class WholeSalesChild extends BaseEntity
+public class WholeRetailChild extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -22,13 +22,13 @@ public class WholeSalesChild extends BaseEntity
     @Excel(name = "单据号")
     private String djNumber;
 
-    /** 客户名称 */
-    @Excel(name = "客户名称")
-    private String khName;
+    /** 商品名称 */
+    @Excel(name = "商品名称")
+    private String goodsName;
 
-    /** 客户编码 */
-    @Excel(name = "客户编码")
-    private String khCode;
+    /** 商品编码 */
+    @Excel(name = "商品编码")
+    private String goodsCode;
 
     /** 销售量 */
     @Excel(name = "销售量")
@@ -45,9 +45,10 @@ public class WholeSalesChild extends BaseEntity
     /** $column.columnComment */
     @Excel(name = "单价")
     private String wholeBz;
+
     private Integer status;
 
-    private String goodsName;
+    private String khName;
 
     public Integer getStatus() {
         return status;
@@ -57,12 +58,12 @@ public class WholeSalesChild extends BaseEntity
         this.status = status;
     }
 
-    public String getGoodsName() {
-        return goodsName;
+    public String getKhName() {
+        return khName;
     }
 
-    public void setGoodsName(String goodsName) {
-        this.goodsName = goodsName;
+    public void setKhName(String khName) {
+        this.khName = khName;
     }
 
     public void setId(String id)
@@ -84,24 +85,23 @@ public class WholeSalesChild extends BaseEntity
         return djNumber;
     }
 
-    public String getKhName() {
-        return khName;
+    public String getGoodsName() {
+        return goodsName;
     }
 
-    public void setKhName(String khName) {
-        this.khName = khName;
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
     }
 
-    public void setKhCode(String khCode)
-    {
-        this.khCode = khCode;
+    public String getGoodsCode() {
+        return goodsCode;
     }
 
-    public String getKhCode() 
-    {
-        return khCode;
+    public void setGoodsCode(String goodsCode) {
+        this.goodsCode = goodsCode;
     }
-    public void setWholeNum(String wholeNum) 
+
+    public void setWholeNum(String wholeNum)
     {
         this.wholeNum = wholeNum;
     }
@@ -143,8 +143,8 @@ public class WholeSalesChild extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("djNumber", getDjNumber())
-            .append("khName", getKhName())
-            .append("khCode", getKhCode())
+            .append("goodsName", getGoodsName())
+            .append("goodsCode", getGoodsCode())
             .append("wholeNum", getWholeNum())
             .append("wholeDw", getWholeDw())
             .append("wholePrice", getWholePrice())

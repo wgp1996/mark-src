@@ -30,7 +30,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectKhInfoList" parameterType="KhInfo" resultMap="KhInfoResult">
         <include refid="selectKhInfoVoByRole"/>
-        <where>  
+        <where>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
             <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
             <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
             <if test="khPhone != null  and khPhone != ''"> and kh_phone = #{khPhone}</if>
@@ -53,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and id != #{id}
         </if>
     </select>
-        
+
     <insert id="insertKhInfo" parameterType="KhInfo" useGeneratedKeys="true" keyProperty="id">
         insert into kh_info
         <trim prefix="(" suffix=")" suffixOverrides=",">

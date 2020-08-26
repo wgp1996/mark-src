@@ -2,15 +2,15 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.project.system.mapper.WholeSalesMapper">
+<mapper namespace="com.ruoyi.project.system.mapper.WholeRetailMapper">
     
-    <resultMap type="WholeSales" id="WholeSalesResult">
+    <resultMap type="WholeRetail" id="WholeRetailResult">
         <result property="id"    column="id"    />
-        <result property="goodsCode"    column="goods_code"    />
+        <result property="khCode"    column="kh_code"    />
         <result property="wholeType"    column="whole_type"    />
         <result property="djNumber"    column="dj_number"    />
         <result property="djTime"    column="dj_time"    />
-        <result property="goodsName"    column="goods_name"    />
+        <result property="khName"    column="kh_name"    />
         <result property="status"    column="status"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -21,25 +21,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="djStatusName"    column="dj_status_name"    />
     </resultMap>
 
-    <sql id="selectWholeSalesVo">
-        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name  from whole_sales a
+    <sql id="selectWholeRetailVo">
+        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name  from whole_retail a
     </sql>
 
-    <sql id="selectWholeSalesVoByRole">
-        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name from whole_sales a
+    <sql id="selectWholeRetailVoByRole">
+        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name from whole_retail a
          join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
 
-    <select id="selectWholeSalesList" parameterType="WholeSales" resultMap="WholeSalesResult">
-        <include refid="selectWholeSalesVoByRole"/>
+    <select id="selectWholeRetailList" parameterType="WholeRetail" resultMap="WholeRetailResult">
+        <include refid="selectWholeRetailVoByRole"/>
         <where>
             <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
-            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
             <if test="wholeType != null "> and whole_type = #{wholeType}</if>
             <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
             <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
-            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
             <if test="status != null "> and status = #{status}</if>
             <if test="from != null "> and `from` = #{from}</if>
             ${dataScope}
@@ -47,20 +47,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by a.create_time desc
     </select>
     
-    <select id="selectWholeSalesById" parameterType="String" resultMap="WholeSalesResult">
-        <include refid="selectWholeSalesVo"/>
+    <select id="selectWholeRetailById" parameterType="String" resultMap="WholeRetailResult">
+        <include refid="selectWholeRetailVo"/>
         where id = #{id}
     </select>
         
-    <insert id="insertWholeSales" parameterType="WholeSales">
-        insert into whole_sales
+    <insert id="insertWholeRetail" parameterType="WholeRetail">
+        insert into whole_retail
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">id,</if>
-            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="khCode != null  and khCode != ''">kh_code,</if>
             <if test="wholeType != null ">whole_type,</if>
             <if test="djNumber != null  and djNumber != ''">dj_number,</if>
             <if test="djTime != null  and djTime != ''">dj_time,</if>
-            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="khName != null  and khName != ''">kh_name,</if>
             <if test="status != null ">status,</if>
             <if test="createBy != null  and createBy != ''">create_by,</if>
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
@@ -71,11 +71,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">#{id},</if>
-            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="khCode != null  and khCode != ''">#{khCode},</if>
             <if test="wholeType != null ">#{wholeType},</if>
             <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
             <if test="djTime != null  and djTime != ''">#{djTime},</if>
-            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="khName != null  and khName != ''">#{khName},</if>
             <if test="status != null ">#{status},</if>
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
@@ -86,14 +86,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateWholeSales" parameterType="WholeSales">
-        update whole_sales
+    <update id="updateWholeRetail" parameterType="WholeRetail">
+        update whole_retail
         <trim prefix="SET" suffixOverrides=",">
-            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
             <if test="wholeType != null ">whole_type = #{wholeType},</if>
             <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
             <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
-            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
             <if test="status != null ">status = #{status},</if>
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
@@ -105,18 +105,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteWholeSalesById" parameterType="String">
-        delete from whole_sales where id = #{id}
+    <delete id="deleteWholeRetailById" parameterType="String">
+        delete from whole_retail where id = #{id}
     </delete>
 
-    <delete id="deleteWholeSalesByIds" parameterType="String">
-        delete from whole_sales where id in 
+    <delete id="deleteWholeRetailByIds" parameterType="String">
+        delete from whole_retail where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    <update id="updateWholeSalesStatus" parameterType="String">
-        update whole_sales set status='1'  where id in
+    <update id="updateWholeRetailStatus" parameterType="String">
+        update whole_retail set status='1'  where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

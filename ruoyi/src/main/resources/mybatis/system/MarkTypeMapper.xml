@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.MarkTypeMapper">
+    
+    <resultMap type="MarkType" id="MarkTypeResult">
+        <result property="markId"    column="mark_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="markTypeName"    column="mark_type_name"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectMarkTypeVo">
+        select mark_id, parent_id, mark_type_name, order_num, create_by, create_time, update_by, update_time, type from mark_type
+    </sql>
+
+    <select id="selectMarkTypeList" parameterType="MarkType" resultMap="MarkTypeResult">
+        <include refid="selectMarkTypeVo"/>
+        <where>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="markTypeName != null  and markTypeName != ''"> and mark_type_name like concat('%', #{markTypeName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectMarkTypeListWhere" parameterType="MarkType" resultMap="MarkTypeResult">
+        <include refid="selectMarkTypeVo"/>
+        <where>
+            <if test="markTypeName != null  and markTypeName != ''"> and mark_type_name like concat('%', #{markTypeName}, '%')</if>
+            <if test="markId != null and markId!=-1"> and mark_id != #{markId}</if>
+            <if test="id != null "> and mark_id = #{markId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMarkTypeById" parameterType="Integer" resultMap="MarkTypeResult">
+        <include refid="selectMarkTypeVo"/>
+        where mark_id = #{markId}
+    </select>
+
+    <select id="hasChildMarkTypeById" parameterType="int" resultType="int">
+		select count(1) from mark_type
+		where  mark_id = #{id}
+	</select>
+
+    <insert id="insertMarkType" parameterType="MarkType">
+        insert into mark_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="markId != null ">mark_id,</if>
+            <if test="parentId != null ">parent_id,</if>
+            <if test="markTypeName != null  and markTypeName != ''">mark_type_name,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="type != null ">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="markId != null ">#{markId},</if>
+            <if test="parentId != null ">#{parentId},</if>
+            <if test="markTypeName != null  and markTypeName != ''">#{markTypeName},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="type != null ">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMarkType" parameterType="MarkType">
+        update mark_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null ">parent_id = #{parentId},</if>
+            <if test="markTypeName != null  and markTypeName != ''">mark_type_name = #{markTypeName},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="type != null ">type = #{type},</if>
+        </trim>
+        where mark_id = #{markId}
+    </update>
+
+    <delete id="deleteMarkTypeById" parameterType="Integer">
+        delete from mark_type where mark_id = #{markId}
+    </delete>
+
+    <delete id="deleteMarkTypeByIds" parameterType="String">
+        delete from mark_type where mark_id in 
+        <foreach item="markId" collection="array" open="(" separator="," close=")">
+            #{markId}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -23,7 +23,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.page.TableDataInfo;
 
 /**
- * 批发销货一票通子表Controller
+ * 批发销货子表Controller
  * 
  * @author ruoyi
  * @date 2020-08-24
@@ -36,7 +36,7 @@ public class WholeSalesChildController extends BaseController
     private IWholeSalesChildService wholeSalesChildService;
 
     /**
-     * 查询批发销货一票通子表列表
+     * 查询批发销货子表列表
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSalesChild:list')")
     @GetMapping("/list")
@@ -54,10 +54,10 @@ public class WholeSalesChildController extends BaseController
         return getDataTable(list);
     }
     /**
-     * 导出批发销货一票通子表列表
+     * 导出批发销货子表列表
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSalesChild:export')")
-    @Log(title = "批发销货一票通子表", businessType = BusinessType.EXPORT)
+    @Log(title = "批发销货子表", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(WholeSalesChild wholeSalesChild)
     {
@@ -67,7 +67,7 @@ public class WholeSalesChildController extends BaseController
     }
 
     /**
-     * 获取批发销货一票通子表详细信息
+     * 获取批发销货子表详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSalesChild:query')")
     @GetMapping(value = "/{id}")
@@ -77,10 +77,10 @@ public class WholeSalesChildController extends BaseController
     }
 
     /**
-     * 新增批发销货一票通子表
+     * 新增批发销货子表
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSalesChild:add')")
-    @Log(title = "批发销货一票通子表", businessType = BusinessType.INSERT)
+    @Log(title = "批发销货子表", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody WholeSalesChild wholeSalesChild)
     {
@@ -88,10 +88,10 @@ public class WholeSalesChildController extends BaseController
     }
 
     /**
-     * 修改批发销货一票通子表
+     * 修改批发销货子表
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSalesChild:edit')")
-    @Log(title = "批发销货一票通子表", businessType = BusinessType.UPDATE)
+    @Log(title = "批发销货子表", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody WholeSalesChild wholeSalesChild)
     {
@@ -99,10 +99,10 @@ public class WholeSalesChildController extends BaseController
     }
 
     /**
-     * 删除批发销货一票通子表
+     * 删除批发销货子表
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSalesChild:remove')")
-    @Log(title = "批发销货一票通子表", businessType = BusinessType.DELETE)
+    @Log(title = "批发销货子表", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {

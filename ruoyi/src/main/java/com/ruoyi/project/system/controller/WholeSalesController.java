@@ -32,7 +32,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.page.TableDataInfo;
 
 /**
- * 批发批发销货单Controller
+ * 批发销货单Controller
  *
  * @author ruoyi
  * @date 2020-08-24
@@ -47,7 +47,7 @@ public class WholeSalesController extends BaseController
     private IWholeSalesChildService wholeSalesChildService;
 
     /**
-     * 查询批发批发销货单列表
+     * 查询批发销货单列表
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSales:list')")
     @GetMapping("/list")
@@ -66,10 +66,10 @@ public class WholeSalesController extends BaseController
     }
 
     /**
-     * 导出批发批发销货单列表
+     * 导出批发销货单列表
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSales:export')")
-    @Log(title = "批发批发销货单", businessType = BusinessType.EXPORT)
+    @Log(title = "批发销货单", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(WholeSales wholeSales)
     {
@@ -79,7 +79,7 @@ public class WholeSalesController extends BaseController
     }
 
     /**
-     * 获取批发批发销货单详细信息
+     * 获取批发销货单详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSales:query')")
     @GetMapping(value = "/{id}")
@@ -89,10 +89,10 @@ public class WholeSalesController extends BaseController
     }
 
     /**
-     * 新增批发批发销货单
+     * 新增批发销货单
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSales:add')")
-    @Log(title = "批发批发销货单", businessType = BusinessType.INSERT)
+    @Log(title = "批发销货单", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody WholeSales wholeSales)
     {
@@ -116,10 +116,10 @@ public class WholeSalesController extends BaseController
     }
 
     /**
-     * 修改批发批发销货单
+     * 修改批发销货单
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSales:edit')")
-    @Log(title = "批发批发销货单", businessType = BusinessType.UPDATE)
+    @Log(title = "批发销货单", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody WholeSales wholeSales)
     {
@@ -142,17 +142,17 @@ public class WholeSalesController extends BaseController
                 child.setId(StringUtils.getId());
                 child.setDjNumber(wholeSales.getDjNumber());
                 child.setCreateTime(DateUtils.getNowDate());
-                wholeSalesChildService.updateWholeSalesChild(child);
+                wholeSalesChildService.insertWholeSalesChild(child);
             }
         }
         return toAjax(wholeSalesService.updateWholeSales(wholeSales));
     }
 
     /**
-     * 删除批发批发销货单
+     * 删除批发销货单
      */
     @PreAuthorize("@ss.hasPermi('system:wholeSales:remove')")
-    @Log(title = "批发批发销货单", businessType = BusinessType.DELETE)
+    @Log(title = "批发销货单", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {
@@ -170,5 +170,15 @@ public class WholeSalesController extends BaseController
         }else{
             return  toAjaxByError("删除失败!");
         }
+    }
+    /**
+     * 单据生效
+     */
+    @PreAuthorize("@ss.hasPermi('system:wholeSales:effect')")
+    @Log(title = "批发销货单", businessType = BusinessType.UPDATE)
+    @DeleteMapping("/effect/{ids}")
+    public AjaxResult effect(@PathVariable String[] ids)
+    {
+        return toAjax(wholeSalesService.updateWholeSalesStatus(ids));
     }
 }

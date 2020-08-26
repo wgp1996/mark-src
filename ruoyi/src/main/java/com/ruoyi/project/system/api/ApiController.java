@@ -10,19 +10,21 @@ import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
+import com.ruoyi.framework.web.domain.server.Sys;
 import com.ruoyi.framework.web.page.TableDataInfo;
 import com.ruoyi.project.system.domain.*;
 import com.ruoyi.project.system.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * 进货单Controller
@@ -35,6 +37,10 @@ import java.util.List;
 @RequestMapping("/mark/api")
 public class ApiController extends BaseController
 {
+    @Autowired
+    private ISysUserService userService;
+    @Autowired
+    private IOwnerInfoService ownerInfoService;
     @Autowired
     private ISysDictDataService dictDataService;
     @Autowired
@@ -51,7 +57,18 @@ public class ApiController extends BaseController
     private ICgRkdChildService cgRkdChildService;
     @Autowired
     private ICgRkdService cgRkdService;
-
+    @Autowired
+    private IWholeSalesService wholeSalesService;
+    @Autowired
+    private IWholeSalesChildService wholeSalesChildService;
+    @Autowired
+    private IWholeRetailService wholeRetailService;
+    @Autowired
+    private IWholeRetailChildService wholeRetailChildService;
+    @Autowired
+    private IKhInfoService khInfoService;
+    @Autowired
+    private ISysRoleService roleService;
     /**
      * 摊位下拉列表
      */
@@ -124,7 +141,7 @@ public class ApiController extends BaseController
             for(GoodsInfo info:infoList){
                 HashMap map=new HashMap();
                 map.put("id",info.getGoodsCode());
-                map.put("pid",code);
+                map.put("pid",info.getGoodsType());
                 map.put("text",info.getGoodsName());
                 map.put("type",1);//1 代表商品
                 maps.add(map);
@@ -205,7 +222,295 @@ public class ApiController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * APP查询客户建档列表
+     */
+    @ApiOperation("APP客户档案")
+    @GetMapping("/appKhList/{createBy}")
+    public TableDataInfo appKhList(@PathVariable String createBy)
+    {
+        KhInfo khInfo=new KhInfo();
+        khInfo.setCreateBy(createBy);
+        List<KhInfo> list = khInfoService.selectKhInfoList(khInfo);
+        return getDataTable(list);
+    }
+
     /*APP接口功能*/
+
+    /**
+     * 查询销货单列表
+     */
+    @ApiOperation("APP销货单列表")
+    @GetMapping("/appWholeSalesList/{createBy}")
+    public TableDataInfo appWholeSalesList(@PathVariable String createBy)
+    {
+        WholeSales sales=new WholeSales();
+        sales.setCreateBy(createBy);
+        List<WholeSales> list = wholeSalesService.selectWholeSalesList(sales);
+        return getDataTable(list);
+    }
+
+    /**
+     * 条件查询销货单列表
+     */
+    @ApiOperation("APP销货单列表条件查询")
+    @GetMapping("/appWholeSalesListByWhere/{createBy}/{dateType}/{date}/{goodsName}/{khName}")
+    public TableDataInfo appWholeSalesListByWhere(@PathVariable String createBy,@PathVariable Integer dateType,@PathVariable String date,@PathVariable String goodsName,@PathVariable String khName)
+    {
+        List<WholeSalesChild> list = wholeSalesChildService.selectWholeSalesChildListByWhere(createBy,dateType,date,goodsName,khName);
+        return getDataTable(list);
+    }
+
+    /**
+     * 获取销货单详细信息
+     */
+    @ApiOperation("APP销货单单个明细")
+    @GetMapping(value = "appWholeSalesInfo/{id}")
+    public AjaxResult appWholeSalesInfo(@PathVariable("id") String id)
+    {
+        WholeSales info=wholeSalesService.selectWholeSalesById(id);
+        if(info!=null){
+            WholeSalesChild child=new WholeSalesChild();
+            child.setDjNumber(info.getDjNumber());
+            info.setChildrenList(wholeSalesChildService.selectWholeSalesChildList(child));
+        }
+        return AjaxResult.success(info);
+    }
+
+    /**
+     * APP新增销货单
+     */
+    @ApiOperation("APP销货单新增")
+    @Log(title = "APP销货单新增", businessType = BusinessType.INSERT)
+    @PostMapping("/appWholeSalesAdd")
+    public AjaxResult appWholeSalesAdd(WholeSales wholeSales)
+    {
+        if(wholeSales.getRows()==""){
+            return  toAjaxByError("明细信息不能为空!");
+        }
+        wholeSales.setDjNumber(StringUtils.getRandomCode("LXH"));
+        wholeSales.setStatus(0);
+        wholeSales.setFrom(1);//app
+        wholeSales.setId(StringUtils.getId());
+        List<WholeSalesChild> childList= JSONArray.parseArray(wholeSales.getRows(),WholeSalesChild.class);
+        for(WholeSalesChild child:childList){
+            child.setCreateBy(wholeSales.getCreateBy());
+            child.setId(StringUtils.getId());
+            child.setDjNumber(wholeSales.getDjNumber());
+            child.setCreateTime(DateUtils.getNowDate());
+            wholeSalesChildService.insertWholeSalesChild(child);
+        }
+        return toAjax(wholeSalesService.insertWholeSales(wholeSales));
+    }
+
+    /**
+     * APP修改销货单
+     */
+    @ApiOperation("APP销货单修改")
+    @Log(title = "APP销货单修改", businessType = BusinessType.INSERT)
+    @PostMapping("/appWholeSalesEdit")
+    public AjaxResult appWholeSalesEdit(WholeSales wholeSales)
+    {
+        //检查是否为已生效的单据
+        if(wholeSales.getStatus()==1){
+            return  toAjaxByError("该状态禁止修改!");
+        }
+        if(wholeSales.getRows()==""){
+            return  toAjaxByError("明细信息不能为空!");
+        }
+        List<WholeSalesChild> childList= JSONArray.parseArray(wholeSales.getRows(),WholeSalesChild.class);
+        for(WholeSalesChild child:childList){
+            if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
+                child.setCreateBy(wholeSales.getCreateBy());
+                child.setDjNumber(wholeSales.getDjNumber());
+                wholeSalesChildService.updateWholeSalesChild(child);
+            }else{
+                child.setCreateBy(wholeSales.getCreateBy());
+                child.setId(StringUtils.getId());
+                child.setDjNumber(wholeSales.getDjNumber());
+                child.setCreateTime(DateUtils.getNowDate());
+                wholeSalesChildService.insertWholeSalesChild(child);
+            }
+        }
+        return toAjax(wholeSalesService.updateWholeSales(wholeSales));
+    }
+
+    /**
+     * 删除批发销货单
+     */
+    @ApiOperation("APP销货单删除")
+    @Log(title = "APP销货单删除", businessType = BusinessType.DELETE)
+    @DeleteMapping("/appWholeSalesRemove/{ids}")
+    public AjaxResult appWholeSalesRemove(@PathVariable String[] ids)
+    {
+        for(int i=0;i<ids.length;i++){
+            WholeSales info = wholeSalesService.selectWholeSalesById(ids[i]);
+            if(info.getStatus()!=0){
+                return toAjaxByError(info.getDjNumber()+"：该单据状态禁止删除!");
+            }
+        }
+        //删除子表信息
+        int result=wholeSalesChildService.deleteWholeSalesChildByPid(ids);
+        if(result>0){
+            wholeSalesService.deleteWholeSalesByIds(ids);
+            return toAjaxBySuccess("删除成功!");
+        }else{
+            return  toAjaxByError("删除失败!");
+        }
+    }
+
+    /**
+     * 删除批发销货单明细
+     */
+    @ApiOperation("APP销货单明细删除")
+    @Log(title = "APP销货单明细删除", businessType = BusinessType.DELETE)
+    @DeleteMapping("/appWholeSalesChildRemove/{ids}")
+    public AjaxResult appWholeSalesChildRemove(@PathVariable String[] ids)
+    {
+        //删除子表信息
+        int result=wholeSalesChildService.deleteWholeSalesChildByIds(ids);
+        if(result>0){
+            return toAjaxBySuccess("删除成功!");
+        }else{
+            return  toAjaxByError("删除失败!");
+        }
+    }
+
+    /**
+     * 查询销售单列表
+     */
+    @ApiOperation("APP销售单列表")
+    @GetMapping("/appWholeRetailList/{createBy}")
+    public TableDataInfo appWholeRetailList(@PathVariable String createBy)
+    {
+        WholeRetail sales=new WholeRetail();
+        sales.setCreateBy(createBy);
+        List<WholeRetail> list = wholeRetailService.selectWholeRetailList(sales);
+        return getDataTable(list);
+    }
+    /**
+     * 条件查询销售单列表
+     */
+    @ApiOperation("APP销售单列表条件查询")
+    @GetMapping("/appWholeRetailListByWhere/{createBy}/{dateType}/{date}/{goodsName}/{khName}")
+    public TableDataInfo appWholeRetailListByWhere(@PathVariable String createBy,@PathVariable Integer dateType,@PathVariable String date,@PathVariable String goodsName,@PathVariable String khName)
+    {
+        List<WholeRetailChild> list = wholeRetailChildService.selectWholeRetailChildListByWhere(createBy,dateType,date,goodsName,khName);
+        return getDataTable(list);
+    }
+    /**
+     * 获取销售单详细信息
+     */
+    @ApiOperation("APP销售单单个明细")
+    @GetMapping(value = "appWholeRetailInfo/{id}")
+    public AjaxResult appWholeRetailInfo(@PathVariable("id") String id)
+    {
+        WholeRetail info=wholeRetailService.selectWholeRetailById(id);
+        if(info!=null) {
+            WholeRetailChild child = new WholeRetailChild();
+            child.setDjNumber(info.getDjNumber());
+            info.setChildrenList(wholeRetailChildService.selectWholeRetailChildList(child));
+        }
+        return AjaxResult.success(info);
+    }
+
+    /**
+     * APP新增销售单
+     */
+    @ApiOperation("APP销售单新增")
+    @Log(title = "APP新增销售单", businessType = BusinessType.INSERT)
+    @PostMapping("/appWholeRetailAdd")
+    public AjaxResult appWholeRetailAdd(WholeRetail wholeRetail)
+    {
+        if(wholeRetail.getRows()==""){
+            return  toAjaxByError("明细信息不能为空!");
+        }
+        wholeRetail.setDjNumber(StringUtils.getRandomCode("LSH"));
+        wholeRetail.setStatus(0);
+        wholeRetail.setFrom(1);//web
+        wholeRetail.setId(StringUtils.getId());
+        List<WholeRetailChild> childList= JSONArray.parseArray(wholeRetail.getRows(),WholeRetailChild.class);
+        for(WholeRetailChild child:childList){
+            child.setCreateBy(wholeRetail.getCreateBy());
+            child.setId(StringUtils.getId());
+            child.setDjNumber(wholeRetail.getDjNumber());
+            child.setCreateTime(DateUtils.getNowDate());
+            wholeRetailChildService.insertWholeRetailChild(child);
+        }
+        return toAjax(wholeRetailService.insertWholeRetail(wholeRetail));
+    }
+
+    /**
+     * APP修改销售单
+     */
+    @ApiOperation("APP销售单修改")
+    @Log(title = "APP修改销售单", businessType = BusinessType.INSERT)
+    @PostMapping("/appWholeRetailEdit")
+    public AjaxResult appWholeRetailEdit(WholeRetail wholeRetail)
+    {
+        //检查是否为已生效的单据
+        if(wholeRetail.getStatus()==1){
+            return  toAjaxByError("该状态禁止修改!");
+        }
+        if(wholeRetail.getRows()==""){
+            return  toAjaxByError("明细信息不能为空!");
+        }
+        List<WholeRetailChild> childList= JSONArray.parseArray(wholeRetail.getRows(),WholeRetailChild.class);
+        for(WholeRetailChild child:childList){
+            if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
+                child.setCreateBy(wholeRetail.getCreateBy());
+                child.setDjNumber(wholeRetail.getDjNumber());
+                wholeRetailChildService.updateWholeRetailChild(child);
+            }else{
+                child.setCreateBy(wholeRetail.getCreateBy());
+                child.setId(StringUtils.getId());
+                child.setDjNumber(wholeRetail.getDjNumber());
+                child.setCreateTime(DateUtils.getNowDate());
+                wholeRetailChildService.insertWholeRetailChild(child);
+            }
+        }
+        return toAjax(wholeRetailService.updateWholeRetail(wholeRetail));
+    }
+    /**
+     * 删除零售销货单
+     */
+    @ApiOperation("删除APP零售单")
+    @Log(title = "APP零售单删除", businessType = BusinessType.DELETE)
+    @DeleteMapping("/appWholeRetailRemove/{ids}")
+    public AjaxResult appWholeRetailRemove(@PathVariable String[] ids)
+    {
+        for(int i=0;i<ids.length;i++){
+            WholeRetail info = wholeRetailService.selectWholeRetailById(ids[i]);
+            if(info.getStatus()!=0){
+                return toAjaxByError(info.getDjNumber()+"：该单据状态禁止删除!");
+            }
+        }
+        //删除子表信息
+        int result=wholeRetailChildService.deleteWholeRetailChildByPid(ids);
+        if(result>0){
+            wholeRetailService.deleteWholeRetailByIds(ids);
+            return toAjaxBySuccess("删除成功!");
+        }else{
+            return  toAjaxByError("删除失败!");
+        }
+    }
+
+    /**
+     * 删除零售销货单明细
+     */
+    @ApiOperation("删除APP零售单明细")
+    @Log(title = "APP零售单删除明细", businessType = BusinessType.DELETE)
+    @DeleteMapping("/appWholeRetailChildRemove/{ids}")
+    public AjaxResult appWholeRetailChildRemove(@PathVariable String[] ids)
+    {
+        //删除子表信息
+        int result=wholeRetailChildService.deleteWholeRetailChildByIds(ids);
+        if(result>0){
+            return toAjaxBySuccess("删除成功!");
+        }else{
+            return  toAjaxByError("删除失败!");
+        }
+    }
     /**
      * 查询进货单列表
      */
@@ -334,6 +639,23 @@ public class ApiController extends BaseController
     }
 
     /**
+     * 删除进货单明细
+     */
+    @ApiOperation("APP进货单明细删除")
+    @Log(title = "APP进货单明细删除", businessType = BusinessType.DELETE)
+    @DeleteMapping("rkdChildRemove/{ids}")
+    public AjaxResult rkdChildRemove(@PathVariable String[] ids)
+    {
+        //删除子表信息
+        int result=cgRkdChildService.deleteCgRkdChildByIds(ids);
+        if(result>0){
+            return toAjaxBySuccess("删除成功!");
+        }else{
+            return  toAjaxByError("删除失败!");
+        }
+    }
+
+    /**
      * 根据字典类型查询字典数据信息
      */
     @ApiOperation("APP字典档案")
@@ -341,5 +663,77 @@ public class ApiController extends BaseController
     public AjaxResult dictType(@PathVariable String dictType)
     {
         return AjaxResult.success(dictDataService.selectDictDataByType(dictType));
+    }
+
+    /**
+     * 导入功能测试
+     */
+    @ApiOperation("导入测试")
+    @GetMapping(value = "/importOwner")
+    public AjaxResult importOwner()
+    {
+        System.out.println("1!");
+        Workbook wb =null;
+        Sheet sheet = null;
+        Row row = null;
+        String cellData = null;
+        String filePath = "D:\\test.xlsx";
+        wb = ExcelUtil.readExcel(filePath);
+        if(wb != null){
+            System.out.println("2!");
+            //获取第一个sheet
+            sheet = wb.getSheetAt(0);
+            //获取最大行数
+            int rownum = sheet.getPhysicalNumberOfRows();
+            //获取第一行
+            row = sheet.getRow(0);
+            //获取最大列数
+            int colnum = row.getPhysicalNumberOfCells();
+            for (int i = 2; i<rownum; i++) {
+                System.out.println(i);
+                Map<String,String> map = new LinkedHashMap<String,String>();
+                row = sheet.getRow(i);
+                if(row !=null){
+
+                    String code=(String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString();
+                    if(code==""||"".equals(code)){
+                        break;
+                    }
+                    OwnerInfo info = ownerInfoService.selectOwnerInfoByCode(code.substring(0,code.indexOf(".")), "");
+                    if (info != null) {
+                        continue;
+                    }
+                    OwnerInfo ownerInfo=new OwnerInfo();
+                    ownerInfo.setCreateBy("admin");
+                    ownerInfo.setId(StringUtils.getId());
+                    ownerInfo.setOwnerCode(code.substring(0,code.indexOf(".")));
+                    ownerInfo.setUserName(code.substring(0,code.indexOf(".")));
+                    ownerInfo.setOwnerName((String)ExcelUtil.getCellFormatValue(row.getCell(3)));
+                    ownerInfo.setOwnerPersonId((String)ExcelUtil.getCellFormatValue(row.getCell(4)));
+                    ownerInfo.setOwnerLxr((String)ExcelUtil.getCellFormatValue(row.getCell(5)));
+                    ownerInfo.setOwnerLxrPhone((String)ExcelUtil.getCellFormatValue(row.getCell(6)));
+                    ownerInfo.setCreateTime(DateUtils.getNowDate());
+                    System.out.println(ownerInfo.getId());
+                    int result=ownerInfoService.insertOwnerInfo(ownerInfo);
+
+                    //添加默认帐号
+                    SysUser user=new SysUser();
+                    Long[] roleIds=new Long[1];
+                    roleIds[0]=3L;
+                    user.setDeptId(104L);
+                    user.setRoleIds(roleIds);
+                    user.setUserName(code.substring(0,code.indexOf(".")));
+                    user.setPassword(SecurityUtils.encryptPassword("123"));
+                    user.setPhonenumber((String)ExcelUtil.getCellFormatValue(row.getCell(6)));
+                    user.setNickName((String)ExcelUtil.getCellFormatValue(row.getCell(3)));
+                    user.setCreateBy("admin");
+                    userService.insertUser(user);
+                }else{
+                    break;
+                }
+            }
+        }
+        System.out.println("导入完成!");
+        return AjaxResult.success("导入成功");
     }
 }

@@ -109,7 +109,7 @@ public class GoodsTypeController extends BaseController
             return toAjaxByError("该分类已存在");
         }
         if(goodsType.getGoodsTypeId()==goodsType.getGoodsTypePid()){
-            return toAjaxByError("上级部门不能是自己");
+            return toAjaxByError("上级分类不能是自己");
         }
         goodsType.setUpdateBy(SecurityUtils.getUsername());
         return toAjax(goodsTypeService.updateGoodsType(goodsType));
@@ -125,7 +125,7 @@ public class GoodsTypeController extends BaseController
     {
         if (goodsTypeService.hasChildGoodsTypeById(goodsTypeIds[0])>0)
         {
-            return AjaxResult.error("存在下级部门,不允许删除");
+            return AjaxResult.error("存在下级分类,不允许删除");
         }
         return toAjax(goodsTypeService.deleteGoodsTypeByIds(goodsTypeIds));
     }

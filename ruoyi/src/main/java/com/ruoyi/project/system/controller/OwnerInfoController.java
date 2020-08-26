@@ -1,6 +1,9 @@
 package com.ruoyi.project.system.controller;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
@@ -11,6 +14,9 @@ import com.ruoyi.project.system.domain.StallInfo;
 import com.ruoyi.project.system.service.ILeaseContractPoolService;
 import com.ruoyi.project.system.service.ILeaseContractSalesService;
 import com.ruoyi.project.system.service.ILeaseContractService;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -127,6 +133,7 @@ public class OwnerInfoController extends BaseController {
             //查询分配的帐号是否存在
             OwnerInfo info=new OwnerInfo();
             info.setUserName(ownerInfo.getUserName());
+            info.setId(ownerInfo.getId());
             List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(info);
             if(list!=null&&list.size()>0){
                 return  toAjaxByError("该账户已被关联!");
@@ -155,6 +162,11 @@ public class OwnerInfoController extends BaseController {
 //        if(LeaseContractList!=null&&LeaseContractList.size()>0){
 //            return toAjaxByError("该业户在系统中存在销售合同");
 //        }
+
         return toAjax(ownerInfoService.deleteOwnerInfoByIds(ids));
+    }
+
+    public static void main(String[] args) {
+
     }
 }

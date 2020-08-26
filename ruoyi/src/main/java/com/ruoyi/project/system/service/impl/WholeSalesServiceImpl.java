@@ -93,4 +93,14 @@ public class WholeSalesServiceImpl implements IWholeSalesService
     {
         return wholeSalesMapper.deleteWholeSalesById(id);
     }
+    /**
+     * 批量生效单据
+     *
+     * @param ids 需要生效的单据ID
+     * @return 结果
+     */
+    @Override
+    public int updateWholeSalesStatus(String[] ids){
+        return wholeSalesMapper.updateWholeSalesStatus(ids);
+    }
 }
