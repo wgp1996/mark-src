@@ -56,10 +56,23 @@ public class LeaseContract extends BaseEntity
      * 子表json字符串
      */
     private String rows;
+    /**
+     * 附件字符串
+     */
+    private String fileRows;
+
     /*
        合同子表
      */
     private List<LeaseContractChild> childrenList;
+
+    public void setFileRows(String fileRows) {
+        this.fileRows = fileRows;
+    }
+
+    public String getFileRows() {
+        return fileRows;
+    }
 
     public String getContractStatus() {
         return contractStatus;

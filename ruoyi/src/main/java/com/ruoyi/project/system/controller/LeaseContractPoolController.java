@@ -34,6 +34,8 @@ public class LeaseContractPoolController extends BaseController {
     private ILeaseContractPoolService leaseContractService;
     @Autowired
     private IStallInfoService stallInfoService;
+    @Autowired
+    private ISysFileService sysFileService;
     /**
      * 查询联营合同列表
      */
@@ -94,6 +96,15 @@ public class LeaseContractPoolController extends BaseController {
         if (leaseContract.getRows() == "") {
             return toAjaxByError("明细信息不能为空!");
         }
+        //附件列表
+        List<SysFile> fileList= JSONArray.parseArray(leaseContract.getFileRows(),SysFile.class);
+        for(SysFile child:fileList){
+            child.setCreateBy(SecurityUtils.getUsername());
+            child.setId(StringUtils.getId());
+            child.setDjNumber(leaseContract.getContractCode());
+            child.setCreateTime(DateUtils.getNowDate());
+            sysFileService.insertSysFile(child);
+        }
         List<LeaseContractChildPool> childList = JSONArray.parseArray(leaseContract.getRows(), LeaseContractChildPool.class);
         for (LeaseContractChildPool child : childList) {
             //修改摊位信息
@@ -140,6 +151,22 @@ public class LeaseContractPoolController extends BaseController {
         if (leaseContract.getRows() == "") {
             return toAjaxByError("明细信息不能为空!");
         }
+        //附件列表
+        List<SysFile> fileList= JSONArray.parseArray(leaseContract.getFileRows(),SysFile.class);
+        for(SysFile child:fileList){
+            if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
+                /*child.setUpdateBy(SecurityUtils.getUsername());
+                child.setDjNumber(leaseContract.getContractCode());
+                child.setUpdateTime(DateUtils.getNowDate());
+                sysFileService.updateSysFile(child);*/
+            }else{
+                child.setCreateBy(SecurityUtils.getUsername());
+                child.setId(StringUtils.getId());
+                child.setDjNumber(leaseContract.getContractCode());
+                child.setCreateTime(DateUtils.getNowDate());
+                sysFileService.insertSysFile(child);
+            }
+        }
         List<LeaseContractChildPool> childList = JSONArray.parseArray(leaseContract.getRows(), LeaseContractChildPool.class);
         for (LeaseContractChildPool child : childList) {
             if (child.getId() != "" && child.getId() != null && !"".equals(child.getId())) {
@@ -174,12 +201,16 @@ public class LeaseContractPoolController extends BaseController {
     @Log(title = "联营合同", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
+        String nums[]=new String[ids.length];
         for(int i=0;i<ids.length;i++){
             LeaseContractPool info = leaseContractService.selectLeaseContractById(ids[i]);
             if(!"正操作".equals(info.getContractStatus())){
                 return toAjaxByError(info.getContractName()+"：该合同状态禁止删除!");
             }
+            nums[i]=info.getContractCode();
         }
+        //删除附件信息
+        sysFileService.deleteSysFileNums(nums);
         //删除子表信息
         leaseContractChildService.deleteLeaseContractChildPid(ids);
         //删除主表信息

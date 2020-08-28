@@ -27,10 +27,12 @@
         <result property="fileName2" column="file_name2"/>
         <result property="fileTitle2" column="file_title2"/>
         <result property="userName" column="user_name"/>
+        <result property="markType" column="mark_type"/>
+        <result property="markTypeName" column="mark_type_name"/>
     </resultMap>
 
     <sql id="selectOwnerInfoVo">
-        select a.* from owner_info a
+        select a.*,(select mark_type_name from mark_type where mark_id=a.mark_type) as mark_type_name  from owner_info a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
@@ -98,6 +100,7 @@
             <if test="fileName2 != null  and fileName2 != ''">file_name2,</if>
             <if test="fileTitle2 != null  and fileTitle2 != ''">file_title2,</if>
             <if test="userName != null  and userName != ''">user_name,</if>
+            <if test="markType != null  and markType != ''">mark_type,</if>
             create_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -122,6 +125,7 @@
             <if test="fileName2 != null  and fileName2 != ''">#{fileName2},</if>
             <if test="fileTitle2 != null  and fileTitle2 != ''">#{fileTitle2},</if>
             <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="markType != null  and markType != ''">#{markType},</if>
             sysdate()
         </trim>
     </insert>
@@ -149,6 +153,7 @@
             <if test="fileName2 != null  and fileName2 != ''">file_name2 = #{fileName2},</if>
             <if test="fileTitle2 != null  and fileTitle2 != ''">file_title2 = #{fileTitle2},</if>
             <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="markType != null  and markType != ''">mark_type = #{markType},</if>
             update_time = sysdate()
         </trim>
         where id = #{id}

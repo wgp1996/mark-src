@@ -89,6 +89,19 @@ public class LeaseContractPool extends BaseEntity {
     @Excel(name = "合同状态")
     private String contractStatus;
 
+    /**
+     * 附件字符串
+     */
+    private String fileRows;
+
+    public String getFileRows() {
+        return fileRows;
+    }
+
+    public void setFileRows(String fileRows) {
+        this.fileRows = fileRows;
+    }
+
     public String getContractStatus() {
         return contractStatus;
     }

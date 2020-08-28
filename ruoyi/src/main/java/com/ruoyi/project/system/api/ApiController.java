@@ -175,9 +175,18 @@ public class ApiController extends BaseController
         GoodsInfoOwner info=goodsInfoOwnerService.selectGoodsInfoOwnerByName(-1,goodsInfoOwner.getGoodsName(),goodsInfoOwner.getCreateBy());
         if(info!=null) {
             return  toAjaxByError("该商品在内库档案中已存在");
-        }else{
+        }else {
             goodsInfoOwner.setGoodsCode(StringUtils.getRandomCode("SP"));
-            return toAjax(goodsInfoOwnerService.insertGoodsInfoOwner(goodsInfoOwner));
+            int result = goodsInfoOwnerService.insertGoodsInfoOwner(goodsInfoOwner);
+            if (result > 0) {
+                AjaxResult ajaxResult = new AjaxResult();
+                ajaxResult.put("msg", "操作成功!");
+                ajaxResult.put("code", 200);
+                ajaxResult.put("data", goodsInfoOwner);
+                return ajaxResult;
+            } else{
+                return toAjaxByError("操作失败!");
+            }
         }
     }
 
@@ -203,7 +212,7 @@ public class ApiController extends BaseController
      */
     @ApiOperation("内库商品删除")
     @Log(title = "APP业户商品建档", businessType = BusinessType.DELETE)
-    @DeleteMapping("appGoodsRemove/{ids}")
+    @GetMapping("appGoodsRemove/{ids}")
     public AjaxResult appGoodsRemove(@PathVariable Integer[] ids)
     {
         return toAjax(goodsInfoOwnerService.deleteGoodsInfoOwnerByIds(ids));
@@ -340,7 +349,7 @@ public class ApiController extends BaseController
      */
     @ApiOperation("APP销货单删除")
     @Log(title = "APP销货单删除", businessType = BusinessType.DELETE)
-    @DeleteMapping("/appWholeSalesRemove/{ids}")
+    @GetMapping("/appWholeSalesRemove/{ids}")
     public AjaxResult appWholeSalesRemove(@PathVariable String[] ids)
     {
         for(int i=0;i<ids.length;i++){
@@ -364,7 +373,7 @@ public class ApiController extends BaseController
      */
     @ApiOperation("APP销货单明细删除")
     @Log(title = "APP销货单明细删除", businessType = BusinessType.DELETE)
-    @DeleteMapping("/appWholeSalesChildRemove/{ids}")
+    @GetMapping("/appWholeSalesChildRemove/{ids}")
     public AjaxResult appWholeSalesChildRemove(@PathVariable String[] ids)
     {
         //删除子表信息
@@ -476,7 +485,7 @@ public class ApiController extends BaseController
      */
     @ApiOperation("删除APP零售单")
     @Log(title = "APP零售单删除", businessType = BusinessType.DELETE)
-    @DeleteMapping("/appWholeRetailRemove/{ids}")
+    @GetMapping("/appWholeRetailRemove/{ids}")
     public AjaxResult appWholeRetailRemove(@PathVariable String[] ids)
     {
         for(int i=0;i<ids.length;i++){
@@ -500,7 +509,7 @@ public class ApiController extends BaseController
      */
     @ApiOperation("删除APP零售单明细")
     @Log(title = "APP零售单删除明细", businessType = BusinessType.DELETE)
-    @DeleteMapping("/appWholeRetailChildRemove/{ids}")
+    @GetMapping("/appWholeRetailChildRemove/{ids}")
     public AjaxResult appWholeRetailChildRemove(@PathVariable String[] ids)
     {
         //删除子表信息
@@ -619,7 +628,7 @@ public class ApiController extends BaseController
      */
     @ApiOperation("APP进货单删除")
     @Log(title = "进货单", businessType = BusinessType.DELETE)
-    @DeleteMapping("appRkdRemove/{ids}")
+    @GetMapping("appRkdRemove/{ids}")
     public AjaxResult rkdRemove(@PathVariable String[] ids)
     {
         for(int i=0;i<ids.length;i++){
@@ -643,7 +652,7 @@ public class ApiController extends BaseController
      */
     @ApiOperation("APP进货单明细删除")
     @Log(title = "APP进货单明细删除", businessType = BusinessType.DELETE)
-    @DeleteMapping("rkdChildRemove/{ids}")
+    @GetMapping("rkdChildRemove/{ids}")
     public AjaxResult rkdChildRemove(@PathVariable String[] ids)
     {
         //删除子表信息

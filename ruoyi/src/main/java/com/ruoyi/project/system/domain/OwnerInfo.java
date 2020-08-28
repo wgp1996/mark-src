@@ -115,6 +115,27 @@ public class OwnerInfo extends BaseEntity {
     @Excel(name = "标题")
     private String fileTitle2;
 
+    private String markType;
+
+    @Excel(name = "所属市场")
+    private String markTypeName;
+
+    public String getMarkType() {
+        return markType;
+    }
+
+    public void setMarkType(String markType) {
+        this.markType = markType;
+    }
+
+    public String getMarkTypeName() {
+        return markTypeName;
+    }
+
+    public void setMarkTypeName(String markTypeName) {
+        this.markTypeName = markTypeName;
+    }
+
     public String getUserName() {
         return userName;
     }

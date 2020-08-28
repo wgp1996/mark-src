@@ -9,8 +9,10 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.project.system.domain.LeaseContractChild;
 import com.ruoyi.project.system.domain.StallInfo;
+import com.ruoyi.project.system.domain.SysFile;
 import com.ruoyi.project.system.service.ILeaseContractChildService;
 import com.ruoyi.project.system.service.IStallInfoService;
+import com.ruoyi.project.system.service.ISysFileService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,7 +49,8 @@ public class LeaseContractController extends BaseController
 
     @Autowired
     private IStallInfoService stallInfoService;
-
+    @Autowired
+    private ISysFileService sysFileService;
     /**
      * 查询租赁合同列表
      */
@@ -109,6 +112,16 @@ public class LeaseContractController extends BaseController
         if(leaseContract.getRows()==""){
             return  toAjaxByError("明细信息不能为空!");
         }
+        //附件列表
+        List<SysFile> fileList= JSONArray.parseArray(leaseContract.getFileRows(),SysFile.class);
+        for(SysFile child:fileList){
+            child.setCreateBy(SecurityUtils.getUsername());
+            child.setId(StringUtils.getId());
+            child.setDjNumber(leaseContract.getContractCode());
+            child.setCreateTime(DateUtils.getNowDate());
+            sysFileService.insertSysFile(child);
+        }
+
         List<LeaseContractChild> childList= JSONArray.parseArray(leaseContract.getRows(),LeaseContractChild.class);
         for(LeaseContractChild child:childList){
             //修改摊位信息
@@ -157,6 +170,22 @@ public class LeaseContractController extends BaseController
         if(leaseContract.getRows()==""){
             return  toAjaxByError("明细信息不能为空!");
         }
+        //附件列表
+        List<SysFile> fileList= JSONArray.parseArray(leaseContract.getFileRows(),SysFile.class);
+        for(SysFile child:fileList){
+            if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
+                /*child.setUpdateBy(SecurityUtils.getUsername());
+                child.setDjNumber(leaseContract.getContractCode());
+                child.setUpdateTime(DateUtils.getNowDate());
+                sysFileService.updateSysFile(child);*/
+            }else{
+                child.setCreateBy(SecurityUtils.getUsername());
+                child.setId(StringUtils.getId());
+                child.setDjNumber(leaseContract.getContractCode());
+                child.setCreateTime(DateUtils.getNowDate());
+                sysFileService.insertSysFile(child);
+            }
+        }
         List<LeaseContractChild> childList= JSONArray.parseArray(leaseContract.getRows(),LeaseContractChild.class);
         for(LeaseContractChild child:childList){
             //修改摊位信息
@@ -168,7 +197,6 @@ public class LeaseContractController extends BaseController
             stallInfo.setStallMoney(child.getRentMoney());//租金
             stallInfo.setStallLeaseholder(leaseContract.getOwnerName());//租赁方
             stallInfoService.updateStallInfoByCode(stallInfo);*/
-
             if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
                 child.setCreateBy(SecurityUtils.getUsername());
                 child.setContractCode(leaseContract.getContractCode());
@@ -221,12 +249,16 @@ public class LeaseContractController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {
+        String nums[]=new String[ids.length];
         for(int i=0;i<ids.length;i++){
             LeaseContract info = leaseContractService.selectLeaseContractById(ids[i]);
             if(!"正操作".equals(info.getContractStatus())){
                 return toAjaxByError(info.getContractName()+"：该合同状态禁止删除!");
             }
+            nums[i]=info.getContractCode();
         }
+        //删除附件信息
+        sysFileService.deleteSysFileNums(nums);
         //删除子表信息
         leaseContractChildService.deleteLeaseContractChildPid(ids);
         //删除主表信息
