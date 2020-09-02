@@ -95,6 +95,15 @@ public class SysUser extends BaseEntity
     {
 
     }
+    private String ownerNum;
+
+    public String getOwnerNum() {
+        return ownerNum;
+    }
+
+    public void setOwnerNum(String ownerNum) {
+        this.ownerNum = ownerNum;
+    }
 
     public SysUser(Long userId)
     {
@@ -321,6 +330,7 @@ public class SysUser extends BaseEntity
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
             .append("dept", getDept())
+            .append("ownerNum", getOwnerNum())
             .toString();
     }
 }

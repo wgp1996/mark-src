@@ -20,6 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="goodsName"    column="goods_name"    />
         <result property="status"    column="status"    />
+        <result property="wholeSum"    column="whole_sum"    />
     </resultMap>
 
     <sql id="selectWholeSalesChildVo">
@@ -41,7 +42,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectWholeSalesChildListByWhere" resultMap="WholeSalesChildResult">
-        select a.*,b.goods_name,b.status from whole_sales_child a join whole_sales b on a.dj_number=b.dj_number
+        select a.*,b.goods_name,b.status,sum(a.whole_num) as whole_sum from whole_sales_child a join whole_sales b on a.dj_number=b.dj_number
         <where>
             <if test="date != null and date != '' and date!='-1'">
                 and b.create_time &lt;= #{date}

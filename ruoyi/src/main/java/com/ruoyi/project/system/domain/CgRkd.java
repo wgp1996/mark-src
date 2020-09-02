@@ -46,6 +46,16 @@ public class CgRkd extends BaseEntity
     private String rows;
     private String djStatusName;
 
+    private String sumNum;
+
+    public String getSumNum() {
+        return sumNum;
+    }
+
+    public void setSumNum(String sumNum) {
+        this.sumNum = sumNum;
+    }
+
     public String getDjStatusName() {
         return djStatusName;
     }

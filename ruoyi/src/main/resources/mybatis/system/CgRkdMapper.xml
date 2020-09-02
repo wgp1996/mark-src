@@ -18,6 +18,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="fileName"    column="file_name"    />
         <result property="djStatusName"    column="dj_status_name"    />
+        <result property="sumNum"    column="sum_num"    />
+
     </resultMap>
 
     <sql id="selectCgRkdVo">
@@ -25,7 +27,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="selectCgRkdVoByRole">
-        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name from cg_rkd a
+        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name,
+        (select sum(goods_num) from cg_rkd_child where dj_number=a.dj_number) as sum_num
+         from cg_rkd a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>

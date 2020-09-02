@@ -49,6 +49,16 @@ public class WholeSalesChild extends BaseEntity
 
     private String goodsName;
 
+    private String wholeSum;
+
+    public String getWholeSum() {
+        return wholeSum;
+    }
+
+    public void setWholeSum(String wholeSum) {
+        this.wholeSum = wholeSum;
+    }
+
     public Integer getStatus() {
         return status;
     }

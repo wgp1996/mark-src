@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.code.MatrixToImageWriter;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
@@ -69,6 +70,8 @@ public class ApiController extends BaseController
     private IKhInfoService khInfoService;
     @Autowired
     private ISysRoleService roleService;
+    @Autowired
+    private ICarInfoService carInfoService;
     /**
      * 摊位下拉列表
      */
@@ -185,6 +188,58 @@ public class ApiController extends BaseController
                 ajaxResult.put("data", goodsInfoOwner);
                 return ajaxResult;
             } else{
+                return toAjaxByError("操作失败!");
+            }
+        }
+    }
+
+    /**
+     * APP客户建档
+     */
+    @ApiOperation("APP客户建档")
+    @Log(title = "APP客户建档", businessType = BusinessType.INSERT)
+    @PostMapping("/appKhAdd")
+    public AjaxResult appKhAdd(KhInfo khInfo)
+    {
+        KhInfo info=khInfoService.selectKhInfoByName(khInfo.getKhName(),khInfo.getCreateBy(),-1);
+        if(info!=null) {
+            return  toAjaxByError("该客户在系统中已存在");
+        }else {
+            khInfo.setKhCode(StringUtils.getRandomCode("KH"));
+            int result=khInfoService.insertKhInfo(khInfo);
+            if(result>0){
+                AjaxResult ajaxResult = new AjaxResult();
+                ajaxResult.put("msg", "操作成功!");
+                ajaxResult.put("code", 200);
+                ajaxResult.put("data", khInfo);
+                return ajaxResult;
+            }else{
+                return toAjaxByError("操作失败!");
+            }
+        }
+    }
+
+    /**
+     * APP供应商建档
+     */
+    @ApiOperation("APP供应商建档")
+    @Log(title = "APP供应商建档", businessType = BusinessType.INSERT)
+    @PostMapping("/appPersonAdd")
+    public AjaxResult appPersonAdd(PersonInfo personInfo)
+    {
+        PersonInfo info=personInfoService.selectPersonInfoByName(personInfo.getPersonName(),personInfo.getCreateBy(),-1);
+        if(info!=null) {
+            return  toAjaxByError("该供应商在系统中已存在");
+        }else {
+            personInfo.setPersonCode(StringUtils.getRandomCode("PCM"));
+            int result=personInfoService.insertPersonInfo(personInfo);
+            if(result>0){
+                AjaxResult ajaxResult = new AjaxResult();
+                ajaxResult.put("msg", "操作成功!");
+                ajaxResult.put("code", 200);
+                ajaxResult.put("data", personInfo);
+                return ajaxResult;
+            }else{
                 return toAjaxByError("操作失败!");
             }
         }
@@ -703,8 +758,48 @@ public class ApiController extends BaseController
                 Map<String,String> map = new LinkedHashMap<String,String>();
                 row = sheet.getRow(i);
                 if(row !=null){
-
+                    //添加摊位信息
+                    StallInfo info=new StallInfo();
                     String code=(String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString();
+                    info.setCreateBy(code.substring(0,code.indexOf(".")));
+                    info.setStallName((String)ExcelUtil.getCellFormatValue(row.getCell(2)));
+                    info.setId(StringUtils.getId());
+                    info.setStallCode(StringUtils.getRandomCode("STL"));
+                    info.setCreateTime(DateUtils.getNowDate());
+                    info.setStallStatus("1");
+                    stallInfoService.insertStallInfo(info);
+
+                    //添加默认供应商信息
+                    PersonInfo personInfo=new PersonInfo();
+                    personInfo.setCreateBy(code.substring(0,code.indexOf(".")));
+                    personInfo.setPersonName("测试供应商"+"("+code.substring(0,code.indexOf("."))+")");
+                    personInfo.setPersonCode(StringUtils.getRandomCode("PCM"));
+                    personInfo.setPersonGoodsAddress("山东省聊城市东昌府区");
+                    personInfo.setPersonAddress("山东省聊城市东昌府区");
+                    personInfoService.insertPersonInfo(personInfo);
+                    //添加默认客户信息
+                    KhInfo khInfo=new KhInfo();
+                    khInfo.setCreateBy(code.substring(0,code.indexOf(".")));
+                    khInfo.setKhName("测试客户"+"("+code.substring(0,code.indexOf("."))+")");
+                    khInfo.setKhAddress("山东省聊城市东昌府区");
+                    khInfo.setKhCode(StringUtils.getRandomCode("KH"));
+                    khInfoService.insertKhInfo(khInfo);
+                    //添加默认商品信息
+                    GoodsInfoOwner goodsInfoOwner=new GoodsInfoOwner();
+                    goodsInfoOwner.setCreateBy(code.substring(0,code.indexOf(".")));
+                    goodsInfoOwner.setGoodsCode(StringUtils.getRandomCode("SP"));
+                    goodsInfoOwner.setGoodsDw("斤");
+                    goodsInfoOwner.setGoodsName("大虾("+code.substring(0,code.indexOf("."))+"测试)");
+                    goodsInfoOwner.setGoodsViceDw("公斤");
+                    goodsInfoOwner.setGoodsAddress("山东省聊城市东昌府区");
+                    goodsInfoOwner.setGoodsGg("1");
+                    goodsInfoOwnerService.insertGoodsInfoOwner(goodsInfoOwner);
+
+                    /*CarInfo carInfo=new CarInfo();
+                    carInfo.setCarNumber("鲁P88888("+code.substring(0,code.indexOf("."))+"测试)");
+                    carInfo.setCreateBy(SecurityUtils.getUsername());
+                    carInfoService.insertCarInfo(carInfo);*/
+                   /* String code=(String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString();
                     if(code==""||"".equals(code)){
                         break;
                     }
@@ -736,7 +831,7 @@ public class ApiController extends BaseController
                     user.setPhonenumber((String)ExcelUtil.getCellFormatValue(row.getCell(6)));
                     user.setNickName((String)ExcelUtil.getCellFormatValue(row.getCell(3)));
                     user.setCreateBy("admin");
-                    userService.insertUser(user);
+                    userService.insertUser(user);*/
                 }else{
                     break;
                 }

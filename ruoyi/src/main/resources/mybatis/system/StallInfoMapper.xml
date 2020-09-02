@@ -91,6 +91,8 @@
             UNION ALL
             select b.stall_code,b.stall_name from lease_contract_sales a join lease_contract_child_sales b on a.contract_code=b.contract_code
             join owner_info c on a.owner_code=c.owner_code where c.user_name=#{createBy}
+            UNION ALL
+            select stall_code,stall_name from stall_info  where create_by=#{createBy} and stall_status>0
     </select>
 
     <select id="selectStallInfoByCode" parameterType="String" resultMap="StallInfoResult">
