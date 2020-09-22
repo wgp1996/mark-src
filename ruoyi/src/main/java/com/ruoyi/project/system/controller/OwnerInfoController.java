@@ -54,10 +54,10 @@ public class OwnerInfoController extends BaseController {
     @Autowired
     private ILeaseContractPoolService leaseContractPoolService;
     /**
-     * 获取主市场信息
+     * 获取业户信息
      */
     @GetMapping(value = "/ownerList")
-    public AjaxResult areaData(OwnerInfo ownerInfo)
+    public AjaxResult ownerList(OwnerInfo ownerInfo)
     {
         return AjaxResult.success(ownerInfoService.selectOwnerInfoList(ownerInfo));
     }
@@ -70,6 +70,31 @@ public class OwnerInfoController extends BaseController {
     public TableDataInfo list(OwnerInfo ownerInfo) {
         startPage();
         List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(ownerInfo);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询业户信息列表
+     */
+    @GetMapping("/ownerAllList")
+    public TableDataInfo ownerAllList(OwnerInfo ownerInfo) {
+        startPage();
+        List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(ownerInfo);
+        return getDataTable(list);
+    }
+
+    @GetMapping("/getOwnerList/{ownerName}/{ownerCode}")
+    public TableDataInfo getOwnerList(@PathVariable("ownerName") String ownerName,@PathVariable("ownerCode") String ownerCode)
+    {
+        OwnerInfo info=new OwnerInfo();
+        if(!"-1".equals(ownerName)){
+            info.setOwnerName(ownerName);
+        }
+        if(!"-1".equals(ownerCode)){
+            info.setOwnerCode(ownerCode);
+        }
+        List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(info);
+        info=null;
         return getDataTable(list);
     }
 

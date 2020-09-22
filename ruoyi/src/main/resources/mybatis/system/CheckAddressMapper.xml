@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CheckAddressMapper">
+    
+    <resultMap type="CheckAddress" id="CheckAddressResult">
+        <result property="id"    column="id"    />
+        <result property="checkAddressId"    column="check_address_id"    />
+        <result property="checkAddress"    column="check_address"    />
+        <result property="checkAddressDetail"    column="check_address_detail"    />
+        <result property="workStartTime"    column="work_start_time"    />
+        <result property="workEndTime"    column="work_end_time"    />
+        <result property="checkBz"    column="check_bz"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="checkAddressLat"    column="check_address_lat"    />
+        <result property="checkAddressLng"    column="check_address_lng"    />
+        <result property="workTel"    column="work_tel"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCheckAddressVo">
+        select id, check_address_id, check_address, check_address_detail, work_start_time, work_end_time, check_bz, create_time, check_address_lat, check_address_lng, work_tel, create_by, update_by, update_time, remark from check_address
+    </sql>
+
+    <select id="checkAddress" resultType="Integer">
+        select count(id) from check_address where id in(select check_address from random_inspection_info where check_address=#{id})
+    </select>
+
+    <sql id="selectCheckAddressVoByRole">
+        select a.* from check_address a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectCheckAddressList" parameterType="CheckAddress" resultMap="CheckAddressResult">
+        <include refid="selectCheckAddressVoByRole"/>
+        <where>  
+            <if test="checkAddressId != null  and checkAddressId != ''"> and check_address_id = #{checkAddressId}</if>
+            <if test="checkAddress != null  and checkAddress != ''"> and check_address = #{checkAddress}</if>
+            <if test="checkAddressDetail != null  and checkAddressDetail != ''"> and check_address_detail = #{checkAddressDetail}</if>
+            <if test="workStartTime != null  and workStartTime != ''"> and work_start_time = #{workStartTime}</if>
+            <if test="workEndTime != null  and workEndTime != ''"> and work_end_time = #{workEndTime}</if>
+            <if test="checkBz != null  and checkBz != ''"> and check_bz = #{checkBz}</if>
+            <if test="checkAddressLat != null  and checkAddressLat != ''"> and check_address_lat = #{checkAddressLat}</if>
+            <if test="checkAddressLng != null  and checkAddressLng != ''"> and check_address_lng = #{checkAddressLng}</if>
+            <if test="workTel != null  and workTel != ''"> and work_tel = #{workTel}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectCheckAddressById" parameterType="String" resultMap="CheckAddressResult">
+        <include refid="selectCheckAddressVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCheckAddress" parameterType="CheckAddress">
+        insert into check_address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="checkAddressId != null  and checkAddressId != ''">check_address_id,</if>
+            <if test="checkAddress != null  and checkAddress != ''">check_address,</if>
+            <if test="checkAddressDetail != null  and checkAddressDetail != ''">check_address_detail,</if>
+            <if test="workStartTime != null  and workStartTime != ''">work_start_time,</if>
+            <if test="workEndTime != null  and workEndTime != ''">work_end_time,</if>
+            <if test="checkBz != null  and checkBz != ''">check_bz,</if>
+            <if test="checkAddressLat != null  and checkAddressLat != ''">check_address_lat,</if>
+            <if test="checkAddressLng != null  and checkAddressLng != ''">check_address_lng,</if>
+            <if test="workTel != null  and workTel != ''">work_tel,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="checkAddressId != null  and checkAddressId != ''">#{checkAddressId},</if>
+            <if test="checkAddress != null  and checkAddress != ''">#{checkAddress},</if>
+            <if test="checkAddressDetail != null  and checkAddressDetail != ''">#{checkAddressDetail},</if>
+            <if test="workStartTime != null  and workStartTime != ''">#{workStartTime},</if>
+            <if test="workEndTime != null  and workEndTime != ''">#{workEndTime},</if>
+            <if test="checkBz != null  and checkBz != ''">#{checkBz},</if>
+            <if test="checkAddressLat != null  and checkAddressLat != ''">#{checkAddressLat},</if>
+            <if test="checkAddressLng != null  and checkAddressLng != ''">#{checkAddressLng},</if>
+            <if test="workTel != null  and workTel != ''">#{workTel},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCheckAddress" parameterType="CheckAddress">
+        update check_address
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="checkAddressId != null  and checkAddressId != ''">check_address_id = #{checkAddressId},</if>
+            <if test="checkAddress != null  and checkAddress != ''">check_address = #{checkAddress},</if>
+            <if test="checkAddressDetail != null  and checkAddressDetail != ''">check_address_detail = #{checkAddressDetail},</if>
+            <if test="workStartTime != null  and workStartTime != ''">work_start_time = #{workStartTime},</if>
+            <if test="workEndTime != null  and workEndTime != ''">work_end_time = #{workEndTime},</if>
+            <if test="checkBz != null  and checkBz != ''">check_bz = #{checkBz},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="checkAddressLat != null  and checkAddressLat != ''">check_address_lat = #{checkAddressLat},</if>
+            <if test="checkAddressLng != null  and checkAddressLng != ''">check_address_lng = #{checkAddressLng},</if>
+            <if test="workTel != null  and workTel != ''">work_tel = #{workTel},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCheckAddressById" parameterType="String">
+        delete from check_address where id = #{id}
+    </delete>
+
+    <delete id="deleteCheckAddressByIds" parameterType="String">
+        delete from check_address where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

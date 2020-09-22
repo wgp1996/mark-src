@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CkInfoMapper">
+    
+    <resultMap type="CkInfo" id="CkInfoResult">
+        <result property="id"    column="id"    />
+        <result property="ckName"    column="ck_name"    />
+        <result property="ckCode"    column="ck_code"    />
+        <result property="ckArea"    column="ck_area"    />
+        <result property="ckVolume"    column="ck_volume"    />
+        <result property="ckType"    column="ck_type"    />
+        <result property="ckAddress"    column="ck_address"    />
+        <result property="lat"    column="lat"    />
+        <result property="lng"    column="lng"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCkInfoVo">
+        select id, ck_name, ck_code, ck_area, ck_volume, ck_type, ck_address, lat, lng, create_by, create_time, update_by, update_time, remark from ck_info
+    </sql>
+    <sql id="selectCkInfoVoByRole">
+        select a.* from ck_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectCkInfoList" parameterType="CkInfo" resultMap="CkInfoResult">
+        <include refid="selectCkInfoVoByRole"/>
+        <where>  
+            <if test="ckName != null  and ckName != ''"> and ck_name like concat('%', #{ckName}, '%')</if>
+            <if test="ckCode != null  and ckCode != ''"> and ck_code = #{ckCode}</if>
+            <if test="ckArea != null  and ckArea != ''"> and ck_area = #{ckArea}</if>
+            <if test="ckVolume != null  and ckVolume != ''"> and ck_volume = #{ckVolume}</if>
+            <if test="ckType != null  and ckType != ''"> and ck_type = #{ckType}</if>
+            <if test="createBy != null  and createBy != ''">and a.create_by = #{createBy}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectCkInfoById" parameterType="String" resultMap="CkInfoResult">
+        <include refid="selectCkInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectCkInfoByName" parameterType="String" resultMap="CkInfoResult">
+        <include refid="selectCkInfoVo"/>
+        where ck_name = #{name}
+        <if test="id != null  and id != ''">
+            and id != #{id}
+        </if>
+    </select>
+        
+    <insert id="insertCkInfo" parameterType="CkInfo">
+        insert into ck_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="ckName != null  and ckName != ''">ck_name,</if>
+            <if test="ckCode != null  and ckCode != ''">ck_code,</if>
+            <if test="ckArea != null  and ckArea != ''">ck_area,</if>
+            <if test="ckVolume != null  and ckVolume != ''">ck_volume,</if>
+            <if test="ckType != null  and ckType != ''">ck_type,</if>
+            <if test="ckAddress != null  and ckAddress != ''">ck_address,</if>
+            <if test="lat != null  and lat != ''">lat,</if>
+            <if test="lng != null  and lng != ''">lng,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="ckName != null  and ckName != ''">#{ckName},</if>
+            <if test="ckCode != null  and ckCode != ''">#{ckCode},</if>
+            <if test="ckArea != null  and ckArea != ''">#{ckArea},</if>
+            <if test="ckVolume != null  and ckVolume != ''">#{ckVolume},</if>
+            <if test="ckType != null  and ckType != ''">#{ckType},</if>
+            <if test="ckAddress != null  and ckAddress != ''">#{ckAddress},</if>
+            <if test="lat != null  and lat != ''">#{lat},</if>
+            <if test="lng != null  and lng != ''">#{lng},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCkInfo" parameterType="CkInfo">
+        update ck_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ckName != null  and ckName != ''">ck_name = #{ckName},</if>
+            <if test="ckCode != null  and ckCode != ''">ck_code = #{ckCode},</if>
+            <if test="ckArea != null  and ckArea != ''">ck_area = #{ckArea},</if>
+            <if test="ckVolume != null  and ckVolume != ''">ck_volume = #{ckVolume},</if>
+            <if test="ckType != null  and ckType != ''">ck_type = #{ckType},</if>
+            <if test="ckAddress != null  and ckAddress != ''">ck_address = #{ckAddress},</if>
+            <if test="lat != null  and lat != ''">lat = #{lat},</if>
+            <if test="lng != null  and lng != ''">lng = #{lng},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCkInfoById" parameterType="String">
+        delete from ck_info where id = #{id}
+    </delete>
+
+    <delete id="deleteCkInfoByIds" parameterType="String">
+        delete from ck_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

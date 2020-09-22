@@ -1,248 +1,262 @@
 package com.ruoyi.common.utils.http;
 
+
+import org.json.JSONObject;
+import org.json.simple.JSONValue;
+import sun.net.www.http.HttpClient;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.security.cert.X509Certificate;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
 
-/**
- * 通用http发送方法
- * 
- * @author ruoyi
- */
-public class HttpUtils
-{
-    private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
+public class HttpUtils {
 
-    /**
-     * 向指定 URL 发送GET方法的请求
-     *
-     * @param url 发送请求的 URL
-     * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
-     * @return 所代表远程资源的响应结果
-     */
-    public static String sendGet(String url, String param)
-    {
-        StringBuilder result = new StringBuilder();
-        BufferedReader in = null;
-        try
-        {
-            String urlNameString = url + "?" + param;
-            log.info("sendGet - {}", urlNameString);
-            URL realUrl = new URL(urlNameString);
-            URLConnection connection = realUrl.openConnection();
-            connection.setRequestProperty("accept", "*/*");
-            connection.setRequestProperty("connection", "Keep-Alive");
-            connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            connection.connect();
-            in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null)
-            {
-                result.append(line);
-            }
-            log.info("recv - {}", result);
+    public static String sendPost(String url,String param,String token) throws IOException{
+        OutputStreamWriter out =null;
+        BufferedReader reader = null;
+        String response = "";
+        //创建连接
+        URL httpUrl = null; //HTTP URL类 用这个类来创建连接
+        //创建URL
+        httpUrl = new URL(url);
+        //建立连接
+        HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+        if(token!=""){
+            conn.setRequestProperty("Authorization","Bearer "+token);
         }
-        catch (ConnectException e)
-        {
-            log.error("调用HttpUtils.sendGet ConnectException, url=" + url + ",param=" + param, e);
+        conn.setRequestProperty("connection", "keep-alive");
+        conn.setUseCaches(false);//设置不要缓存
+        conn.setInstanceFollowRedirects(true);
+        conn.setDoOutput(true);
+        conn.setDoInput(true);
+        conn.connect();
+        //POST请求
+        out = new OutputStreamWriter(conn.getOutputStream(), "utf-8");
+        out.write(param);
+        out.flush();
+        //读取响应
+        reader = new BufferedReader(new InputStreamReader(
+                conn.getInputStream()));
+        String lines;
+        while ((lines = reader.readLine()) != null) {
+            lines = new String(lines.getBytes(), "utf-8");
+            response+=lines;
         }
-        catch (SocketTimeoutException e)
-        {
-            log.error("调用HttpUtils.sendGet SocketTimeoutException, url=" + url + ",param=" + param, e);
+        reader.close();
+        // 断开连接
+        conn.disconnect();
+        if(out!=null){
+            out.close();
         }
-        catch (IOException e)
-        {
-            log.error("调用HttpUtils.sendGet IOException, url=" + url + ",param=" + param, e);
+        if(reader!=null){
+            reader.close();
         }
-        catch (Exception e)
-        {
-            log.error("调用HttpsUtil.sendGet Exception, url=" + url + ",param=" + param, e);
-        }
-        finally
-        {
-            try
-            {
-                if (in != null)
-                {
-                    in.close();
-                }
-            }
-            catch (Exception ex)
-            {
-                log.error("调用in.close Exception, url=" + url + ",param=" + param, ex);
-            }
-        }
-        return result.toString();
+        return response;
     }
-
-    /**
-     * 向指定 URL 发送POST方法的请求
-     *
-     * @param url 发送请求的 URL
-     * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
-     * @return 所代表远程资源的响应结果
-     */
-    public static String sendPost(String url, String param)
-    {
-        PrintWriter out = null;
-        BufferedReader in = null;
-        StringBuilder result = new StringBuilder();
-        try
-        {
-            String urlNameString = url + "?" + param;
-            log.info("sendPost - {}", urlNameString);
-            URL realUrl = new URL(urlNameString);
-            URLConnection conn = realUrl.openConnection();
-            conn.setRequestProperty("accept", "*/*");
-            conn.setRequestProperty("connection", "Keep-Alive");
-            conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            conn.setRequestProperty("Accept-Charset", "utf-8");
-            conn.setRequestProperty("contentType", "utf-8");
+    public static String sendGet(String url,String param,String token){
+        OutputStreamWriter out =null;
+        BufferedReader reader = null;
+        String response = "";
+        //创建连接
+        try {
+            URL httpUrl = null; //HTTP URL类 用这个类来创建连接
+            //创建URL
+            httpUrl = new URL(url);
+            //建立连接
+            HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-Type", "application/json");
+            if(token!=""){
+                conn.setRequestProperty("Authorization", token);
+            }
+            conn.setRequestProperty("connection", "keep-alive");
+            conn.setUseCaches(false);//设置不要缓存
+            conn.setInstanceFollowRedirects(true);
             conn.setDoOutput(true);
             conn.setDoInput(true);
-            out = new PrintWriter(conn.getOutputStream());
-            out.print(param);
+            conn.connect();
+            //GET请求
+            out = new OutputStreamWriter(
+                    conn.getOutputStream());
+            out.write(param);
             out.flush();
-            in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-            String line;
-            while ((line = in.readLine()) != null)
-            {
-                result.append(line);
+            //读取响应
+            reader = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
+            String lines;
+            while ((lines = reader.readLine()) != null) {
+                lines = new String(lines.getBytes(), "utf-8");
+                response+=lines;
             }
-            log.info("recv - {}", result);
+            reader.close();
+            // 断开连接
+            conn.disconnect();
+
+        } catch (Exception e) {
+            System.out.println("发送 POST 请求出现异常！"+e);
+            e.printStackTrace();
         }
-        catch (ConnectException e)
-        {
-            log.error("调用HttpUtils.sendPost ConnectException, url=" + url + ",param=" + param, e);
-        }
-        catch (SocketTimeoutException e)
-        {
-            log.error("调用HttpUtils.sendPost SocketTimeoutException, url=" + url + ",param=" + param, e);
-        }
-        catch (IOException e)
-        {
-            log.error("调用HttpUtils.sendPost IOException, url=" + url + ",param=" + param, e);
-        }
-        catch (Exception e)
-        {
-            log.error("调用HttpsUtil.sendPost Exception, url=" + url + ",param=" + param, e);
-        }
-        finally
-        {
-            try
-            {
-                if (out != null)
-                {
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
                     out.close();
                 }
-                if (in != null)
-                {
-                    in.close();
+                if(reader!=null){
+                    reader.close();
                 }
             }
-            catch (IOException ex)
-            {
-                log.error("调用in.close Exception, url=" + url + ",param=" + param, ex);
+            catch(IOException ex){
+                ex.printStackTrace();
             }
         }
-        return result.toString();
+
+        return response;
     }
 
-    public static String sendSSLPost(String url, String param)
-    {
-        StringBuilder result = new StringBuilder();
-        String urlNameString = url + "?" + param;
-        try
-        {
-            log.info("sendSSLPost - {}", urlNameString);
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, new TrustManager[] { new TrustAnyTrustManager() }, new java.security.SecureRandom());
-            URL console = new URL(urlNameString);
-            HttpsURLConnection conn = (HttpsURLConnection) console.openConnection();
-            conn.setRequestProperty("accept", "*/*");
-            conn.setRequestProperty("connection", "Keep-Alive");
-            conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            conn.setRequestProperty("Accept-Charset", "utf-8");
-            conn.setRequestProperty("contentType", "utf-8");
+    public static String sendPut(String url,String param,String token){
+        OutputStreamWriter out =null;
+        BufferedReader reader = null;
+        String response = "";
+        //创建连接
+        try {
+            URL httpUrl = null; //HTTP URL类 用这个类来创建连接
+            //创建URL
+            httpUrl = new URL(url);
+            //建立连接
+            HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
+            conn.setRequestMethod("PUT");
+            conn.setRequestProperty("Content-Type", "application/json");
+            if(token!=""){
+                conn.setRequestProperty("Authorization", token);
+            }
+            conn.setRequestProperty("connection", "keep-alive");
+            conn.setUseCaches(false);//设置不要缓存
+            conn.setInstanceFollowRedirects(true);
             conn.setDoOutput(true);
             conn.setDoInput(true);
-
-            conn.setSSLSocketFactory(sc.getSocketFactory());
-            conn.setHostnameVerifier(new TrustAnyHostnameVerifier());
             conn.connect();
-            InputStream is = conn.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            String ret = "";
-            while ((ret = br.readLine()) != null)
-            {
-                if (ret != null && !ret.trim().equals(""))
-                {
-                    result.append(new String(ret.getBytes("ISO-8859-1"), "utf-8"));
+            //GET请求
+            out = new OutputStreamWriter(
+                    conn.getOutputStream());
+            out.write(param);
+            out.flush();
+            //读取响应
+            reader = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
+            String lines;
+            while ((lines = reader.readLine()) != null) {
+                lines = new String(lines.getBytes(), "utf-8");
+                response+=lines;
+            }
+            reader.close();
+            // 断开连接
+            conn.disconnect();
+
+        } catch (Exception e) {
+            System.out.println("发送 POST 请求出现异常！"+e);
+            e.printStackTrace();
+        }
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
+                    out.close();
+                }
+                if(reader!=null){
+                    reader.close();
                 }
             }
-            log.info("recv - {}", result);
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+
+        return response;
+    }
+    public static String sendDelete(String url,String param,String token){
+        OutputStreamWriter out =null;
+        BufferedReader reader = null;
+        String response = "";
+        //创建连接
+        try {
+            URL httpUrl = null; //HTTP URL类 用这个类来创建连接
+            //创建URL
+            httpUrl = new URL(url);
+            //建立连接
+            HttpURLConnection conn = (HttpURLConnection) httpUrl.openConnection();
+            conn.setRequestMethod("DELETE");
+            conn.setRequestProperty("Content-Type", "application/json");
+            if(token!=""){
+                conn.setRequestProperty("Authorization", token);
+            }
+            conn.setRequestProperty("connection", "keep-alive");
+            conn.setUseCaches(false);//设置不要缓存
+            conn.setInstanceFollowRedirects(true);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.connect();
+            //GET请求
+            out = new OutputStreamWriter(
+                    conn.getOutputStream());
+            out.write(param);
+            out.flush();
+            //读取响应
+            reader = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
+            String lines;
+            while ((lines = reader.readLine()) != null) {
+                lines = new String(lines.getBytes(), "utf-8");
+                response+=lines;
+            }
+            reader.close();
+            // 断开连接
             conn.disconnect();
-            br.close();
+
+        } catch (Exception e) {
+            System.out.println("发送 POST 请求出现异常！"+e);
+            e.printStackTrace();
         }
-        catch (ConnectException e)
-        {
-            log.error("调用HttpUtils.sendSSLPost ConnectException, url=" + url + ",param=" + param, e);
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
+                    out.close();
+                }
+                if(reader!=null){
+                    reader.close();
+                }
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
         }
-        catch (SocketTimeoutException e)
-        {
-            log.error("调用HttpUtils.sendSSLPost SocketTimeoutException, url=" + url + ",param=" + param, e);
-        }
-        catch (IOException e)
-        {
-            log.error("调用HttpUtils.sendSSLPost IOException, url=" + url + ",param=" + param, e);
-        }
-        catch (Exception e)
-        {
-            log.error("调用HttpsUtil.sendSSLPost Exception, url=" + url + ",param=" + param, e);
-        }
-        return result.toString();
+
+        return response;
     }
 
-    private static class TrustAnyTrustManager implements X509TrustManager
-    {
-        @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType)
-        {
+    public static String getToken(){
+        HashMap data=new HashMap();
+        data.put("username","qdkji123");
+        data.put("password", "123456");
+        JSONObject jsonObject=null;
+        String token="";
+        try {
+            jsonObject = new JSONObject(HttpUtils.sendPost("http://esl.ylwlesl.com:9191/V1/Login", JSONValue.toJSONString(data),""));
+            JSONObject bodyObject=new JSONObject(jsonObject.get("body").toString());
+            token=bodyObject.getString("token");
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-
-        @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType)
-        {
-        }
-
-        @Override
-        public X509Certificate[] getAcceptedIssuers()
-        {
-            return new X509Certificate[] {};
-        }
-    }
-
-    private static class TrustAnyHostnameVerifier implements HostnameVerifier
-    {
-        @Override
-        public boolean verify(String hostname, SSLSession session)
-        {
-            return true;
-        }
+        return token;
     }
 }

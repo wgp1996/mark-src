@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.RandomInspectionInfoMapper">
+    
+    <resultMap type="RandomInspectionInfo" id="RandomInspectionInfoResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="djTime"    column="dj_time"    />
+        <result property="djTitle"    column="dj_title"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="checkAddress"    column="check_address"    />
+        <result property="djStatus"    column="dj_status"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="inhibitionNum"    column="inhibition_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectRandomInspectionInfoVo">
+        select id, dj_number, dj_time, dj_title, create_time, check_address, dj_status, file_name, inhibition_num, create_by, update_by, update_time, remark from random_inspection_info
+    </sql>
+
+    <sql id="selectRandomInspectionInfoVoByRole">
+        select a.id, a.dj_number, a.dj_time, a.dj_title, a.create_time, a.dj_status, a.inhibition_num, a.create_by,
+        (select concat(check_address,check_address_detail) from check_address where id=a.check_address) as check_address from random_inspection_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectRandomInspectionInfoList" parameterType="RandomInspectionInfo" resultMap="RandomInspectionInfoResult">
+        <include refid="selectRandomInspectionInfoVoByRole"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="djTitle != null  and djTitle != ''"> and dj_title = #{djTitle}</if>
+            <if test="checkAddress != null  and checkAddress != ''"> and check_address = #{checkAddress}</if>
+            <if test="djStatus != null "> and dj_status = #{djStatus}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="inhibitionNum != null "> and inhibition_num = #{inhibitionNum}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectRandomInspectionInfoById" parameterType="String" resultMap="RandomInspectionInfoResult">
+        <include refid="selectRandomInspectionInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertRandomInspectionInfo" parameterType="RandomInspectionInfo">
+        insert into random_inspection_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="djTitle != null  and djTitle != ''">dj_title,</if>
+            <if test="checkAddress != null  and checkAddress != ''">check_address,</if>
+            <if test="djStatus != null ">dj_status,</if>
+            <if test="fileName != null  and fileName != ''">file_name,</if>
+            <if test="inhibitionNum != null ">inhibition_num,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="djTitle != null  and djTitle != ''">#{djTitle},</if>
+            <if test="checkAddress != null  and checkAddress != ''">#{checkAddress},</if>
+            <if test="djStatus != null ">#{djStatus},</if>
+            <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            <if test="inhibitionNum != null ">#{inhibitionNum},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateRandomInspectionInfo" parameterType="RandomInspectionInfo">
+        update random_inspection_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="djTitle != null  and djTitle != ''">dj_title = #{djTitle},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="checkAddress != null  and checkAddress != ''">check_address = #{checkAddress},</if>
+            <if test="djStatus != null ">dj_status = #{djStatus},</if>
+            <if test="fileName != null  and fileName != ''">file_name = #{fileName},</if>
+            <if test="inhibitionNum != null ">inhibition_num = #{inhibitionNum},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRandomInspectionInfoById" parameterType="String">
+        delete from random_inspection_info where id = #{id}
+    </delete>
+
+    <delete id="deleteRandomInspectionInfoByIds" parameterType="String">
+        delete from random_inspection_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

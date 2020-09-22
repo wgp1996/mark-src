@@ -26,7 +26,7 @@ public class CgRkd extends BaseEntity
 
     /** 摊位编码 */
     @Excel(name = "摊位编码")
-    private String stallCode;
+    private String storeCode;
 
     /** 单据日期 */
     @Excel(name = "单据日期")
@@ -34,7 +34,7 @@ public class CgRkd extends BaseEntity
 
     /** 摊位名称 */
     @Excel(name = "摊位名称")
-    private String stallName;
+    private String storeName;
 
     /** 单据状态 */
     @Excel(name = "单据状态")
@@ -46,7 +46,117 @@ public class CgRkd extends BaseEntity
     private String rows;
     private String djStatusName;
 
+    private Integer isRate;
+
     private String sumNum;
+
+    private String goodsName;
+    private String goodsDw;
+    private String goodsNum;
+    private String createName;
+    private String goodsAddress;
+    private String personName;
+    private String personCode;
+    private String personLxr;
+    private Integer type;
+    private String statusName;
+    private String djId;
+
+    public String getDjId() {
+        return djId;
+    }
+
+    public void setDjId(String djId) {
+        this.djId = djId;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getPersonLxr() {
+        return personLxr;
+    }
+
+    public void setPersonLxr(String personLxr) {
+        this.personLxr = personLxr;
+    }
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
+    }
+
+    public String getPersonCode() {
+        return personCode;
+    }
+
+    public void setPersonCode(String personCode) {
+        this.personCode = personCode;
+    }
+
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
+    }
+
+    public String getGoodsDw() {
+        return goodsDw;
+    }
+
+    public void setGoodsDw(String goodsDw) {
+        this.goodsDw = goodsDw;
+    }
+
+    public String getGoodsNum() {
+        return goodsNum;
+    }
+
+    public void setGoodsNum(String goodsNum) {
+        this.goodsNum = goodsNum;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName;
+    }
+
+    public String getGoodsAddress() {
+        return goodsAddress;
+    }
+
+    public void setGoodsAddress(String goodsAddress) {
+        this.goodsAddress = goodsAddress;
+    }
+
+    public Integer getIsRate() {
+        return isRate;
+    }
+
+    public void setIsRate(Integer isRate) {
+        this.isRate = isRate;
+    }
 
     public String getSumNum() {
         return sumNum;
@@ -103,14 +213,14 @@ public class CgRkd extends BaseEntity
     {
         return djNumber;
     }
-    public void setStallCode(String stallCode) 
+    public void setStoreCode(String storeCode) 
     {
-        this.stallCode = stallCode;
+        this.storeCode = storeCode;
     }
 
-    public String getStallCode() 
+    public String getStoreCode() 
     {
-        return stallCode;
+        return storeCode;
     }
     public void setDjTime(String djTime) 
     {
@@ -121,14 +231,14 @@ public class CgRkd extends BaseEntity
     {
         return djTime;
     }
-    public void setStallName(String stallName) 
+    public void setStoreName(String storeName) 
     {
-        this.stallName = stallName;
+        this.storeName = storeName;
     }
 
-    public String getStallName() 
+    public String getStoreName() 
     {
-        return stallName;
+        return storeName;
     }
     public void setStatus(Integer status) 
     {
@@ -154,9 +264,9 @@ public class CgRkd extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("djNumber", getDjNumber())
-            .append("stallCode", getStallCode())
+            .append("storeCode", getStoreCode())
             .append("djTime", getDjTime())
-            .append("stallName", getStallName())
+            .append("storeName", getStoreName())
             .append("status", getStatus())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())

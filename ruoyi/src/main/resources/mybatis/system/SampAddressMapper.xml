@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.SampAddressMapper">
+    
+    <resultMap type="SampAddress" id="SampAddressResult">
+        <result property="id"    column="id"    />
+        <result property="sampAddressId"    column="samp_address_id"    />
+        <result property="sampAddress"    column="samp_address"    />
+        <result property="sampAddressDetail"    column="samp_address_detail"    />
+        <result property="sampAddressPerson"    column="samp_address_person"    />
+        <result property="sampBz"    column="samp_bz"    />
+        <result property="sampAddressLat"    column="samp_address_lat"    />
+        <result property="sampAddressLng"    column="samp_address_lng"    />
+        <result property="sampAddressPersonTel"    column="samp_address_person_tel"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSampAddressVo">
+        select id, samp_address_id, samp_address, samp_address_detail, samp_address_person, samp_bz, samp_address_lat, samp_address_lng, samp_address_person_tel, create_by, create_time, update_by, update_time, remark from samp_address
+    </sql>
+
+    <sql id="selectSampAddressVoByRole">
+        select a.* from samp_address a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectSampAddressList" parameterType="SampAddress" resultMap="SampAddressResult">
+        <include refid="selectSampAddressVoByRole"/>
+        <where>  
+            <if test="sampAddressId != null  and sampAddressId != ''"> and samp_address_id = #{sampAddressId}</if>
+            <if test="sampAddress != null  and sampAddress != ''"> and samp_address = #{sampAddress}</if>
+            <if test="sampAddressDetail != null  and sampAddressDetail != ''"> and samp_address_detail = #{sampAddressDetail}</if>
+            <if test="sampAddressPerson != null  and sampAddressPerson != ''"> and samp_address_person = #{sampAddressPerson}</if>
+            <if test="sampBz != null  and sampBz != ''"> and samp_bz = #{sampBz}</if>
+            <if test="sampAddressLat != null  and sampAddressLat != ''"> and samp_address_lat = #{sampAddressLat}</if>
+            <if test="sampAddressLng != null  and sampAddressLng != ''"> and samp_address_lng = #{sampAddressLng}</if>
+            <if test="sampAddressPersonTel != null  and sampAddressPersonTel != ''"> and samp_address_person_tel = #{sampAddressPersonTel}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectSampAddressById" parameterType="String" resultMap="SampAddressResult">
+        <include refid="selectSampAddressVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSampAddress" parameterType="SampAddress">
+        insert into samp_address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="sampAddressId != null  and sampAddressId != ''">samp_address_id,</if>
+            <if test="sampAddress != null  and sampAddress != ''">samp_address,</if>
+            <if test="sampAddressDetail != null  and sampAddressDetail != ''">samp_address_detail,</if>
+            <if test="sampAddressPerson != null  and sampAddressPerson != ''">samp_address_person,</if>
+            <if test="sampBz != null  and sampBz != ''">samp_bz,</if>
+            <if test="sampAddressLat != null  and sampAddressLat != ''">samp_address_lat,</if>
+            <if test="sampAddressLng != null  and sampAddressLng != ''">samp_address_lng,</if>
+            <if test="sampAddressPersonTel != null  and sampAddressPersonTel != ''">samp_address_person_tel,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="sampAddressId != null  and sampAddressId != ''">#{sampAddressId},</if>
+            <if test="sampAddress != null  and sampAddress != ''">#{sampAddress},</if>
+            <if test="sampAddressDetail != null  and sampAddressDetail != ''">#{sampAddressDetail},</if>
+            <if test="sampAddressPerson != null  and sampAddressPerson != ''">#{sampAddressPerson},</if>
+            <if test="sampBz != null  and sampBz != ''">#{sampBz},</if>
+            <if test="sampAddressLat != null  and sampAddressLat != ''">#{sampAddressLat},</if>
+            <if test="sampAddressLng != null  and sampAddressLng != ''">#{sampAddressLng},</if>
+            <if test="sampAddressPersonTel != null  and sampAddressPersonTel != ''">#{sampAddressPersonTel},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateSampAddress" parameterType="SampAddress">
+        update samp_address
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sampAddressId != null  and sampAddressId != ''">samp_address_id = #{sampAddressId},</if>
+            <if test="sampAddress != null  and sampAddress != ''">samp_address = #{sampAddress},</if>
+            <if test="sampAddressDetail != null  and sampAddressDetail != ''">samp_address_detail = #{sampAddressDetail},</if>
+            <if test="sampAddressPerson != null  and sampAddressPerson != ''">samp_address_person = #{sampAddressPerson},</if>
+            <if test="sampBz != null  and sampBz != ''">samp_bz = #{sampBz},</if>
+            <if test="sampAddressLat != null  and sampAddressLat != ''">samp_address_lat = #{sampAddressLat},</if>
+            <if test="sampAddressLng != null  and sampAddressLng != ''">samp_address_lng = #{sampAddressLng},</if>
+            <if test="sampAddressPersonTel != null  and sampAddressPersonTel != ''">samp_address_person_tel = #{sampAddressPersonTel},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSampAddressById" parameterType="String">
+        delete from samp_address where id = #{id}
+    </delete>
+
+    <delete id="deleteSampAddressByIds" parameterType="String">
+        delete from samp_address where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

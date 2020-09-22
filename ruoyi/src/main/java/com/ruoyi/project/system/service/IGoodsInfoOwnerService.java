@@ -28,6 +28,14 @@ public interface IGoodsInfoOwnerService
     public GoodsInfoOwner selectGoodsInfoOwnerByName(Integer id,String goodsName,String createBy);
 
     /**
+     * 根据编码查询业户商品建档
+     *
+     * @param goodsCode 业户商品建档编码
+     * @return 业户商品建档
+     */
+    public GoodsInfoOwner selectGoodsInfoOwnerByCode(Integer id,String goodsCode,String createBy);
+
+    /**
      * 查询业户商品建档列表
      * 
      * @param goodsInfoOwner 业户商品建档

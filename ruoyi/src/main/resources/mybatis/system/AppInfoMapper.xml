@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.AppInfoMapper">
+    
+    <resultMap type="AppInfo" id="AppInfoResult">
+        <result property="id"    column="id"    />
+        <result property="versionName"    column="version_name"    />
+        <result property="version"    column="version"    />
+        <result property="content"    column="content"    />
+        <result property="url"    column="url"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectAppInfoVo">
+        select id, version_name, version, content, url from app_info
+    </sql>
+
+    <select id="selectAppInfoList" parameterType="AppInfo" resultMap="AppInfoResult">
+        <include refid="selectAppInfoVo"/>
+        <where>  
+            <if test="versionName != null  and versionName != ''"> and version_name like concat('%', #{versionName}, '%')</if>
+            <if test="version != null  and version != ''"> and version = #{version}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="id != null"> and id = #{id}</if>
+            <if test="type != null"> and type = #{type}</if>
+        </where>
+        order by  id
+    </select>
+    
+    <select id="selectAppInfoById" parameterType="Long" resultMap="AppInfoResult">
+        <include refid="selectAppInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAppInfo" parameterType="AppInfo">
+        insert into app_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="versionName != null  and versionName != ''">version_name,</if>
+            <if test="version != null  and version != ''">version,</if>
+            <if test="content != null  and content != ''">content,</if>
+            <if test="url != null  and url != ''">url,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="versionName != null  and versionName != ''">#{versionName},</if>
+            <if test="version != null  and version != ''">#{version},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+            <if test="url != null  and url != ''">#{url},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppInfo" parameterType="AppInfo">
+        update app_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="versionName != null  and versionName != ''">version_name = #{versionName},</if>
+            <if test="version != null  and version != ''">version = #{version},</if>
+            <if test="content != null  and content != ''">content = #{content},</if>
+            <if test="url != null  and url != ''">url = #{url},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAppInfoById" parameterType="Long">
+        delete from app_info where id = #{id}
+    </delete>
+
+    <delete id="deleteAppInfoByIds" parameterType="String">
+        delete from app_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

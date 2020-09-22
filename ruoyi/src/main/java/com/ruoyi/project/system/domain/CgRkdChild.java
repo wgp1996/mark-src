@@ -54,8 +54,113 @@ public class CgRkdChild extends BaseEntity
     @Excel(name = "产地信息")
     private String goodsAddress;
 
+    /** 单价 */
+    @Excel(name = "单价")
+    private String goodsPrice;
+
+    /** 金额 */
+    @Excel(name = "金额")
+    private String goodsMoney;
+
+    /** 税率 */
+    @Excel(name = "税率")
+    private String goodsRate;
+
+    /** 含税单价 */
+    @Excel(name = "含税单价")
+    private String goodsPriceRate;
+
+    /** 含税金额 */
+    @Excel(name = "含税金额")
+    private String goodsMoneyRate;
+
     private String goodsImg;
     private  String goodsCodeImg;
+
+    private  String pid;
+
+    /** 门店编号 */
+    @Excel(name = "门店编号")
+    private String storeid;
+
+    /** 门店名称 */
+    @Excel(name = "门店名称")
+    private String shopName;
+    /** 单据状态 */
+    @Excel(name = "单据状态")
+    private Integer status;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getStoreid() {
+        return storeid;
+    }
+
+    public void setStoreid(String storeid) {
+        this.storeid = storeid;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public String getGoodsPrice() {
+        return goodsPrice;
+    }
+
+    public void setGoodsPrice(String goodsPrice) {
+        this.goodsPrice = goodsPrice;
+    }
+
+    public String getGoodsMoney() {
+        return goodsMoney;
+    }
+
+    public void setGoodsMoney(String goodsMoney) {
+        this.goodsMoney = goodsMoney;
+    }
+
+    public String getGoodsRate() {
+        return goodsRate;
+    }
+
+    public void setGoodsRate(String goodsRate) {
+        this.goodsRate = goodsRate;
+    }
+
+    public String getGoodsPriceRate() {
+        return goodsPriceRate;
+    }
+
+    public void setGoodsPriceRate(String goodsPriceRate) {
+        this.goodsPriceRate = goodsPriceRate;
+    }
+
+    public String getGoodsMoneyRate() {
+        return goodsMoneyRate;
+    }
+
+    public void setGoodsMoneyRate(String goodsMoneyRate) {
+        this.goodsMoneyRate = goodsMoneyRate;
+    }
 
     public String getGoodsCodeImg() {
         return goodsCodeImg;

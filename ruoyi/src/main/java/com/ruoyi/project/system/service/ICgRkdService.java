@@ -28,6 +28,53 @@ public interface ICgRkdService
     public List<CgRkd> selectCgRkdList(CgRkd cgRkd);
 
     /**
+     * 查询业户接收订单列表
+     *
+     * @param createBy 业户代码
+     * @return 进货单集合
+     */
+    public List<CgRkd> selectCgRkdAllListByStatus(String createBy,Integer type);
+    /**
+     * 查询百大审核订单列表
+     *
+     * @param createBy 业户代码
+     * @return 进货单集合
+     */
+    public List<CgRkd> selectCgRkdAllListByShStatus(String createBy,Integer type,Integer status);
+
+    /**
+     * 查询业户接收订单数量
+     *
+     * @param createBy 业户代码
+     * @return 进货单待接收数量
+     */
+    public Integer selectCgRkdByStatusCount(String createBy);
+
+    /**
+     * 查询百大待审核总数
+     *
+     * @param createBy 业户代码
+     * @return 进货单待接收数量
+     */
+    public Integer selectCgRkdByShStatusCount(String createBy);
+
+    /**
+     * 查询进货单列表
+     *
+     * @param cgRkd 进货单
+     * @return 进货单集合
+     */
+    public List<CgRkd> selectCgRkdAllList(CgRkd cgRkd);
+
+    /**
+     * 查询进货单汇总列表
+     *
+     * @param cgRkd 进货单
+     * @return 进货单集合
+     */
+    public List<CgRkd> rkdSummaryList(CgRkd cgRkd);
+
+    /**
      * 新增进货单
      * 
      * @param cgRkd 进货单
@@ -42,6 +89,28 @@ public interface ICgRkdService
      * @return 结果
      */
     public int updateCgRkd(CgRkd cgRkd);
+
+    /**
+     * 修改进货单状态
+     *
+     * @param cgRkd 进货单
+     * @return 结果
+     */
+    public int updateCgRkdStatusByNumber(CgRkd cgRkd);
+
+    /**
+     * 检查进货单是否全部接收完毕
+     *
+     * @return 结果
+     */
+    public int checkRkdAllReceive(String djNumber);
+
+    /**
+     * 检查进货单是否全部确认完毕
+     *
+     * @return 结果
+     */
+    public int checkRkdAllConfirm(String djNumber);
 
     /**
      * 批量删除进货单

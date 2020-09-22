@@ -67,6 +67,18 @@ public class GoodsInfoOwnerController extends BaseController
     }
 
     /**
+     * 根据业主查询业户商品建档下拉列表
+     */
+
+    @GetMapping("/goodsList")
+    public TableDataInfo goodsList(GoodsInfoOwner goodsInfoOwner)
+    {
+        goodsInfoOwner.setCreateBy(SecurityUtils.getUsername());
+        List<GoodsInfoOwner> list = goodsInfoOwnerService.selectGoodsInfoOwnerList(goodsInfoOwner);
+        return getDataTable(list);
+    }
+
+    /**
      * 导出业户商品建档列表
      */
     @PreAuthorize("@ss.hasPermi('system:ownerGoods:export')")

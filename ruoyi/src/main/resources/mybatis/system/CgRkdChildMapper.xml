@@ -22,6 +22,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="goodsAddress"    column="goods_address"    />
         <result property="goodsImg"    column="goods_img"    />
         <result property="goodsCodeImg"    column="goods_code_img"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="goodsMoney"    column="goods_money"    />
+        <result property="goodsRate"    column="goods_rate"    />
+        <result property="goodsPriceRate"    column="goods_price_rate"    />
+        <result property="goodsMoneyRate"    column="goods_money_rate"    />
+        <result property="pid"    column="pid"    />
+        <result property="storeid"    column="storeId"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="status"    column="status"    />
     </resultMap>
 
     <sql id="selectCgRkdChildVo">
@@ -33,7 +42,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectCgRkdChildList" parameterType="CgRkdChild" resultMap="CgRkdChildResult">
         <include refid="selectCgRkdChildVo"/>
-        <where>  
+        <where>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
             <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
             <if test="personName != null  and personName != ''"> and person_name like concat('%', #{personName}, '%')</if>
             <if test="personCode != null  and personCode != ''"> and person_code = #{personCode}</if>
@@ -51,9 +61,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCgRkdChildVo"/>
         where id = #{id}
     </select>
+    <select id="selectCgRkdSingleChildByNumber" parameterType="String" resultMap="CgRkdChildResult">
+        select a.*,
+        (select goods_img from goods_info_owner where goods_code=a.goods_code) as goods_img,
+        (select goods_code_img from goods_info_owner where goods_code=a.goods_code) as goods_code_img
+        from cg_rkd_single_child a
+        where dj_number = #{djNumber}
+    </select>
     <select id="selectCgRkdChildByNumber" parameterType="String" resultMap="CgRkdChildResult">
         <include refid="selectCgRkdChildVo"/>
         where a.dj_number = #{dj_number}
+    </select>
+    <select id="selectCgRkdChildByUser" parameterType="String" resultMap="CgRkdChildResult">
+        select a.*,b.id as pid,
+        (select goods_img from goods_info_owner where goods_code=a.goods_code) as goods_img,
+        (select goods_code_img from goods_info_owner where goods_code=a.goods_code) as goods_code_img
+        from cg_rkd_child a join cg_rkd b on a.dj_number=b.dj_number
+        where a.create_by = #{createBy} order  by a.create_time desc
     </select>
 
     <select id="appRkdChildListByStall" parameterType="String" resultMap="CgRkdChildResult">
@@ -81,6 +105,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
             <if test="goodsAddress != null  and goodsAddress != ''">goods_address,</if>
+            <if test="goodsPrice != null  and goodsPrice != ''">goods_price,</if>
+            <if test="goodsMoney != null  and goodsMoney != ''">goods_money,</if>
+            <if test="goodsRate != null  and goodsRate != ''">goods_rate,</if>
+            <if test="goodsPriceRate != null  and goodsPriceRate != ''">goods_price_rate,</if>
+            <if test="goodsMoneyRate != null  and goodsMoneyRate != ''">goods_money_rate,</if>
+            <if test="storeid != null  and storeid != ''">storeId,</if>
+            <if test="shopName != null  and shopName != ''">shop_name,</if>
+            status,
             create_time
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -98,6 +130,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
             <if test="goodsAddress != null  and goodsAddress != ''">#{goodsAddress},</if>
+            <if test="goodsPrice != null  and goodsPrice != ''">#{goodsPrice},</if>
+            <if test="goodsMoney != null  and goodsMoney != ''">#{goodsMoney},</if>
+            <if test="goodsRate != null  and goodsRate != ''">#{goodsRate},</if>
+            <if test="goodsPriceRate != null  and goodsPriceRate != ''">#{goodsPriceRate},</if>
+            <if test="goodsMoneyRate != null  and goodsMoneyRate != ''">#{goodsMoneyRate},</if>
+            <if test="storeid != null  and storeid != ''">#{storeid},</if>
+            <if test="shopName != null  and shopName != ''">#{shopName},</if>
+            0,
             sysdate()
          </trim>
     </insert>
@@ -118,6 +158,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
             <if test="goodsAddress != null  and goodsAddress != ''">goods_address = #{goodsAddress},</if>
+            <if test="goodsPrice != null  and goodsPrice != ''">goods_price = #{goodsPrice},</if>
+            <if test="goodsMoney != null  and goodsMoney != ''">goods_money = #{goodsMoney},</if>
+            <if test="goodsRate != null  and goodsRate != ''">goods_rate = #{goodsRate},</if>
+            <if test="goodsPriceRate != null  and goodsPriceRate != ''">goods_price_rate = #{goodsPriceRate},</if>
+            <if test="goodsMoneyRate != null  and goodsMoneyRate != ''">goods_money_rate = #{goodsMoneyRate},</if>
+            <if test="storeid != null  and storeid != ''">storeId = #{storeid},</if>
+            <if test="shopName != null  and shopName != ''">shop_name = #{shopName},</if>
+            <if test="status != null ">status = #{status},</if>
             update_time = sysdate()
         </trim>
         where id = #{id}

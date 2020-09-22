@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ShopGoodsMapper">
+    
+    <resultMap type="ShopGoods" id="ShopGoodsResult">
+        <result property="storeid"    column="storeId"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="labelMac"    column="label_mac"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="id"    column="id"    />
+        <result property="goodsHyPrice"    column="goods_hy_price"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsAddress"    column="goods_address"    />
+    </resultMap>
+
+    <sql id="selectShopGoodsVo">
+        select storeId, goods_code, label_mac, goods_price, id, goods_hy_price, create_by, create_time, update_by, update_time, remark from shop_goods
+    </sql>
+
+    <sql id="selectShopGoodsVoByRole">
+        select a.*,b.goods_name,b.goods_dw,b.goods_address from shop_goods a join goods_info_owner b on a.goods_code=b.goods_code and a.create_by=b.create_by
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectShopGoodsList" parameterType="ShopGoods" resultMap="ShopGoodsResult">
+        <include refid="selectShopGoodsVoByRole"/>
+        <where>  
+            <if test="storeid != null  and storeid != ''"> and storeId = #{storeid}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="labelMac != null  and labelMac != ''"> and label_mac = #{labelMac}</if>
+            <if test="goodsPrice != null  and goodsPrice != ''"> and goods_price = #{goodsPrice}</if>
+            <if test="goodsHyPrice != null  and goodsHyPrice != ''"> and goods_hy_price = #{goodsHyPrice}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectShopGoodsById" parameterType="String" resultMap="ShopGoodsResult">
+        <include refid="selectShopGoodsVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="checkShopGoods" parameterType="String" resultType="Integer">
+        select count(id) from shop_goods
+        where  storeId = #{storeId} and goods_code=#{goodsCode}
+    </select>
+
+    <select id="checkShopGoodsLabel" parameterType="String" resultType="Integer">
+        select count(id) from label_info
+        where   label_status=1 and goods_code=#{goodsCode}
+    </select>
+        
+    <insert id="insertShopGoods" parameterType="ShopGoods">
+        insert into shop_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="storeid != null  and storeid != ''">storeId,</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="labelMac != null  and labelMac != ''">label_mac,</if>
+            <if test="goodsPrice != null  and goodsPrice != ''">goods_price,</if>
+            <if test="id != null  and id != ''">id,</if>
+            <if test="goodsHyPrice != null  and goodsHyPrice != ''">goods_hy_price,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="storeid != null  and storeid != ''">#{storeid},</if>
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="labelMac != null  and labelMac != ''">#{labelMac},</if>
+            <if test="goodsPrice != null  and goodsPrice != ''">#{goodsPrice},</if>
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="goodsHyPrice != null  and goodsHyPrice != ''">#{goodsHyPrice},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateShopGoods" parameterType="ShopGoods">
+        update shop_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="storeid != null  and storeid != ''">storeId = #{storeid},</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="labelMac != null  and labelMac != ''">label_mac = #{labelMac},</if>
+            <if test="goodsPrice != null  and goodsPrice != ''">goods_price = #{goodsPrice},</if>
+            <if test="goodsHyPrice != null  and goodsHyPrice != ''">goods_hy_price = #{goodsHyPrice},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteShopGoodsById" parameterType="String">
+        delete from shop_goods where id = #{id}
+    </delete>
+
+    <delete id="deleteShopGoodsByIds" parameterType="String">
+        delete from shop_goods where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

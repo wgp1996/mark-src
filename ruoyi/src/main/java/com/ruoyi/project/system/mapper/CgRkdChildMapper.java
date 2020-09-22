@@ -2,6 +2,7 @@ package com.ruoyi.project.system.mapper;
 
 import java.util.List;
 import com.ruoyi.project.system.domain.CgRkdChild;
+import com.ruoyi.project.system.domain.CgRkdSingleChild;
 
 /**
  * 进货单子表Mapper接口
@@ -24,7 +25,21 @@ public interface CgRkdChildMapper
      * @param dj_number 进货单子表编码
      * @return 进货单子表
      */
+    public List<CgRkdChild> selectCgRkdSingleChildByNumber(String dj_number);
+    /**
+     * 查询进货单子表
+     *
+     * @param dj_number 进货单子表编码
+     * @return 进货单子表
+     */
     public List<CgRkdChild> selectCgRkdChildByNumber(String dj_number);
+    /**
+     * 查询进货单子表
+     *
+     * @param createBy 用户编码
+     * @return 进货单子表
+     */
+    public List<CgRkdChild> selectCgRkdChildByUser(String createBy);
     /**
      * 查询进货单子表
      *

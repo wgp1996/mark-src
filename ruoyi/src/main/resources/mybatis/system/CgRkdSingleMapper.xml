@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CgRkdSingleMapper">
+    
+    <resultMap type="CgRkdSingle" id="CgRkdSingleResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="storeCode"    column="store_code"    />
+        <result property="djTime"    column="dj_time"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="djStatusName"    column="dj_status_name"    />
+        <result property="sumNum"    column="sum_num"    />
+        <result property="isRate"    column="is_rate"    />
+        <result property="personCode"    column="person_code"    />
+        <result property="personName"    column="person_name"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="createName"    column="create_name"    />
+        <result property="goodsAddress"    column="goods_address"    />
+    </resultMap>
+
+    <sql id="selectCgRkdSingleVo">
+        select * from cg_rkd_single
+    </sql>
+
+    <sql id="selectCgRkdSingleVoByRole">
+        select a.*,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
+        (select sum(goods_num) from cg_rkd_single_child where dj_number=a.dj_number) as sum_num
+         from cg_rkd_single a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectCgRkdSingleList" parameterType="CgRkdSingle" resultMap="CgRkdSingleResult">
+        <include refid="selectCgRkdSingleVoByRole"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    <select id="selectCgRkdSingleAllList" parameterType="CgRkdSingle" resultMap="CgRkdSingleResult">
+        select distinct a.*,
+        case a.status when 0 then '正操作' when 1 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 2 then '已接收' when 3 then '已审核' end as dj_status_name,
+        (select sum(goods_num) from cg_rkd_single_child where dj_number=a.dj_number) as sum_num,
+        (select nick_name from sys_user where user_name=a.create_by) as create_name,
+        b.goods_num,b.goods_name,b.goods_dw,b.goods_address
+        from cg_rkd_single a join cg_rkd_single_child b on a.dj_number=b.dj_number
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    <select id="selectCgRkdSingleById" parameterType="String" resultMap="CgRkdSingleResult">
+        <include refid="selectCgRkdSingleVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCgRkdSingle" parameterType="CgRkdSingle">
+        insert into cg_rkd_single
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="personName != null  and personName != ''">person_name,</if>
+            <if test="personCode != null  and personCode != ''">person_code,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="storeCode != null  and storeCode != ''">store_code,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="storeName != null  and storeName != ''">store_name,</if>
+            <if test="status != null ">status,</if>
+            <if test="isRate != null ">is_rate,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="fileName != null  and fileName != ''">file_name,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="personName != null  and personName != ''">#{personName},</if>
+            <if test="personCode != null  and personCode != ''">#{personCode},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="storeCode != null  and storeCode != ''">#{storeCode},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="storeName != null  and storeName != ''">#{storeName},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="isRate != null ">#{isRate},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCgRkdSingle" parameterType="CgRkdSingle">
+        update cg_rkd_single
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="personName != null  and personName != ''">person_name = #{personName},</if>
+            <if test="personCode != null  and personCode != ''">person_code = #{personCode},</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="storeCode != null  and storeCode != ''">store_code = #{storeCode},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="storeName != null  and storeName != ''">store_name = #{storeName},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="isRate != null ">is_rate = #{isRate},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            file_name=#{fileName},
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateCgRkdSingleStatusByNumber" parameterType="CgRkdSingle">
+        update cg_rkd_single
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null ">status = #{status},</if>
+        </trim>
+        where dj_number = #{djNumber}
+    </update>
+
+    <delete id="deleteCgRkdSingleById" parameterType="String">
+        delete from cg_rkd_single where id = #{id}
+    </delete>
+
+    <delete id="deleteCgRkdSingleByIds" parameterType="String">
+        delete from cg_rkd_single where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="updateCgRkdSingleStatus" parameterType="String">
+        update cg_rkd_single set status='1'  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

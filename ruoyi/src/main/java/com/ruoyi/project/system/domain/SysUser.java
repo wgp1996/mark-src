@@ -70,6 +70,9 @@ public class SysUser extends BaseEntity
     /** 最后登陆IP */
     @Excel(name = "最后登陆IP", type = Type.EXPORT)
     private String loginIp;
+    /** 单位名称 */
+    @Excel(name = "单位名称")
+    private String unitName;
 
     /** 最后登陆时间 */
     @Excel(name = "最后登陆时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
@@ -96,6 +99,14 @@ public class SysUser extends BaseEntity
 
     }
     private String ownerNum;
+
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
 
     public String getOwnerNum() {
         return ownerNum;

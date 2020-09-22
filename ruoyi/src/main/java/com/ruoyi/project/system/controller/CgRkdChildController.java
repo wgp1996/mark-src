@@ -1,7 +1,11 @@
 package com.ruoyi.project.system.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.ruoyi.project.system.domain.CgRkdSingle;
+import com.ruoyi.project.system.service.ICgRkdSingleChildService;
+import com.ruoyi.project.system.service.ICgRkdSingleService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,10 @@ public class CgRkdChildController extends BaseController
 {
     @Autowired
     private ICgRkdChildService cgRkdChildService;
+    @Autowired
+    private ICgRkdSingleService cgRkdSingleService;
+    @Autowired
+    private ICgRkdSingleChildService cgRkdSingleChildService;
 
     /**
      * 查询进货单子表列表
@@ -46,7 +54,23 @@ public class CgRkdChildController extends BaseController
         List<CgRkdChild> list = cgRkdChildService.selectCgRkdChildList(cgRkdChild);
         return getDataTable(list);
     }
-
+    /**
+     * APP业户接收订单列表明细信息
+     */
+    @GetMapping("/mxList/{id}/{type}")
+    public TableDataInfo appRkdChildListByStatus(@PathVariable String id,@PathVariable Integer type)
+    {
+        //单供应商
+        if(type==0){
+            CgRkdSingle CgRkd=cgRkdSingleService.selectCgRkdSingleById(id);
+            return getDataTable(cgRkdSingleChildService.selectCgRkdSingleChildByNumber(CgRkd.getDjNumber()));
+        }else{
+            CgRkdChild cgRkdChild= cgRkdChildService.selectCgRkdChildById(id);
+            List<CgRkdChild> CgRkdChild=new ArrayList<>();
+            CgRkdChild.add(cgRkdChild);
+            return getDataTable(CgRkdChild);
+        }
+    }
     @GetMapping("/getCgrkdChild")
     public TableDataInfo getCgrkdChild(CgRkdChild cgRkdChild)
     {

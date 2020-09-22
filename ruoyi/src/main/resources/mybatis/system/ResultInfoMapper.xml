@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ResultInfoMapper">
+    
+    <resultMap type="ResultInfo" id="ResultInfoResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="djId"    column="dj_id"    />
+        <result property="returnType"    column="return_type"    />
+        <result property="returnNote"    column="return_note"    />
+        <result property="returnTime"    column="return_time"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectResultInfoVo">
+        select id, dj_number, dj_id, return_type, return_note, return_time, type from result_info
+    </sql>
+
+    <select id="selectResultInfoList" parameterType="ResultInfo" resultMap="ResultInfoResult">
+        <include refid="selectResultInfoVo"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="djId != null  and djId != ''"> and dj_id = #{djId}</if>
+            <if test="returnType != null "> and return_type = #{returnType}</if>
+            <if test="returnNote != null  and returnNote != ''"> and return_note = #{returnNote}</if>
+            <if test="returnTime != null  and returnTime != ''"> and return_time = #{returnTime}</if>
+            <if test="type != null "> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectResultInfoById" parameterType="String" resultMap="ResultInfoResult">
+        <include refid="selectResultInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertResultInfo" parameterType="ResultInfo">
+        insert into result_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="djId != null  and djId != ''">dj_id,</if>
+            <if test="returnType != null ">return_type,</if>
+            <if test="returnNote != null  and returnNote != ''">return_note,</if>
+            <if test="returnTime != null  and returnTime != ''">return_time,</if>
+            <if test="type != null ">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="djId != null  and djId != ''">#{djId},</if>
+            <if test="returnType != null ">#{returnType},</if>
+            <if test="returnNote != null  and returnNote != ''">#{returnNote},</if>
+            <if test="returnTime != null  and returnTime != ''">#{returnTime},</if>
+            <if test="type != null ">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateResultInfo" parameterType="ResultInfo">
+        update result_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="djId != null  and djId != ''">dj_id = #{djId},</if>
+            <if test="returnType != null ">return_type = #{returnType},</if>
+            <if test="returnNote != null  and returnNote != ''">return_note = #{returnNote},</if>
+            <if test="returnTime != null  and returnTime != ''">return_time = #{returnTime},</if>
+            <if test="type != null ">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteResultInfoById" parameterType="String">
+        delete from result_info where id = #{id}
+    </delete>
+
+    <delete id="deleteResultInfoByIds" parameterType="String">
+        delete from result_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

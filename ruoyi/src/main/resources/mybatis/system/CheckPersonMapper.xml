@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CheckPersonMapper">
+    
+    <resultMap type="CheckPerson" id="CheckPersonResult">
+        <result property="id"    column="id"    />
+        <result property="checkPersonId"    column="check_person_id"    />
+        <result property="checkPersonName"    column="check_person_name"    />
+        <result property="checkPersonCode"    column="check_person_code"    />
+        <result property="checkPersonTel"    column="check_person_tel"    />
+        <result property="checkPersonMajor"    column="check_person_major"    />
+        <result property="checkPersonBz"    column="check_person_bz"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCheckPersonVo">
+        select id, check_person_id, check_person_name, check_person_code, check_person_tel, check_person_major, check_person_bz, create_by, create_time, update_by, update_time, remark from check_person
+    </sql>
+    <sql id="selectCheckPersonVoByRole">
+        select a.* from check_person a
+          join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectCheckPersonList" parameterType="CheckPerson" resultMap="CheckPersonResult">
+        <include refid="selectCheckPersonVoByRole"/>
+        <where>  
+            <if test="checkPersonId != null  and checkPersonId != ''"> and check_person_id = #{checkPersonId}</if>
+            <if test="checkPersonName != null  and checkPersonName != ''"> and check_person_name like concat('%', #{checkPersonName}, '%')</if>
+            <if test="checkPersonCode != null  and checkPersonCode != ''"> and check_person_code = #{checkPersonCode}</if>
+            <if test="checkPersonTel != null  and checkPersonTel != ''"> and check_person_tel = #{checkPersonTel}</if>
+            <if test="checkPersonMajor != null  and checkPersonMajor != ''"> and check_person_major = #{checkPersonMajor}</if>
+            <if test="checkPersonBz != null  and checkPersonBz != ''"> and check_person_bz = #{checkPersonBz}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectCheckPersonById" parameterType="String" resultMap="CheckPersonResult">
+        <include refid="selectCheckPersonVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCheckPerson" parameterType="CheckPerson">
+        insert into check_person
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="checkPersonId != null  and checkPersonId != ''">check_person_id,</if>
+            <if test="checkPersonName != null  and checkPersonName != ''">check_person_name,</if>
+            <if test="checkPersonCode != null  and checkPersonCode != ''">check_person_code,</if>
+            <if test="checkPersonTel != null  and checkPersonTel != ''">check_person_tel,</if>
+            <if test="checkPersonMajor != null  and checkPersonMajor != ''">check_person_major,</if>
+            <if test="checkPersonBz != null  and checkPersonBz != ''">check_person_bz,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="checkPersonId != null  and checkPersonId != ''">#{checkPersonId},</if>
+            <if test="checkPersonName != null  and checkPersonName != ''">#{checkPersonName},</if>
+            <if test="checkPersonCode != null  and checkPersonCode != ''">#{checkPersonCode},</if>
+            <if test="checkPersonTel != null  and checkPersonTel != ''">#{checkPersonTel},</if>
+            <if test="checkPersonMajor != null  and checkPersonMajor != ''">#{checkPersonMajor},</if>
+            <if test="checkPersonBz != null  and checkPersonBz != ''">#{checkPersonBz},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCheckPerson" parameterType="CheckPerson">
+        update check_person
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="checkPersonId != null  and checkPersonId != ''">check_person_id = #{checkPersonId},</if>
+            <if test="checkPersonName != null  and checkPersonName != ''">check_person_name = #{checkPersonName},</if>
+            <if test="checkPersonCode != null  and checkPersonCode != ''">check_person_code = #{checkPersonCode},</if>
+            <if test="checkPersonTel != null  and checkPersonTel != ''">check_person_tel = #{checkPersonTel},</if>
+            <if test="checkPersonMajor != null  and checkPersonMajor != ''">check_person_major = #{checkPersonMajor},</if>
+            <if test="checkPersonBz != null  and checkPersonBz != ''">check_person_bz = #{checkPersonBz},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCheckPersonById" parameterType="String">
+        delete from check_person where id = #{id}
+    </delete>
+
+    <delete id="deleteCheckPersonByIds" parameterType="String">
+        delete from check_person where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

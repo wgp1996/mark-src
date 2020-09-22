@@ -43,6 +43,16 @@ public class GoodsInfoOwnerServiceImpl implements IGoodsInfoOwnerService
     }
 
     /**
+     * 根据编码查询业户商品建档
+     *
+     * @param goodsCode 业户商品建档编码
+     * @return 业户商品建档
+     */
+    @Override
+    public GoodsInfoOwner selectGoodsInfoOwnerByCode(Integer id,String goodsCode,String createBy){
+        return goodsInfoOwnerMapper.selectGoodsInfoOwnerByCode(id,goodsCode,createBy);
+    }
+    /**
      * 查询业户商品建档列表
      * 
      * @param goodsInfoOwner 业户商品建档

@@ -62,6 +62,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and id != #{id}
         </if>
     </select>
+
+    <select id="selectGoodsInfoOwnerByCode" resultMap="GoodsInfoOwnerResult">
+        <include refid="selectGoodsInfoOwnerVo"/>
+        where goods_code=#{goodsCode} and create_by=#{createBy}
+        <if test="id!=-1">
+            and id != #{id}
+        </if>
+    </select>
         
     <insert id="insertGoodsInfoOwner" parameterType="GoodsInfoOwner" useGeneratedKeys="true" keyProperty="id">
         insert into goods_info_owner

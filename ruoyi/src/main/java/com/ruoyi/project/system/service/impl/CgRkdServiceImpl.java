@@ -31,7 +31,74 @@ public class CgRkdServiceImpl implements ICgRkdService
     {
         return cgRkdMapper.selectCgRkdById(id);
     }
+    /**
+     * 查询业户接收订单列表
+     *
+     * @param createBy 业户代码
+     * @return 进货单集合
+     */
+    @Override
+    public List<CgRkd> selectCgRkdAllListByStatus(String createBy,Integer type){
+        return cgRkdMapper.selectCgRkdAllListByStatus(createBy,type);
+    }
+    /**
+     * 查询百大审核订单列表
+     *
+     * @param createBy 业户代码
+     * @return 进货单集合
+     */
+    @Override
+    public List<CgRkd> selectCgRkdAllListByShStatus(String createBy,Integer type,Integer status){
+        return cgRkdMapper.selectCgRkdAllListByShStatus(createBy,type,status);
+    }
+    /**
+     * 检查进货单是否全部接收完毕
+     *
+     * @return 结果
+     */
+    @Override
+    public int checkRkdAllReceive(String djNumber){
+        return cgRkdMapper.checkRkdAllReceive(djNumber);
+    }
+    @Override
+    /**
+     * 检查进货单是否全部确认完毕
+     *
+     * @return 结果
+     */
+    public int checkRkdAllConfirm(String djNumber){
+        return cgRkdMapper.checkRkdAllConfirm(djNumber);
+    }
 
+    /**
+     * 修改进货单状态
+     *
+     * @return 结果
+     */
+    @Override
+    public int updateCgRkdStatusByNumber(CgRkd cgRkd){
+        return cgRkdMapper.updateCgRkdStatusByNumber(cgRkd);
+    }
+    /**
+     * 查询业户接收订单数量
+     *
+     * @param createBy 业户代码
+     * @return 进货单待接收数量
+     */
+    @Override
+    public Integer selectCgRkdByStatusCount(String createBy){
+        return cgRkdMapper.selectCgRkdByStatusCount(createBy);
+    }
+    /**
+     * 查询百大待审核总数
+     *
+     * @param createBy 业户代码
+     * @return 进货单待接收数量
+     */
+    @Override
+    public Integer selectCgRkdByShStatusCount(String createBy){
+        return cgRkdMapper.selectCgRkdByShStatusCount(createBy);
+    }
     /**
      * 查询进货单列表
      * 
@@ -42,6 +109,27 @@ public class CgRkdServiceImpl implements ICgRkdService
     public List<CgRkd> selectCgRkdList(CgRkd cgRkd)
     {
         return cgRkdMapper.selectCgRkdList(cgRkd);
+    }
+    /**
+     * 查询进货单汇总列表
+     *
+     * @param cgRkd 进货单
+     * @return 进货单集合
+     */
+    @Override
+    public List<CgRkd> rkdSummaryList(CgRkd cgRkd){
+        return cgRkdMapper.rkdSummaryList(cgRkd);
+    }
+    /**
+     * 查询进货单列表
+     *
+     * @param cgRkd 进货单
+     * @return 进货单
+     */
+    @Override
+    public List<CgRkd> selectCgRkdAllList(CgRkd cgRkd)
+    {
+        return cgRkdMapper.selectCgRkdAllList(cgRkd);
     }
 
     /**

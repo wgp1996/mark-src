@@ -7,9 +7,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="CgRkd" id="CgRkdResult">
         <result property="id"    column="id"    />
         <result property="djNumber"    column="dj_number"    />
-        <result property="stallCode"    column="stall_code"    />
+        <result property="storeCode"    column="store_code"    />
         <result property="djTime"    column="dj_time"    />
-        <result property="stallName"    column="stall_name"    />
+        <result property="storeName"    column="store_name"    />
         <result property="status"    column="status"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -19,15 +19,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="fileName"    column="file_name"    />
         <result property="djStatusName"    column="dj_status_name"    />
         <result property="sumNum"    column="sum_num"    />
-
+        <result property="isRate"    column="is_rate"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="createName"    column="create_name"    />
+        <result property="goodsAddress"    column="goods_address"    />
+        <result property="personCode"    column="person_code"    />
+        <result property="personName"    column="person_name"    />
+        <result property="personLxr"    column="person_lxr"    />
+        <result property="statusName"    column="status_name"    />
+        <result property="djId"    column="dj_id"    />
     </resultMap>
 
     <sql id="selectCgRkdVo">
-        select id, dj_number, stall_code, dj_time, stall_name, status, create_by, create_time, update_by, update_time, remark, file_name from cg_rkd
+        select is_rate,id, dj_number, store_code, dj_time, store_name, status, create_by, create_time, update_by, update_time, remark, file_name from cg_rkd
     </sql>
 
     <sql id="selectCgRkdVoByRole">
-        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name,
+        select a.*,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
         (select sum(goods_num) from cg_rkd_child where dj_number=a.dj_number) as sum_num
          from cg_rkd a
         join sys_user u on a.create_by=u.user_name
@@ -39,15 +49,182 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
             <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
-            <if test="stallCode != null  and stallCode != ''"> and stall_code = #{stallCode}</if>
+            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
             <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
-            <if test="stallName != null  and stallName != ''"> and stall_name like concat('%', #{stallName}, '%')</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
             <if test="status != null "> and status = #{status}</if>
             ${dataScope}
         </where>
         order by a.create_time desc
     </select>
-    
+
+    <select id="selectCgRkdAllList" parameterType="CgRkd" resultMap="CgRkdResult">
+        select distinct a.*,
+        case b.status when 0 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 1 then '已接收' when 2 then '已审核' end as dj_status_name,
+        (select sum(goods_num) from cg_rkd_child where dj_number=a.dj_number) as sum_num,
+        (select nick_name from sys_user where user_name=a.create_by) as create_name,
+        b.goods_num,b.goods_name,b.goods_dw,b.goods_address,b.person_name,b.person_code,b.id as dj_id
+        from cg_rkd a join cg_rkd_child b on a.dj_number=b.dj_number
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+            <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="rkdSummaryList" parameterType="CgRkd" resultMap="CgRkdResult">
+          select distinct a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
+        (select sum(goods_num) from cg_rkd_child where dj_number=a.dj_number) as sum_num,
+        (select nick_name from sys_user where user_name=a.create_by) as create_name,
+        b.goods_num,b.goods_name,b.goods_dw,b.goods_address
+        from cg_rkd a join cg_rkd_child b on a.dj_number=b.dj_number
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+            ${dataScope}
+        </where>
+
+        UNION ALL
+            select distinct a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
+        (select sum(goods_num) from cg_rkd_single_child where dj_number=a.dj_number) as sum_num,
+        (select nick_name from sys_user where user_name=a.create_by) as create_name,
+        b.goods_num,b.goods_name,b.goods_dw,b.goods_address
+        from cg_rkd_single a join cg_rkd_single_child b on a.dj_number=b.dj_number
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+        ${dataScope}
+        </where>
+    </select>
+
+    <!--百大待审核总数-->
+    <select id="selectCgRkdByShStatusCount" parameterType="CgRkd" resultType="Integer">
+        select
+        (select count(DISTINCT a.id)
+            from cg_rkd a
+            join  cg_rkd_child b on a.dj_number=b.dj_number left join owner_info c
+            on b.person_code=c.owner_code where a.create_by=#{createBy}   and b.status=1
+        )
+        +
+        (select count(DISTINCT a.id)
+            from cg_rkd_single a  where a.create_by=#{createBy}  and a.status=2
+        )
+    </select>
+    <!--百大审核订单列表-->
+    <select id="selectCgRkdAllListByShStatus" parameterType="CgRkd" resultMap="CgRkdResult">
+        <if test="type==1">
+            select DISTINCT 1 as type,b.id,a.dj_number,a.create_time,b.person_code,b.person_name,
+            case b.status when 0 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 1 then '已接收' when 2 then '已审核' end as status_name
+            from cg_rkd a
+            join  cg_rkd_child b on a.dj_number=b.dj_number left join owner_info c
+            on b.person_code=c.owner_code where a.create_by=#{createBy}
+            <!--所有-->
+            <if test="status==-1">
+                and (b.status=1||b.status=2||b.status=-2) or (a.`status`=2||a.`status`=3||a.`status`=-2)
+            </if>
+            <!--待审核-->
+            <if test="status==0">
+                and b.status=1
+            </if>
+            <!--已审核-->
+            <if test="status==1">
+                and b.status=2
+            </if>
+            <!--被退回-->
+            <if test="status==2">
+                and b.status=-2
+            </if>
+             ORDER BY a.create_time DESC
+        </if>
+
+        <if test="type==0">
+            select DISTINCT 0 as type,a.id,a.dj_number,a.create_time,a.person_code,a.person_name,
+            case a.status when 1 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 2 then '已接收' when 3 then '已审核' end as status_name
+            from cg_rkd_single a  where a.create_by=#{createBy}
+            <!--所有-->
+            <if test="status==-1">
+                and (a.`status`>=2||a.`status` &lt;=-2)
+            </if>
+            <!--待审核-->
+            <if test="status==0">
+                and a.status=2
+            </if>
+            <!--已审核-->
+            <if test="status==1">
+                and a.status=3
+            </if>
+            <!--被退回-->
+            <if test="status==2">
+                and a.status=-2
+            </if>
+            ORDER BY a.create_time DESC
+        </if>
+
+    </select>
+
+    <!--业户接收订单列表-->
+    <select id="selectCgRkdAllListByStatus" parameterType="CgRkd" resultMap="CgRkdResult">
+        select distinct 1 as type,b.id,a.dj_number,a.create_time,a.create_by as person_code,
+        case b.status when 0 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 1 then '已接收' when 2 then '已审核' end as status_name,
+        (select distinct nick_name from sys_user where user_name=a.create_by) as person_name,
+        (select distinct unit_name from sys_user where user_name=a.create_by) as person_lxr
+        from cg_rkd a
+        join  cg_rkd_child b on a.dj_number=b.dj_number left join owner_info c
+        on b.person_code=c.owner_code where b.person_code=#{createBy}
+        <if test="type==0">
+            and b.status=0 and a.`status`=1
+        </if>
+        <if test="type==1">
+            and (b.status=1||b.status=2||b.status=-1||b.status=-2) or (a.`status`=2||a.`status`=3||a.`status`=-1||a.`status`=-2)
+        </if>
+        UNION ALL
+        select distinct 0 as type,a.id,a.dj_number,a.create_time,
+        a.create_by as person_code,
+        case a.status when 1 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 2 then '已接收' when 3 then '已审核' end as status_name,
+        (select distinct nick_name from sys_user where user_name=a.create_by) as person_name,
+        (select distinct unit_name from sys_user where user_name=a.create_by) as person_lxr
+        from cg_rkd_single a join  cg_rkd_single_child b on a.dj_number=b.dj_number left join
+        owner_info c on a.person_code=c.owner_code where a.person_code=#{createBy}
+        <if test="type==0">
+            and a.`status`=1
+        </if>
+        <if test="type==1">
+            and (a.`status`>=2||a.`status` &lt;=-1)
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <!--业户待接收总数-->
+    <select id="selectCgRkdByStatusCount" parameterType="CgRkd" resultType="Integer">
+        select
+        (select count(DISTINCT a.id)
+        from cg_rkd a
+        join cg_rkd_child b on a.dj_number=b.dj_number left join owner_info c
+        on b.person_code=c.owner_code where b.person_code=#{createBy}
+        and b.status=0 and a.`status`=1
+        )
+        +
+        (select count(DISTINCT a.id)
+        from cg_rkd_single a join cg_rkd_single_child b on a.dj_number=b.dj_number left join
+        owner_info c on a.person_code=c.owner_code where a.person_code=#{createBy}
+            and a.`status`=1
+        )
+
+    </select>
+
+    <select id="checkRkdAllReceive" parameterType="String" resultType="Integer">
+        select IFNULL((select count(id) from cg_rkd_child where dj_number=#{djNumber}),0)-IFNULL((select count(id) from cg_rkd_child where dj_number=#{djNumber} and status=1),0)
+    </select>
+    <select id="checkRkdAllConfirm" parameterType="String" resultType="Integer">
+        select IFNULL((select count(id) from cg_rkd_child where dj_number=#{djNumber}),0)-IFNULL((select count(id) from cg_rkd_child where dj_number=#{djNumber} and status=2),0)
+    </select>
+
     <select id="selectCgRkdById" parameterType="String" resultMap="CgRkdResult">
         <include refid="selectCgRkdVo"/>
         where id = #{id}
@@ -58,10 +235,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">id,</if>
             <if test="djNumber != null  and djNumber != ''">dj_number,</if>
-            <if test="stallCode != null  and stallCode != ''">stall_code,</if>
+            <if test="storeCode != null  and storeCode != ''">store_code,</if>
             <if test="djTime != null  and djTime != ''">dj_time,</if>
-            <if test="stallName != null  and stallName != ''">stall_name,</if>
+            <if test="storeName != null  and storeName != ''">store_name,</if>
             <if test="status != null ">status,</if>
+            <if test="isRate != null ">is_rate,</if>
             <if test="createBy != null  and createBy != ''">create_by,</if>
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
@@ -72,10 +250,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">#{id},</if>
             <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
-            <if test="stallCode != null  and stallCode != ''">#{stallCode},</if>
+            <if test="storeCode != null  and storeCode != ''">#{storeCode},</if>
             <if test="djTime != null  and djTime != ''">#{djTime},</if>
-            <if test="stallName != null  and stallName != ''">#{stallName},</if>
+            <if test="storeName != null  and storeName != ''">#{storeName},</if>
             <if test="status != null ">#{status},</if>
+            <if test="isRate != null ">#{isRate},</if>
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
@@ -89,10 +268,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update cg_rkd
         <trim prefix="SET" suffixOverrides=",">
             <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
-            <if test="stallCode != null  and stallCode != ''">stall_code = #{stallCode},</if>
+            <if test="storeCode != null  and storeCode != ''">store_code = #{storeCode},</if>
             <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
-            <if test="stallName != null  and stallName != ''">stall_name = #{stallName},</if>
+            <if test="storeName != null  and storeName != ''">store_name = #{storeName},</if>
             <if test="status != null ">status = #{status},</if>
+            <if test="isRate != null ">is_rate = #{isRate},</if>
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
@@ -101,6 +281,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             update_time = sysdate()
         </trim>
         where id = #{id}
+    </update>
+
+    <update id="updateCgRkdStatusByNumber" parameterType="CgRkd">
+        update cg_rkd
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="status != null ">status = #{status},</if>
+        </trim>
+        where dj_number = #{djNumber}
     </update>
 
     <delete id="deleteCgRkdById" parameterType="String">

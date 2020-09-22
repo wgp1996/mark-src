@@ -2,6 +2,7 @@ package com.ruoyi.project.system.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.project.system.domain.CgRkdSingleChild;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.project.system.mapper.CgRkdChildMapper;
@@ -40,6 +41,27 @@ public class CgRkdChildServiceImpl implements ICgRkdChildService
     @Override
     public List<CgRkdChild> selectCgRkdChildByNumber(String dj_number){
         return cgRkdChildMapper.selectCgRkdChildByNumber(dj_number);
+    }
+    /**
+     * 查询进货单子表
+     *
+     * @param dj_number 进货单子表编码
+     * @return 进货单子表
+     */
+    @Override
+    public List<CgRkdChild> selectCgRkdSingleChildByNumber(String dj_number){
+        return cgRkdChildMapper.selectCgRkdSingleChildByNumber(dj_number);
+    }
+
+    /**
+     * 查询进货单子表
+     *
+     * @param createBy 用户编码
+     * @return 进货单子表
+     */
+    @Override
+    public List<CgRkdChild> selectCgRkdChildByUser(String createBy){
+        return cgRkdChildMapper.selectCgRkdChildByUser(createBy);
     }
     /**
      * 查询进货单子表

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.DeviceItemMapper">
+    
+    <resultMap type="DeviceItem" id="DeviceItemResult">
+        <result property="id"    column="id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="deviceName"    column="device_name"    />
+        <result property="deviceTdNum"    column="device_td_num"    />
+        <result property="deviceAccuracy"    column="device_accuracy"    />
+        <result property="deviceBrand"    column="device_brand"    />
+        <result property="deviceModel"    column="device_model"    />
+        <result property="deviceBuyTime"    column="device_buy_time"    />
+        <result property="deviceSendUnit"    column="device_send_unit"    />
+        <result property="deviceSendLxr"    column="device_send_lxr"    />
+        <result property="deviceSendLxrPhone"    column="device_send_lxr_phone"    />
+        <result property="deviceSalesLxr"    column="device_sales_lxr"    />
+        <result property="deviceSalesLxrPhone"    column="device_sales_lxr_phone"    />
+        <result property="deviceBz"    column="device_bz"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectDeviceItemVo">
+        select id, device_id, device_name, device_td_num, device_accuracy, device_brand, device_model, device_buy_time, device_send_unit, device_send_lxr, device_send_lxr_phone, device_sales_lxr, device_sales_lxr_phone, device_bz, create_by, create_time, update_by, update_time, remark from device_item
+    </sql>
+    <sql id="selectDeviceItemVoByRole">
+        select a.* from device_item a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectDeviceItemList" parameterType="DeviceItem" resultMap="DeviceItemResult">
+        <include refid="selectDeviceItemVoByRole"/>
+        <where>  
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="deviceTdNum != null "> and device_td_num = #{deviceTdNum}</if>
+            <if test="deviceAccuracy != null "> and device_accuracy = #{deviceAccuracy}</if>
+            <if test="deviceBrand != null  and deviceBrand != ''"> and device_brand = #{deviceBrand}</if>
+            <if test="deviceModel != null  and deviceModel != ''"> and device_model = #{deviceModel}</if>
+            <if test="deviceBuyTime != null  and deviceBuyTime != ''"> and device_buy_time = #{deviceBuyTime}</if>
+            <if test="deviceSendUnit != null  and deviceSendUnit != ''"> and device_send_unit = #{deviceSendUnit}</if>
+            <if test="deviceSendLxr != null  and deviceSendLxr != ''"> and device_send_lxr = #{deviceSendLxr}</if>
+            <if test="deviceSendLxrPhone != null  and deviceSendLxrPhone != ''"> and device_send_lxr_phone = #{deviceSendLxrPhone}</if>
+            <if test="deviceSalesLxr != null  and deviceSalesLxr != ''"> and device_sales_lxr = #{deviceSalesLxr}</if>
+            <if test="deviceSalesLxrPhone != null  and deviceSalesLxrPhone != ''"> and device_sales_lxr_phone = #{deviceSalesLxrPhone}</if>
+            <if test="deviceBz != null  and deviceBz != ''"> and device_bz = #{deviceBz}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectDeviceItemById" parameterType="String" resultMap="DeviceItemResult">
+        <include refid="selectDeviceItemVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDeviceItem" parameterType="DeviceItem">
+        insert into device_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="deviceId != null  and deviceId != ''">device_id,</if>
+            <if test="deviceName != null  and deviceName != ''">device_name,</if>
+            <if test="deviceTdNum != null ">device_td_num,</if>
+            <if test="deviceAccuracy != null ">device_accuracy,</if>
+            <if test="deviceBrand != null  and deviceBrand != ''">device_brand,</if>
+            <if test="deviceModel != null  and deviceModel != ''">device_model,</if>
+            <if test="deviceBuyTime != null  and deviceBuyTime != ''">device_buy_time,</if>
+            <if test="deviceSendUnit != null  and deviceSendUnit != ''">device_send_unit,</if>
+            <if test="deviceSendLxr != null  and deviceSendLxr != ''">device_send_lxr,</if>
+            <if test="deviceSendLxrPhone != null  and deviceSendLxrPhone != ''">device_send_lxr_phone,</if>
+            <if test="deviceSalesLxr != null  and deviceSalesLxr != ''">device_sales_lxr,</if>
+            <if test="deviceSalesLxrPhone != null  and deviceSalesLxrPhone != ''">device_sales_lxr_phone,</if>
+            <if test="deviceBz != null  and deviceBz != ''">device_bz,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="deviceId != null  and deviceId != ''">#{deviceId},</if>
+            <if test="deviceName != null  and deviceName != ''">#{deviceName},</if>
+            <if test="deviceTdNum != null ">#{deviceTdNum},</if>
+            <if test="deviceAccuracy != null ">#{deviceAccuracy},</if>
+            <if test="deviceBrand != null  and deviceBrand != ''">#{deviceBrand},</if>
+            <if test="deviceModel != null  and deviceModel != ''">#{deviceModel},</if>
+            <if test="deviceBuyTime != null  and deviceBuyTime != ''">#{deviceBuyTime},</if>
+            <if test="deviceSendUnit != null  and deviceSendUnit != ''">#{deviceSendUnit},</if>
+            <if test="deviceSendLxr != null  and deviceSendLxr != ''">#{deviceSendLxr},</if>
+            <if test="deviceSendLxrPhone != null  and deviceSendLxrPhone != ''">#{deviceSendLxrPhone},</if>
+            <if test="deviceSalesLxr != null  and deviceSalesLxr != ''">#{deviceSalesLxr},</if>
+            <if test="deviceSalesLxrPhone != null  and deviceSalesLxrPhone != ''">#{deviceSalesLxrPhone},</if>
+            <if test="deviceBz != null  and deviceBz != ''">#{deviceBz},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateDeviceItem" parameterType="DeviceItem">
+        update device_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceId != null  and deviceId != ''">device_id = #{deviceId},</if>
+            <if test="deviceName != null  and deviceName != ''">device_name = #{deviceName},</if>
+            <if test="deviceTdNum != null ">device_td_num = #{deviceTdNum},</if>
+            <if test="deviceAccuracy != null ">device_accuracy = #{deviceAccuracy},</if>
+            <if test="deviceBrand != null  and deviceBrand != ''">device_brand = #{deviceBrand},</if>
+            <if test="deviceModel != null  and deviceModel != ''">device_model = #{deviceModel},</if>
+            <if test="deviceBuyTime != null  and deviceBuyTime != ''">device_buy_time = #{deviceBuyTime},</if>
+            <if test="deviceSendUnit != null  and deviceSendUnit != ''">device_send_unit = #{deviceSendUnit},</if>
+            <if test="deviceSendLxr != null  and deviceSendLxr != ''">device_send_lxr = #{deviceSendLxr},</if>
+            <if test="deviceSendLxrPhone != null  and deviceSendLxrPhone != ''">device_send_lxr_phone = #{deviceSendLxrPhone},</if>
+            <if test="deviceSalesLxr != null  and deviceSalesLxr != ''">device_sales_lxr = #{deviceSalesLxr},</if>
+            <if test="deviceSalesLxrPhone != null  and deviceSalesLxrPhone != ''">device_sales_lxr_phone = #{deviceSalesLxrPhone},</if>
+            <if test="deviceBz != null  and deviceBz != ''">device_bz = #{deviceBz},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDeviceItemById" parameterType="String">
+        delete from device_item where id = #{id}
+    </delete>
+
+    <delete id="deleteDeviceItemByIds" parameterType="String">
+        delete from device_item where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -24,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateTime"   column="update_time"  />
 		<result property="remark"       column="remark"       />
         <result property="ownerNum"       column="owner_num"       />
+        <result property="unitName"       column="unit_name"       />
 		<association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
 		<collection  property="roles"   javaType="java.util.List"        resultMap="RoleResult" />
 	</resultMap>
@@ -47,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<sql id="selectUserVo">
-        select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, 
+        select u.user_id,u.unit_name, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
         d.dept_id, d.parent_id, d.dept_name, d.order_num, d.leader, d.status as dept_status,
         (select owner_person_id from owner_info where owner_code=u.user_name) as owner_num,
         r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
@@ -125,6 +126,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">status,</if>
  			<if test="createBy != null and createBy != ''">create_by,</if>
  			<if test="remark != null and remark != ''">remark,</if>
+            unit_name,
  			create_time
  		)values(
  			<if test="userId != null and userId != ''">#{userId},</if>
@@ -139,6 +141,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">#{status},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
+ 			'聊城百货大楼',
  			sysdate()
  		)
 	</insert>

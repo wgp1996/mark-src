@@ -38,6 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storeArea != null  and storeArea != ''"> and store_area = #{storeArea}</if>
             <if test="storeVolume != null  and storeVolume != ''"> and store_volume = #{storeVolume}</if>
             <if test="storeType != null  and storeType != ''"> and store_type = #{storeType}</if>
+            <if test="createBy != null  and createBy != ''">and a.create_by = #{createBy}</if>
             ${dataScope}
         </where>
         order by a.create_time desc

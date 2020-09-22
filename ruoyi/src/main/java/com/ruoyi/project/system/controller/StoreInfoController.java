@@ -53,6 +53,18 @@ public class StoreInfoController extends BaseController
     }
 
     /**
+     * 仓库下拉列表
+     */
+    @GetMapping("/getStoreAll")
+    public TableDataInfo getStoreAll() {
+        StoreInfo storeInfo=new StoreInfo();
+        storeInfo.setCreateBy(SecurityUtils.getUsername());
+        List<StoreInfo> list = storeInfoService.selectStoreInfoList(storeInfo);
+        storeInfo=null;
+        return getDataTable(list);
+    }
+
+    /**
      * 导出冷库建档列表
      */
     @PreAuthorize("@ss.hasPermi('system:store:export')")
