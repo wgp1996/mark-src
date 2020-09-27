@@ -69,6 +69,14 @@ public interface ILabelInfoService
     public int checkLabel(String mac,String id);
 
     /**
+     * 检查电子价签编码是否重复
+     *
+     * @param labelCode 电子价签编码
+     * @return 结果
+     */
+    public int checkLabelCode(String labelCode,String id);
+
+    /**
      * 批量删除电子价签管理
      * 
      * @param ids 需要删除的电子价签管理ID

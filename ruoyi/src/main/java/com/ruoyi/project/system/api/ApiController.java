@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -85,7 +86,7 @@ public class ApiController extends BaseController
     @Autowired
     private IAppInfoService appInfoService;
     @Autowired
-    private IShopInfoService shopInfoService;
+    private IShopInfoOwnerService shopInfoOwnerService;
     @Autowired
     private IResultInfoService resultInfoService;
     /**
@@ -337,9 +338,9 @@ public class ApiController extends BaseController
     @GetMapping("/appShopList/{createBy}")
     public TableDataInfo appShopList(@PathVariable("createBy") String createBy)
     {
-        ShopInfo info=new ShopInfo();
+        ShopInfoOwner info=new ShopInfoOwner();
         info.setCreateBy(createBy);
-        List<ShopInfo> list = shopInfoService.selectShopInfoList(info);
+        List<ShopInfoOwner> list = shopInfoOwnerService.selectShopInfoOwnerList(info);
         info=null;
         return getDataTable(list);
     }
@@ -366,16 +367,7 @@ public class ApiController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * 查询业户信息列表
-     */
-    @ApiOperation("查询业户信息分页")
-    @GetMapping("/ownerAllList")
-    public TableDataInfo ownerAllList(OwnerInfo ownerInfo) {
-        startPage();
-        List<OwnerInfo> list = ownerInfoService.selectOwnerInfoList(ownerInfo);
-        return getDataTable(list);
-    }
+
     /**
      * 仓库列表
      */
@@ -1237,6 +1229,81 @@ public class ApiController extends BaseController
         List<CgRkd> list = cgRkdService.selectCgRkdList(cgRkd);
         return getDataTable(list);
     }
+
+    /**
+     * 市平台查询所有进货单列表
+     */
+    @ApiOperation("市平台查询所有进货单列表")
+    @GetMapping("/rkdAllListBySpt")
+    public TableDataInfo rkdAllListBySpt(CgRkd cgRkd, HttpServletResponse response)
+    {
+        startPage();
+        List<CgRkd> list = cgRkdService.selectCgRkdAllListBySpt(cgRkd);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Cache-Control","no-cache");
+        return getDataTable(list);
+    }
+    /**
+     *市平台查询周公河数量信息
+     */
+    @ApiOperation("市平台查询周公河数量信息")
+    @GetMapping("/selectMatkIndexNum")
+    public AjaxResult selectMatkIndexNum()
+    {
+        CgRkd rkd=cgRkdService.selectMatkIndexNum();
+        HashMap map=new HashMap();
+        map.put("ownerCount",rkd.getDjStatusName());
+        map.put("goodsCount",rkd.getGoodsName());
+        map.put("rkdCount",rkd.getCreateName());
+        map.put("addressCount",rkd.getPersonName());
+        AjaxResult ajaxResult = new AjaxResult();
+        ajaxResult.put("msg", "操作成功!");
+        ajaxResult.put("code", 200);
+        ajaxResult.put("rows", map);
+        return ajaxResult;
+    }
+
+    /**
+     * 市平台查询业户主营商品列表
+     */
+    @ApiOperation("市平台查询业户商品列表")
+    @GetMapping("/ownerAllGoodsList/{createBy}")
+    public TableDataInfo ownerAllGoodsList(@PathVariable("createBy") String createBy, HttpServletResponse response)
+    {
+        GoodsInfoOwner goodsInfoOwner=new GoodsInfoOwner();
+        goodsInfoOwner.setCreateBy(createBy);
+        List<GoodsInfoOwner> list = goodsInfoOwnerService.selectGoodsInfoOwnerList(goodsInfoOwner);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Cache-Control","no-cache");
+        return getDataTable(list);
+    }
+
+    /**
+     * 市平台查询业户主营商品列表
+     */
+    @ApiOperation("市平台查询业户商品列表")
+    @GetMapping("/ownerAllGoodsOwnerList")
+    public TableDataInfo ownerAllGoodsOwnerList(GoodsInfoOwner goodsInfoOwner,HttpServletResponse response)
+    {
+        startPage();
+        List<GoodsInfoOwner> list = goodsInfoOwnerService.selectGoodsInfoOwnerListBySpt(goodsInfoOwner);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Cache-Control","no-cache");
+        return getDataTable(list);
+    }
+    /**
+     * 市平台查询业户信息列表
+     */
+    @ApiOperation("市平台查询业户信息")
+    @GetMapping("/ownerAllList")
+    public TableDataInfo ownerAllList(OwnerInfo ownerInfo, HttpServletResponse response) {
+        startPage();
+        List<OwnerInfo> list = ownerInfoService.selectOwnerStallInfoList(ownerInfo);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Cache-Control","no-cache");
+        return getDataTable(list);
+    }
+
     /**
      * 获取进货单详细信息
      */
@@ -1496,7 +1563,7 @@ public class ApiController extends BaseController
                 row = sheet.getRow(i);
                 if(row !=null){
                     //添加摊位信息
-                    StallInfo info=new StallInfo();
+                   /* StallInfo info=new StallInfo();
                     String code=(String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString();
                     info.setCreateBy(code.substring(0,code.indexOf(".")));
                     info.setStallName((String)ExcelUtil.getCellFormatValue(row.getCell(2)));
@@ -1504,32 +1571,35 @@ public class ApiController extends BaseController
                     info.setStallCode(StringUtils.getRandomCode("STL"));
                     info.setCreateTime(DateUtils.getNowDate());
                     info.setStallStatus("1");
-                    stallInfoService.insertStallInfo(info);
+                    stallInfoService.insertStallInfo(info);*/
 
                     //添加默认供应商信息
-                    PersonInfo personInfo=new PersonInfo();
+                   /* PersonInfo personInfo=new PersonInfo();
                     personInfo.setCreateBy(code.substring(0,code.indexOf(".")));
                     personInfo.setPersonName("测试供应商"+"("+code.substring(0,code.indexOf("."))+")");
                     personInfo.setPersonCode(StringUtils.getRandomCode("PCM"));
                     personInfo.setPersonGoodsAddress("山东省聊城市东昌府区");
                     personInfo.setPersonAddress("山东省聊城市东昌府区");
-                    personInfoService.insertPersonInfo(personInfo);
+                    personInfoService.insertPersonInfo(personInfo);*/
                     //添加默认客户信息
-                    KhInfo khInfo=new KhInfo();
+                  /*  KhInfo khInfo=new KhInfo();
                     khInfo.setCreateBy(code.substring(0,code.indexOf(".")));
                     khInfo.setKhName("测试客户"+"("+code.substring(0,code.indexOf("."))+")");
                     khInfo.setKhAddress("山东省聊城市东昌府区");
                     khInfo.setKhCode(StringUtils.getRandomCode("KH"));
-                    khInfoService.insertKhInfo(khInfo);
+                    khInfoService.insertKhInfo(khInfo);*/
                     //添加默认商品信息
                     GoodsInfoOwner goodsInfoOwner=new GoodsInfoOwner();
-                    goodsInfoOwner.setCreateBy(code.substring(0,code.indexOf(".")));
+                    goodsInfoOwner.setCreateBy("lgh");
                     goodsInfoOwner.setGoodsCode(StringUtils.getRandomCode("SP"));
-                    goodsInfoOwner.setGoodsDw("斤");
-                    goodsInfoOwner.setGoodsName("大虾("+code.substring(0,code.indexOf("."))+"测试)");
+                    goodsInfoOwner.setGoodsDw((String)ExcelUtil.getCellFormatValue(row.getCell(3)).toString());
+                    goodsInfoOwner.setGoodsNbCode((String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString());
+                    goodsInfoOwner.setGoodsSptCode((String)ExcelUtil.getCellFormatValue(row.getCell(2)).toString());
+                    goodsInfoOwner.setIsSend(0);
+                    goodsInfoOwner.setGoodsName((String)ExcelUtil.getCellFormatValue(row.getCell(0)).toString());
                     goodsInfoOwner.setGoodsViceDw("公斤");
-                    goodsInfoOwner.setGoodsAddress("山东省聊城市东昌府区");
-                    goodsInfoOwner.setGoodsGg("1");
+                    goodsInfoOwner.setGoodsAddress((String)ExcelUtil.getCellFormatValue(row.getCell(7)).toString());
+                    goodsInfoOwner.setGoodsGg((String)ExcelUtil.getCellFormatValue(row.getCell(4)).toString());
                     goodsInfoOwnerService.insertGoodsInfoOwner(goodsInfoOwner);
 
                     /*CarInfo carInfo=new CarInfo();

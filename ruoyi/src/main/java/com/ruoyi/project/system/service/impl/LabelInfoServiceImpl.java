@@ -71,7 +71,16 @@ public class LabelInfoServiceImpl implements ILabelInfoService
     public int checkLabel(String mac,String id){
         return labelInfoMapper.checkLabel(mac,id);
     }
-
+    /**
+     * 检查电子价签编码是否重复
+     *
+     * @param labelCode 电子价签编码
+     * @return 结果
+     */
+    @Override
+    public int checkLabelCode(String labelCode,String id){
+        return labelInfoMapper.checkLabelCode(labelCode,id);
+    }
     /**
      * 批量修改电子价签绑定网关状态
      *

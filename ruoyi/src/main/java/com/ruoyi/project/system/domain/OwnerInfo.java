@@ -120,6 +120,25 @@ public class OwnerInfo extends BaseEntity {
     @Excel(name = "所属市场")
     private String markTypeName;
 
+    private String stallName;
+    private String stallCode;
+
+    public String getStallName() {
+        return stallName;
+    }
+
+    public void setStallName(String stallName) {
+        this.stallName = stallName;
+    }
+
+    public String getStallCode() {
+        return stallCode;
+    }
+
+    public void setStallCode(String stallCode) {
+        this.stallCode = stallCode;
+    }
+
     public String getMarkType() {
         return markType;
     }

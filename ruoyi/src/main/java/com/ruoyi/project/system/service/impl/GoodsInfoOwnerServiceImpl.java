@@ -63,7 +63,16 @@ public class GoodsInfoOwnerServiceImpl implements IGoodsInfoOwnerService
     {
         return goodsInfoOwnerMapper.selectGoodsInfoOwnerList(goodsInfoOwner);
     }
-
+    /**
+     * 市平台查询业户商品建档列表
+     *
+     * @param goodsInfoOwner 业户商品建档
+     * @return 业户商品建档集合
+     */
+    @Override
+    public List<GoodsInfoOwner> selectGoodsInfoOwnerListBySpt(GoodsInfoOwner goodsInfoOwner){
+        return goodsInfoOwnerMapper.selectGoodsInfoOwnerListBySpt(goodsInfoOwner);
+    }
     /**
      * 新增业户商品建档
      * 

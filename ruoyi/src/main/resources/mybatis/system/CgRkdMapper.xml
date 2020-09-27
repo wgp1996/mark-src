@@ -29,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="personName"    column="person_name"    />
         <result property="personLxr"    column="person_lxr"    />
         <result property="statusName"    column="status_name"    />
+        <result property="createCount"    column="create_count"    />
         <result property="djId"    column="dj_id"    />
     </resultMap>
 
@@ -200,6 +201,57 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         ORDER BY create_time DESC
     </select>
+
+    <!--市平台查询周公河数量信息-->
+    <select id="selectMatkIndexNum" resultMap="CgRkdResult">
+        select
+
+        (select count(id) from owner_info) as djStatusName,<!--业户总数-->
+
+        (select count(id) from goods_info_owner where create_by in(select owner_code from owner_info)) as goodsName,<!--业户商品总数-->
+
+        (select (select count(id) from cg_rkd where create_by in(select owner_code from owner_info))+
+        (select count(id) from cg_rkd_single where create_by in(select owner_code from owner_info)))as createName,<!--进货单总数-->
+
+        (select count(id) from goods_info_owner where create_by in(select owner_code from owner_info) and goods_address is not null) as personName<!--业户总数-->
+
+    </select>
+
+    <!-- 市平台查询所有订单列表  按照业户做单子的数量排序 -->
+    <select id="selectCgRkdAllListBySpt" parameterType="CgRkd" resultMap="CgRkdResult">
+            select DISTINCT 1 as type,b.id,a.dj_number,a.create_time,b.person_code,b.person_name,a.store_code,a.store_name,a.create_by,
+            (select distinct nick_name from sys_user where user_name=a.create_by) as create_name,
+            (select count(id) from cg_rkd where create_by=a.create_by) create_count
+            from cg_rkd a
+            join  cg_rkd_child b on a.dj_number=b.dj_number left join owner_info c
+            on b.person_code=c.owner_code
+            <where>
+                b.person_code LIKE '%PCM%'
+                <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
+                <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+                <if test="personName != null  and personName != ''"> and b.person_name like concat('%', #{personName}, '%')</if>
+                <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
+                <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+                <if test="storeName != null  and storeName != ''"> and a.store_name like concat('%', #{storeName}, '%')</if>
+                <if test="status != null "> and status = #{status}</if>
+            </where>
+            UNION ALL
+            select DISTINCT 0 as type,a.id,a.dj_number,a.create_time,a.person_code,a.person_name,a.store_code,a.store_name,a.create_by,
+            (select distinct nick_name from sys_user where user_name=a.create_by) as create_name,
+            (select count(id) from cg_rkd where create_by=a.create_by) create_count
+            from cg_rkd_single a
+            <where>
+                a.person_code LIKE '%PCM%'
+                <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
+                <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+                <if test="personName != null  and personName != ''"> and a.person_name like concat('%', #{personName}, '%')</if>
+                <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+                <if test="storeName != null  and storeName != ''"> and a.store_name like concat('%', #{storeName}, '%')</if>
+                <if test="status != null "> and status = #{status}</if>
+            </where>
+            ORDER BY create_count DESC
+    </select>
+
     <!--业户待接收总数-->
     <select id="selectCgRkdByStatusCount" parameterType="CgRkd" resultType="Integer">
         select

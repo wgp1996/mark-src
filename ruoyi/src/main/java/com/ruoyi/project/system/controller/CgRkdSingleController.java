@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
+import com.ruoyi.framework.config.RuoYiConfig;
 import com.ruoyi.framework.push.JPush;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
@@ -20,6 +22,7 @@ import com.ruoyi.project.system.service.ICgRkdSingleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,8 +60,62 @@ public class CgRkdSingleController extends BaseController
         }*/
         return getDataTable(list);
     }
-
-
+    /**
+     * 导入进货单
+     */
+    @PreAuthorize("@ss.hasPermi('system:cgrkdSingle:import')")
+    @Log(title = "进货单", businessType = BusinessType.EXPORT)
+    @PostMapping("/import")
+    public AjaxResult uploadFile(MultipartFile file) throws Exception
+    {
+        try
+        {
+            // 上传文件路径
+            String filePath = RuoYiConfig.getUploadPath();
+            System.out.println(filePath);
+            // 上传并返回新文件名称
+            String fileName = FileUploadUtils.upload(filePath, file);
+            //解析Excel
+            List<List<String>> list=ExcelUtil.importCgRkd(filePath+fileName.substring(fileName.indexOf("upload")+6,fileName.length()));
+            if(list.size()>0){
+                for(List<String> info:list){
+                    if(!"".equals(info.get(3))&&info.get(3)!=null) {
+                        CgRkdSingle cgRkd = new CgRkdSingle();
+                        cgRkd.setDjNumber(StringUtils.getRandomCode("POC"));//代表导入的采购单;
+                        cgRkd.setStatus(3);//导入代表已生效
+                        cgRkd.setCreateBy(SecurityUtils.getUsername());
+                        cgRkd.setId(StringUtils.getId());
+                        cgRkd.setDjTime(info.get(0));//单据日期
+                        cgRkd.setCreateBy(SecurityUtils.getUsername());//制单人
+                        cgRkdService.insertCgRkdSingle(cgRkd);
+                        //插入子表
+                        CgRkdSingleChild child = new CgRkdSingleChild();
+                        child.setCreateBy(SecurityUtils.getUsername());
+                        child.setId(StringUtils.getId());
+                        child.setDjNumber(cgRkd.getDjNumber());
+                        child.setCreateTime(DateUtils.getNowDate());
+                        child.setShopName(info.get(2));//门店
+                        child.setGoodsCode(info.get(3));//商品编码
+                        child.setGoodsName(info.get(4));//商品名称
+                        child.setGoodsAddress(info.get(5));//商品产地
+                        child.setGoodsDw(info.get(6));//商品单位
+                        child.setGoodsNum(info.get(7));//数量
+                        child.setGoodsNum(info.get(8));//单价
+                        child.setGoodsNum(info.get(9));//金额
+                        child.setRemark(info.get(10));//备注
+                        cgRkdChildService.insertCgRkdSingleChild(child);
+                    }
+                }
+                return  AjaxResult.success("导入成功!");
+            }else{
+                return AjaxResult.error("导入失败!");
+            }
+        }
+        catch (Exception e)
+        {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
 
     /**
      * 导出进货单列表

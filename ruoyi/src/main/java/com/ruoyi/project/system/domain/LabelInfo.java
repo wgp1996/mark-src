@@ -61,10 +61,32 @@ public class LabelInfo extends BaseEntity
     /** 温度信息 */
     @Excel(name = "温度信息")
     private String temperature;
+    /** 价签编码 */
+    @Excel(name = "价签编码")
+    private String labelCode;
+    /** 货位 */
+    @Excel(name = "货位")
+    private String storeCode;
 
     private String demoName;
 
     private String goodsName;
+
+    public String getLabelCode() {
+        return labelCode;
+    }
+
+    public void setLabelCode(String labelCode) {
+        this.labelCode = labelCode;
+    }
+
+    public String getStoreCode() {
+        return storeCode;
+    }
+
+    public void setStoreCode(String storeCode) {
+        this.storeCode = storeCode;
+    }
 
     public String getDemoName() {
         return demoName;

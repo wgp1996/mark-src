@@ -30,7 +30,16 @@ public class OwnerInfoServiceImpl implements IOwnerInfoService {
     public OwnerInfo selectOwnerInfoById(String id) {
         return ownerInfoMapper.selectOwnerInfoById(id);
     }
-
+    /**
+     * 市平台查询业户建档列表
+     *
+     * @param ownerInfo 业户建档
+     * @return 业户建档集合
+     */
+    @Override
+    public List<OwnerInfo> selectOwnerStallInfoList(OwnerInfo ownerInfo){
+        return ownerInfoMapper.selectOwnerStallInfoList(ownerInfo);
+    }
     /**
      * 查询业户建档
      *

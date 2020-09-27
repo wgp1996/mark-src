@@ -28,6 +28,8 @@
         <result property="fileTitle2" column="file_title2"/>
         <result property="userName" column="user_name"/>
         <result property="markType" column="mark_type"/>
+        <result property="stallName" column="stall_name"/>
+        <result property="stallCode" column="stall_code"/>
         <result property="markTypeName" column="mark_type_name"/>
     </resultMap>
 
@@ -36,6 +38,27 @@
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
+
+    <select id="selectOwnerStallInfoList" parameterType="OwnerInfo" resultMap="OwnerInfoResult">
+        select a.*,(select mark_type_name from mark_type where mark_id=a.mark_type) as mark_type_name,b.stall_code,b.stall_name  from owner_info a
+        join stall_info b on a.owner_code=b.create_by
+        <where>
+            <if test="id != null  and id != ''">and id != #{id}</if>
+            <if test="ownerCode != null  and ownerCode != ''">and a.owner_code = #{ownerCode}</if>
+            <if test="ownerName != null  and ownerName != ''">and a.owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="ownerOrg != null  and ownerOrg != ''">and owner_org = #{ownerOrg}</if>
+            <if test="ownerOrgNature != null  and ownerOrgNature != ''">and owner_org_nature = #{ownerOrgNature}</if>
+            <if test="ownerPersonId != null  and ownerPersonId != ''">and owner_person_id = #{ownerPersonId}</if>
+            <if test="ownerMangerType != null  and ownerMangerType != ''">and owner_manger_type = #{ownerMangerType}
+            </if>
+            <if test="ownerLxr != null  and ownerLxr != ''">and owner_lxr = #{ownerLxr}</if>
+            <if test="ownerLxrPhone != null  and ownerLxrPhone != ''">and owner_lxr_phone = #{ownerLxrPhone}</if>
+            <if test="userName != null  and userName != ''">and a.user_name = #{userName}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            ${dataScope}
+        </where>
+        order by a.owner_code,a.create_time desc
+    </select>
 
     <select id="selectOwnerInfoList" parameterType="OwnerInfo" resultMap="OwnerInfoResult">
         <include refid="selectOwnerInfoVo"/>

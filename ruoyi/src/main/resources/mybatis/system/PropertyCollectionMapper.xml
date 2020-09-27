@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="selectPropertyCollectionByRole">
-        select a.* from property_collection a
+        select a.*,(select ) from property_collection a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>

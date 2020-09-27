@@ -61,6 +61,15 @@ public class CgRkd extends BaseEntity
     private Integer type;
     private String statusName;
     private String djId;
+    private String createCount;
+
+    public String getCreateCount() {
+        return createCount;
+    }
+
+    public void setCreateCount(String createCount) {
+        this.createCount = createCount;
+    }
 
     public String getDjId() {
         return djId;

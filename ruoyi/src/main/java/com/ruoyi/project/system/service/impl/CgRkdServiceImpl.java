@@ -31,6 +31,7 @@ public class CgRkdServiceImpl implements ICgRkdService
     {
         return cgRkdMapper.selectCgRkdById(id);
     }
+
     /**
      * 查询业户接收订单列表
      *
@@ -98,6 +99,24 @@ public class CgRkdServiceImpl implements ICgRkdService
     @Override
     public Integer selectCgRkdByShStatusCount(String createBy){
         return cgRkdMapper.selectCgRkdByShStatusCount(createBy);
+    }
+    /**
+     * 市平台查询所有进货单列表
+     *
+     * @param cgRkd 进货单
+     * @return 进货单集合
+     */
+    @Override
+    public List<CgRkd> selectCgRkdAllListBySpt(CgRkd cgRkd){
+        return cgRkdMapper.selectCgRkdAllListBySpt(cgRkd);
+    }
+    /**
+     * 市平台查询周公河数量信息
+     *
+     */
+    @Override
+    public CgRkd selectMatkIndexNum(){
+        return cgRkdMapper.selectMatkIndexNum();
     }
     /**
      * 查询进货单列表

@@ -24,6 +24,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="goodsName"    column="goods_name"    />
         <result property="demoName"    column="demo_name"    />
+        <result property="labelCode"    column="label_code"    />
+        <result property="storeCode"    column="store_code"    />
     </resultMap>
 
     <sql id="selectLabelInfoVo">
@@ -39,7 +41,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectLabelInfoList" parameterType="LabelInfo" resultMap="LabelInfoResult">
         <include refid="selectLabelInfoVoByRole"/>
-        <where>  
+        <where>
+            <if test="labelCode != null  and labelCode != ''"> and label_code = #{labelCode}</if>
+            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
             <if test="mac != null  and mac != ''"> and mac = #{mac}</if>
             <if test="activekey != null  and activekey != ''"> and activekey = #{activekey}</if>
             <if test="storeid != null  and storeid != ''"> and storeId = #{storeid}</if>
@@ -74,6 +78,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and id!=#{id}
         </if>
     </select>
+
+    <select id="checkLabelCode" parameterType="String" resultType="Integer">
+        select count(id) from label_info
+        where label_code = #{labelCode}
+        <if test="id!=null and id!=''">
+            and id!=#{id}
+        </if>
+    </select>
         
     <insert id="insertLabelInfo" parameterType="LabelInfo">
         insert into label_info
@@ -94,6 +106,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
+            <if test="labelCode != null  and labelCode != ''"> label_code,</if>
+            <if test="storeCode != null  and storeCode != ''"> store_code,</if>
             create_time
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -113,6 +127,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="labelCode != null  and labelCode != ''"> #{labelCode},</if>
+            <if test="storeCode != null  and storeCode != ''"> #{storeCode},</if>
             sysdate()
          </trim>
     </insert>
@@ -135,6 +151,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="labelCode != null  and labelCode != ''"> label_code=#{labelCode},</if>
+            <if test="storeCode != null  and storeCode != ''"> store_code=#{storeCode},</if>
             update_time = sysdate()
         </trim>
         where id = #{id}

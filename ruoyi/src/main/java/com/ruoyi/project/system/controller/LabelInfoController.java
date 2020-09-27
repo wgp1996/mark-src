@@ -88,6 +88,9 @@ public class LabelInfoController extends BaseController
         if(labelInfoService.checkLabel(item.getMac(),"")>0){
             return AjaxResult.error("该价签已存在!");
         }
+        if(labelInfoService.checkLabelCode(item.getLabelCode(),"")>0){
+            return AjaxResult.error("价签编码已重复!");
+        }
         HashMap map=new HashMap();
         List<HashMap> listGoods=new ArrayList<HashMap>();
         HashMap info=new HashMap();
@@ -133,6 +136,12 @@ public class LabelInfoController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody LabelInfo item)
     {
+        if(labelInfoService.checkLabel(item.getMac(),item.getId())>0){
+            return AjaxResult.error("该价签已存在!");
+        }
+        if(labelInfoService.checkLabelCode(item.getLabelCode(),item.getId())>0){
+            return AjaxResult.error("价签编码已重复!");
+        }
         String token=HttpUtils.getToken();
         HashMap map=new HashMap();
         List<HashMap> listGoods=new ArrayList<HashMap>();

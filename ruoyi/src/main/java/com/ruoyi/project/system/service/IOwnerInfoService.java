@@ -38,6 +38,14 @@ public interface IOwnerInfoService {
     public List<OwnerInfo> selectOwnerInfoList(OwnerInfo ownerInfo);
 
     /**
+     * 市平台查询业户建档列表
+     *
+     * @param ownerInfo 业户建档
+     * @return 业户建档集合
+     */
+    public List<OwnerInfo> selectOwnerStallInfoList(OwnerInfo ownerInfo);
+
+    /**
      * 新增业户建档
      *
      * @param ownerInfo 业户建档

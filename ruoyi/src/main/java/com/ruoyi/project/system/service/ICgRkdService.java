@@ -20,6 +20,12 @@ public interface ICgRkdService
     public CgRkd selectCgRkdById(String id);
 
     /**
+     * 市平台查询周公河数量信息
+     *
+     */
+    public CgRkd selectMatkIndexNum();
+
+    /**
      * 查询进货单列表
      * 
      * @param cgRkd 进货单
@@ -65,6 +71,15 @@ public interface ICgRkdService
      * @return 进货单集合
      */
     public List<CgRkd> selectCgRkdAllList(CgRkd cgRkd);
+
+
+    /**
+     * 市平台查询所有进货单列表
+     *
+     * @param cgRkd 进货单
+     * @return 进货单集合
+     */
+    public List<CgRkd> selectCgRkdAllListBySpt(CgRkd cgRkd);
 
     /**
      * 查询进货单汇总列表

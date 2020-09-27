@@ -39,7 +39,13 @@ public interface GoodsInfoOwnerMapper
      * @return 业户商品建档集合
      */
     public List<GoodsInfoOwner> selectGoodsInfoOwnerList(GoodsInfoOwner goodsInfoOwner);
-
+    /**
+     * 市平台查询业户商品建档列表
+     *
+     * @param goodsInfoOwner 业户商品建档
+     * @return 业户商品建档集合
+     */
+    public List<GoodsInfoOwner> selectGoodsInfoOwnerListBySpt(GoodsInfoOwner goodsInfoOwner);
     /**
      * 新增业户商品建档
      * 

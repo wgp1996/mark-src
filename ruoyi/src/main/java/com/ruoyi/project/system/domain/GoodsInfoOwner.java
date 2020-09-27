@@ -21,6 +21,12 @@ public class GoodsInfoOwner extends BaseEntity
     /** 商品编码 */
     @Excel(name = "商品编码")
     private String goodsCode;
+    /** 商品内部编码 */
+    @Excel(name = "商品内部编码")
+    private String goodsNbCode;
+    /** 商品市平台编码 */
+    @Excel(name = "商品市平台编码")
+    private String goodsSptCode;
 
     /** 商品名称 */
     @Excel(name = "商品名称")
@@ -57,6 +63,32 @@ public class GoodsInfoOwner extends BaseEntity
     /** 是否推送磅房 */
     @Excel(name = "是否推送磅房")
     private Integer isSend;
+
+    private String createName;
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName;
+    }
+
+    public String getGoodsNbCode() {
+        return goodsNbCode;
+    }
+
+    public void setGoodsNbCode(String goodsNbCode) {
+        this.goodsNbCode = goodsNbCode;
+    }
+
+    public String getGoodsSptCode() {
+        return goodsSptCode;
+    }
+
+    public void setGoodsSptCode(String goodsSptCode) {
+        this.goodsSptCode = goodsSptCode;
+    }
 
     public String getGoodsCodeImg() {
         return goodsCodeImg;

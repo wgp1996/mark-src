@@ -47,6 +47,13 @@ public interface LabelInfoMapper
      */
     public int checkLabel(String mac,String id);
     /**
+     * 检查电子价签编码是否重复
+     *
+     * @param labelCode 电子价签编码
+     * @return 结果
+     */
+    public int checkLabelCode(String labelCode,String id);
+    /**
      * 新增电子价签管理
      * 
      * @param labelInfo 电子价签管理

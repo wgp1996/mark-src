@@ -863,17 +863,57 @@ public class ExcelUtil<T>
         return val;
     }
 
-    public static void main(String[] args) {
+    /**
+     * 百大导入入库单
+     */
+    public static  List<List<String>> importCgRkd(String filePath){
         Workbook wb =null;
         Sheet sheet = null;
         Row row = null;
-        List<Map<String,String>> list = null;
+        List<List<String>> list = null;
+        String cellData = null;
+        wb = readExcel(filePath);
+        if(wb != null){
+            //用来存放表中数据
+            list = new ArrayList<List<String>>();
+            //获取第一个sheet
+            sheet = wb.getSheetAt(0);
+            //获取最大行数
+            int rownum = sheet.getPhysicalNumberOfRows();
+            //获取第一行
+            row = sheet.getRow(0);
+            //获取最大列数
+            int colnum = row.getPhysicalNumberOfCells();
+            for (int i = 1; i<rownum; i++) {
+                Map<String,String> map = new LinkedHashMap<String,String>();
+                row = sheet.getRow(i);
+                if(row !=null){
+                    List<String> stringList=new ArrayList<>();
+                    for (int j=0;j<colnum;j++){
+                        cellData = (String) getCellFormatValue(row.getCell(j));
+                        stringList.add(cellData);
+                    }
+                    list.add(stringList);
+                }else{
+                    break;
+                }
+            }
+        }
+        return  list;
+    }
+    public static void main(String[] args) {
+        String str="\\profile\\upload\\2020\\09\\25\\ae64484e1a7dd7f7f3607c59b19c0c25.xlsx";
+        System.out.println(str.substring(str.indexOf("upload")+6,str.length()));
+       /* Workbook wb =null;
+        Sheet sheet = null;
+        Row row = null;
+        List<String> list = null;
         String cellData = null;
         String filePath = "D:\\test.xlsx";
         wb = readExcel(filePath);
         if(wb != null){
             //用来存放表中数据
-            list = new ArrayList<Map<String,String>>();
+            list = new ArrayList<String>();
             //获取第一个sheet
             sheet = wb.getSheetAt(0);
             //获取最大行数
@@ -888,20 +928,13 @@ public class ExcelUtil<T>
                 if(row !=null){
                     for (int j=0;j<colnum;j++){
                         cellData = (String) getCellFormatValue(row.getCell(j));
-                        System.out.println(cellData);
+                        list.add(cellData);
                     }
                 }else{
                     break;
                 }
-                list.add(map);
             }
-        }
-        //遍历解析出来的list
-        for (Map<String,String> map : list) {
-
-            System.out.println();
-        }
-
+        }*/
     }
     //读取excel
     public static Workbook readExcel(String filePath){

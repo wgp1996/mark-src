@@ -41,6 +41,18 @@ public interface CgRkdMapper
      */
     public List<CgRkd> selectCgRkdAllListByStatus(String createBy,Integer type);
     /**
+     * 市平台查询所有进货单列表
+     *
+     * @param cgRkd 进货单
+     * @return 进货单集合
+     */
+    public List<CgRkd> selectCgRkdAllListBySpt(CgRkd cgRkd);
+    /**
+     * 市平台查询周公河数量信息
+     *
+     */
+    public CgRkd selectMatkIndexNum();
+    /**
      * 查询进货单列表
      *
      * @param cgRkd 进货单

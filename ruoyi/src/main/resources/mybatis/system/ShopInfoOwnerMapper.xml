@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.ShopInfoOwnerMapper">
+    
+    <resultMap type="ShopInfoOwner" id="ShopInfoOwnerResult">
+        <result property="id"    column="id"    />
+        <result property="storeid"    column="storeId"    />
+        <result property="shopName"    column="shop_name"    />
+        <result property="shopAddress"    column="shop_address"    />
+        <result property="shopStatus"    column="shop_status"    />
+        <result property="shopArea"    column="shop_area"    />
+        <result property="personNum"    column="person_num"    />
+        <result property="personPhone"    column="person_phone"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="userName"    column="user_name"    />
+    </resultMap>
+
+    <sql id="selectShopInfoOwnerVo">
+        select * from shop_info_owner
+    </sql>
+
+    <sql id="selectShopInfoOwnerVoByRole">
+        select a.* from shop_info_owner a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectShopInfoOwnerList" parameterType="ShopInfoOwner" resultMap="ShopInfoOwnerResult">
+        <include refid="selectShopInfoOwnerVoByRole"/>
+        <where>  
+            <if test="storeid != null  and storeid != ''"> and storeId = #{storeid}</if>
+            <if test="shopName != null  and shopName != ''"> and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="shopAddress != null  and shopAddress != ''"> and shop_address = #{shopAddress}</if>
+            <if test="shopStatus != null "> and shop_status = #{shopStatus}</if>
+            <if test="shopArea != null  and shopArea != ''"> and shop_area = #{shopArea}</if>
+            <if test="personNum != null  and personNum != ''"> and person_num = #{personNum}</if>
+            <if test="personPhone != null  and personPhone != ''"> and person_phone = #{personPhone}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectShopInfoOwnerById" parameterType="String" resultMap="ShopInfoOwnerResult">
+        <include refid="selectShopInfoOwnerVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="checkShopInfoOwner" parameterType="String" resultType="Integer">
+        select count(id) from shop_info_owner
+        where storeId = #{storeId}
+        <if  test="id != null  and id != ''">
+            and id!=#{id}
+        </if>
+    </select>
+
+
+        
+    <insert id="insertShopInfoOwner" parameterType="ShopInfoOwner">
+        insert into shop_info_owner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="storeid != null  and storeid != ''">storeId,</if>
+            <if test="shopName != null  and shopName != ''">shop_name,</if>
+            <if test="shopAddress != null  and shopAddress != ''">shop_address,</if>
+            <if test="shopStatus != null ">shop_status,</if>
+            <if test="shopArea != null  and shopArea != ''">shop_area,</if>
+            <if test="personNum != null  and personNum != ''">person_num,</if>
+            <if test="personPhone != null  and personPhone != ''">person_phone,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="userName != null  and userName != ''">user_name,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="storeid != null  and storeid != ''">#{storeid},</if>
+            <if test="shopName != null  and shopName != ''">#{shopName},</if>
+            <if test="shopAddress != null  and shopAddress != ''">#{shopAddress},</if>
+            <if test="shopStatus != null ">#{shopStatus},</if>
+            <if test="shopArea != null  and shopArea != ''">#{shopArea},</if>
+            <if test="personNum != null  and personNum != ''">#{personNum},</if>
+            <if test="personPhone != null  and personPhone != ''">#{personPhone},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateShopInfoOwner" parameterType="ShopInfoOwner">
+        update shop_info_owner
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="storeid != null  and storeid != ''">storeId = #{storeid},</if>
+            <if test="shopName != null  and shopName != ''">shop_name = #{shopName},</if>
+            <if test="shopAddress != null  and shopAddress != ''">shop_address = #{shopAddress},</if>
+            <if test="shopStatus != null ">shop_status = #{shopStatus},</if>
+            <if test="shopArea != null  and shopArea != ''">shop_area = #{shopArea},</if>
+            <if test="personNum != null  and personNum != ''">person_num = #{personNum},</if>
+            <if test="personPhone != null  and personPhone != ''">person_phone = #{personPhone},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="userName != null  and userName != ''">user_name=#{userName},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteShopInfoOwnerById" parameterType="String">
+        delete from shop_info_owner where id = #{id}
+    </delete>
+
+    <delete id="deleteShopInfoOwnerByIds" parameterType="String">
+        delete from shop_info_owner where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="checkHasLabel" parameterType="String" resultType="Integer">
+        select count(id) from label_info
+        where storeId = #{storeId}
+    </select>
+    <select id="checkHasGoods" parameterType="String" resultType="Integer">
+       select count(id) from shop_goods
+        where storeId = #{storeId}
+    </select>
+</mapper>
