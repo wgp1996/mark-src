@@ -5,6 +5,7 @@ import java.util.List;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.project.system.domain.CheckAddress;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,7 +50,14 @@ public class SampAddressController extends BaseController
         List<SampAddress> list = sampAddressService.selectSampAddressList(sampAddress);
         return getDataTable(list);
     }
-
+    @GetMapping("/getAllSampAddress")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo getAllSampAddress(SampAddress sampAddress)
+    {
+        startPage();
+        List<SampAddress> list = sampAddressService.selectSampAddressList(sampAddress);
+        return getDataTable(list);
+    }
     /**
      * 导出取样地建档列表
      */

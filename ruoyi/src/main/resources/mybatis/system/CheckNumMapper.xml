@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CheckNumMapper">
+    
+    <resultMap type="CheckNum" id="CheckNumResult">
+        <result property="id"    column="id"    />
+        <result property="inhibitionNum"    column="inhibition_num"    />
+        <result property="checkNum"    column="check_num"    />
+        <result property="type"    column="type"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCheckNumVo">
+        select id, inhibition_num, check_num, type, create_by, create_time, update_by, update_time, remark from check_num
+    </sql>
+
+    <sql id="selectCheckNumVoByRole">
+        select a.* from check_num a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="checkNumIsContain" parameterType="CheckNum" resultType="Integer">
+        select count(id) from check_num
+        <where>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+        </where>
+    </select>
+    <select id="selectCheckNumList" parameterType="CheckNum" resultMap="CheckNumResult">
+        <include refid="selectCheckNumVoByRole"/>
+        <where>  
+            <if test="inhibitionNum != null  and inhibitionNum != ''"> and inhibition_num = #{inhibitionNum}</if>
+            <if test="checkNum != null  and checkNum != ''"> and check_num = #{checkNum}</if>
+            <if test="type != null"> and type = #{type}</if>
+        </where>
+    </select>
+    
+    <select id="selectCheckNumById" parameterType="Integer" resultMap="CheckNumResult">
+        <include refid="selectCheckNumVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCheckNum" parameterType="CheckNum" useGeneratedKeys="true" keyProperty="id">
+        insert into check_num
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="inhibitionNum != null  and inhibitionNum != ''">inhibition_num,</if>
+            <if test="checkNum != null  and checkNum != ''">check_num,</if>
+            <if test="type != null ">type,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="inhibitionNum != null  and inhibitionNum != ''">#{inhibitionNum},</if>
+            <if test="checkNum != null  and checkNum != ''">#{checkNum},</if>
+            <if test="type != null ">#{type},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCheckNum" parameterType="CheckNum">
+        update check_num
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="inhibitionNum != null  and inhibitionNum != ''">inhibition_num = #{inhibitionNum},</if>
+            <if test="checkNum != null  and checkNum != ''">check_num = #{checkNum},</if>
+            <if test="type != null ">type = #{type},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCheckNumById" parameterType="Integer">
+        delete from check_num where id = #{id}
+    </delete>
+
+    <delete id="deleteCheckNumByIds" parameterType="String">
+        delete from check_num where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

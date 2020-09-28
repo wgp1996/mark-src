@@ -60,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         case a.status when 0 then '正操作' when 1 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 2 then '已接收' when 3 then '已审核' end as dj_status_name,
         (select sum(goods_num) from cg_rkd_single_child where dj_number=a.dj_number) as sum_num,
         (select nick_name from sys_user where user_name=a.create_by) as create_name,
-        b.goods_num,b.goods_name,b.goods_dw,b.goods_address
+        b.goods_num,b.goods_name,b.goods_dw,b.goods_address,b.goods_price,b.goods_money
         from cg_rkd_single a join cg_rkd_single_child b on a.dj_number=b.dj_number
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id

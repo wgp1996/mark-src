@@ -53,6 +53,8 @@ public class CgRkd extends BaseEntity
     private String goodsName;
     private String goodsDw;
     private String goodsNum;
+    private String goodsPrice;
+    private String goodsMoney;
     private String createName;
     private String goodsAddress;
     private String personName;
@@ -62,6 +64,22 @@ public class CgRkd extends BaseEntity
     private String statusName;
     private String djId;
     private String createCount;
+
+    public String getGoodsPrice() {
+        return goodsPrice;
+    }
+
+    public void setGoodsPrice(String goodsPrice) {
+        this.goodsPrice = goodsPrice;
+    }
+
+    public String getGoodsMoney() {
+        return goodsMoney;
+    }
+
+    public void setGoodsMoney(String goodsMoney) {
+        this.goodsMoney = goodsMoney;
+    }
 
     public String getCreateCount() {
         return createCount;

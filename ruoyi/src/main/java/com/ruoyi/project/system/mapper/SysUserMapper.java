@@ -20,7 +20,13 @@ public interface SysUserMapper
      * @return 用户信息集合信息
      */
     public List<SysUser> selectUserList(SysUser sysUser);
-
+    /**
+     * 根据条件匹配用户列表
+     *
+     * @param user 用户信息
+     * @return 用户信息集合信息
+     */
+    public List<SysUser> selectUserByUserLike(SysUser user);
     /**
      * 通过用户名查询用户
      * 

@@ -6,9 +6,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.framework.config.RuoYiConfig;
 import com.ruoyi.project.system.domain.*;
 import com.ruoyi.project.system.service.IRandomInspectionInfoChildService;
+import com.ruoyi.project.system.service.ISysUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +29,7 @@ import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.web.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 随机检测单Controller
@@ -41,7 +45,93 @@ public class RandomInspectionInfoController extends BaseController
     private IRandomInspectionInfoService randomInspectionInfoService;
     @Autowired
     private IRandomInspectionInfoChildService randomInspectionInfoChildService;
+    @Autowired
+    private ISysUserService userService;
+    /**
+     * 导入进货单
+     */
+    @PreAuthorize("@ss.hasPermi('system:randomInsp:import')")
+    @Log(title = "检测单", businessType = BusinessType.EXPORT)
+    @PostMapping("/import")
+    public AjaxResult uploadFile(MultipartFile file,String djNumber) throws Exception
+    {
+        try
+        {
+            System.out.println(djNumber);
+            // 上传文件路径
+            String filePath = RuoYiConfig.getUploadPath();
+            System.out.println(filePath);
+            // 上传并返回新文件名称
+            String fileName = FileUploadUtils.upload(filePath, file);
+            //解析Excel
+            List<List<String>> list=ExcelUtil.importCgRkd(filePath+fileName.substring(fileName.indexOf("upload")+6,fileName.length()));
+            if(list.size()>0){
+                String checkTime="";
+                String checkNum="";
+                for(int i=0;i<list.size();i++){
+                    //取检测日期跟检测标准
+                    List<String> info=list.get(i);
+                   /* if(i==0){
+                        checkTime=info.get(0);
+                        checkNum=info.get(1);
+                    }*/
+                    if(!"".equals(info.get(4))&&info.get(4)!=null) {
+                        //RandomInspectionInfo randomInspectionInfo=new RandomInspectionInfo();
+                        //自动匹配业户
+                        SysUser user=new SysUser();
+                        user.setPhonenumber(info.get(3));
+                        user.setUnitName(info.get(1));
+                        user.setNickName(info.get(2));
+                        List<SysUser> userList=userService.selectUserByUserLike(user);
 
+                        /*randomInspectionInfo.setDjNumber(StringUtils.getRandomCode("CH"));
+                        randomInspectionInfo.setDjStatus(Long.valueOf(1));
+                        randomInspectionInfo.setDjTime(checkTime);//检测日期
+                        randomInspectionInfo.setCheckNum(checkNum);//检验标准
+                        randomInspectionInfo.setCreateBy(SecurityUtils.getUsername());
+                        randomInspectionInfo.setId(StringUtils.getId());*/
+                        RandomInspectionInfoChild child=new RandomInspectionInfoChild();
+                        if(userList!=null&&userList.size()>0){
+                            //默认取第一条
+                            SysUser item=userList.get(0);
+                            child.setOwnerCode(user.getUserName());
+                            child.setOwnerName(user.getNickName());
+                            //randomInspectionInfo.setCreateBy(item.getUserName());
+                        }else{
+                            child.setOwnerCode("");
+                            child.setOwnerName("");
+                            child.setRemark("业户待建档");
+                            //未匹配到的数据默认放到admin帐号下 可修改
+                            //randomInspectionInfo.setCreateBy("admin");
+                        }
+                       // child.setGoodsCode();
+                        child.setGoodsName(info.get(4));
+                        child.setCheckProject(info.get(5));
+                        child.setSampTime(info.get(6));
+                        child.setTestResult(info.get(7));
+                        if("合格".equals(info.get(8))){
+                            child.setCheckResult(1);
+                        }else{
+                            child.setCheckResult(0);
+                        }
+                        child.setCreateBy(SecurityUtils.getUsername());
+                        child.setId(StringUtils.getId());
+                        child.setDjNumber(djNumber);
+                        child.setCreateTime(DateUtils.getNowDate());
+                        randomInspectionInfoChildService.insertRandomInspectionInfoChild(child);
+
+                    }
+                }
+                return  AjaxResult.success("导入成功!");
+            }else{
+                return AjaxResult.error("导入失败!");
+            }
+        }
+        catch (Exception e)
+        {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
     /**
      * 查询随机检测单列表
      */
@@ -94,7 +184,7 @@ public class RandomInspectionInfoController extends BaseController
         if(randomInspectionInfo.getRows()==""){
             return  toAjaxByError("明细信息不能为空!");
         }
-        randomInspectionInfo.setDjNumber(StringUtils.getRandomCode("PO"));
+        randomInspectionInfo.setDjNumber(StringUtils.getRandomCode("CH"));
         randomInspectionInfo.setDjStatus(Long.valueOf(0));
         randomInspectionInfo.setCreateBy(SecurityUtils.getUsername());
         randomInspectionInfo.setId(StringUtils.getId());

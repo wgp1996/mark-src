@@ -60,6 +60,24 @@ public class CgRkdSingle extends BaseEntity
     private String goodsNum;
     private String createName;
     private String goodsAddress;
+    private String goodsPrice;
+    private String goodsMoney;
+
+    public String getGoodsPrice() {
+        return goodsPrice;
+    }
+
+    public void setGoodsPrice(String goodsPrice) {
+        this.goodsPrice = goodsPrice;
+    }
+
+    public String getGoodsMoney() {
+        return goodsMoney;
+    }
+
+    public void setGoodsMoney(String goodsMoney) {
+        this.goodsMoney = goodsMoney;
+    }
 
     public String getGoodsName() {
         return goodsName;

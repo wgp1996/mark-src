@@ -52,6 +52,16 @@ public class RandomInspectionInfoChild extends BaseEntity
     /** 结论 */
     @Excel(name = "结论")
     private String checkResultName;
+    @Excel(name = "业户代码")
+    private String ownerCode;
+    @Excel(name = "业户名称")
+    private String ownerName;
+    @Excel(name = "监测项目")
+    private String checkProject;
+    @Excel(name = "采样日期")
+    private String sampTime;
+    @Excel(name = "检测结果")
+    private String testResult;
 
     public String getCheckResultName() {
         return checkResultName;
@@ -141,6 +151,46 @@ public class RandomInspectionInfoChild extends BaseEntity
     public String getDjNumber() 
     {
         return djNumber;
+    }
+
+    public String getOwnerCode() {
+        return ownerCode;
+    }
+
+    public void setOwnerCode(String ownerCode) {
+        this.ownerCode = ownerCode;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getCheckProject() {
+        return checkProject;
+    }
+
+    public void setCheckProject(String checkProject) {
+        this.checkProject = checkProject;
+    }
+
+    public String getSampTime() {
+        return sampTime;
+    }
+
+    public void setSampTime(String sampTime) {
+        this.sampTime = sampTime;
+    }
+
+    public String getTestResult() {
+        return testResult;
+    }
+
+    public void setTestResult(String testResult) {
+        this.testResult = testResult;
     }
 
     @Override

@@ -51,6 +51,18 @@ public class DeviceItemController extends BaseController
     }
 
     /**
+     * 查询设备建档列表
+     */
+    @GetMapping("/getAllDeviceItem")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo getAllDeviceItem(DeviceItem deviceItem)
+    {
+        startPage();
+        List<DeviceItem> list = deviceItemService.selectDeviceItemList(deviceItem);
+        return getDataTable(list);
+    }
+
+    /**
      * 导出设备建档列表
      */
     @PreAuthorize("@ss.hasPermi('system:deviceItem:export')")

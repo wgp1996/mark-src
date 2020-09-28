@@ -19,11 +19,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createBy"    column="create_by"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="workStartXtime"    column="work_start_xtime"    />
+        <result property="workEndXtime"    column="work_end_xtime"    />
+        <result property="workDay"    column="work_day"    />
+        <result property="checkHome"    column="check_home"    />
         <result property="remark"    column="remark"    />
     </resultMap>
 
     <sql id="selectCheckAddressVo">
-        select id, check_address_id, check_address, check_address_detail, work_start_time, work_end_time, check_bz, create_time, check_address_lat, check_address_lng, work_tel, create_by, update_by, update_time, remark from check_address
+        select * from check_address
     </sql>
 
     <select id="checkAddress" resultType="Integer">
@@ -74,6 +78,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null  and createBy != ''">create_by,</if>
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
+            <if test="workStartXtime != null  and workStartXtime != ''">work_start_xtime,</if>
+            <if test="workEndXtime != null  and workEndXtime != ''">work_end_xtime,</if>
+            <if test="workDay != null  and workDay != ''">work_day,</if>
+            <if test="checkHome != null  and checkHome != ''">check_home,</if>
             <if test="remark != null  and remark != ''">remark,</if>
             create_time
          </trim>
@@ -91,6 +99,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
+            <if test="workStartXtime != null  and workStartXtime != ''">#{workStartXtime},</if>
+            <if test="workEndXtime != null  and workEndXtime != ''">#{workEndXtime},</if>
+            <if test="workDay != null  and workDay != ''">#{workDay},</if>
+            <if test="checkHome != null  and checkHome != ''">#{checkHome},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
             sysdate()
          </trim>
@@ -111,6 +123,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="workTel != null  and workTel != ''">work_tel = #{workTel},</if>
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="workStartXtime != null  and workStartXtime != ''">work_start_xtime=#{workStartXtime},</if>
+            <if test="workEndXtime != null  and workEndXtime != ''">work_end_xtime=#{workEndXtime},</if>
+            <if test="workDay != null  and workDay != ''">work_day=#{workDay},</if>
+            <if test="checkHome != null  and checkHome != ''">check_home=#{checkHome},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
             update_time = sysdate()
         </trim>

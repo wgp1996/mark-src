@@ -22,6 +22,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isRate"    column="is_rate"    />
         <result property="goodsName"    column="goods_name"    />
         <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="goodsMoney"    column="goods_money"    />
         <result property="goodsNum"    column="goods_num"    />
         <result property="createName"    column="create_name"    />
         <result property="goodsAddress"    column="goods_address"    />
@@ -64,7 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         case b.status when 0 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 1 then '已接收' when 2 then '已审核' end as dj_status_name,
         (select sum(goods_num) from cg_rkd_child where dj_number=a.dj_number) as sum_num,
         (select nick_name from sys_user where user_name=a.create_by) as create_name,
-        b.goods_num,b.goods_name,b.goods_dw,b.goods_address,b.person_name,b.person_code,b.id as dj_id
+        b.goods_price,b.goods_money,b.goods_num,b.goods_name,b.goods_dw,b.goods_address,b.person_name,b.person_code,b.id as dj_id
         from cg_rkd a join cg_rkd_child b on a.dj_number=b.dj_number
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id

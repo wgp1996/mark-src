@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.CheckObjectMapper">
+    
+    <resultMap type="CheckObject" id="CheckObjectResult">
+        <result property="id"    column="id"    />
+        <result property="objectNum"    column="object_num"    />
+        <result property="objectName"    column="object_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCheckObjectVo">
+        select id, object_num, object_name, create_by, create_time, update_by, update_time, remark from check_object
+    </sql>
+
+    <sql id="selectCheckObjectVoByRole">
+        select a.* from check_object a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectCheckObjectList" parameterType="CheckObject" resultMap="CheckObjectResult">
+        <include refid="selectCheckObjectVoByRole"/>
+        <where>  
+            <if test="objectNum != null  and objectNum != ''"> and object_num = #{objectNum}</if>
+            <if test="objectName != null  and objectName != ''"> and object_name like concat('%', #{objectName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="checkObjectIsContain" parameterType="CheckObject" resultType="Integer">
+        select count(id) from check_object
+        <where>
+            <if test="objectName != null  and objectName != ''"> and object_name=#{objectName}</if>
+            <if test="createBy != null and createBy != ''"> and create_by!=#{createBy}</if>
+            <if test="id != -1"> and id!=#{id}</if>
+        </where>
+    </select>
+    
+    <select id="selectCheckObjectById" parameterType="Integer" resultMap="CheckObjectResult">
+        <include refid="selectCheckObjectVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCheckObject" parameterType="CheckObject">
+        insert into check_object
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="objectNum != null  and objectNum != ''">object_num,</if>
+            <if test="objectName != null  and objectName != ''">object_name,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="objectNum != null  and objectNum != ''">#{objectNum},</if>
+            <if test="objectName != null  and objectName != ''">#{objectName},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCheckObject" parameterType="CheckObject">
+        update check_object
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="objectNum != null  and objectNum != ''">object_num = #{objectNum},</if>
+            <if test="objectName != null  and objectName != ''">object_name = #{objectName},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCheckObjectById" parameterType="Integer">
+        delete from check_object where id = #{id}
+    </delete>
+
+    <delete id="deleteCheckObjectByIds" parameterType="String">
+        delete from check_object where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

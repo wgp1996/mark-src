@@ -65,7 +65,16 @@ public class SysUserServiceImpl implements ISysUserService
     {
         return userMapper.selectUserList(user);
     }
-
+    /**
+     * 根据条件匹配用户列表
+     *
+     * @param user 用户信息
+     * @return 用户信息集合信息
+     */
+    @Override
+    public List<SysUser> selectUserByUserLike(SysUser user){
+        return userMapper.selectUserByUserLike(user);
+    }
     /**
      * 通过用户名查询用户
      * 

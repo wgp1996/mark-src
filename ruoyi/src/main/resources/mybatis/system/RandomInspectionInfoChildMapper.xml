@@ -20,6 +20,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="checkResultName"    column="check_result_name"    />
+        <result property="ownerCode"    column="owner_code"    />
+        <result property="ownerName"    column="owner_name"    />
+        <result property="checkProject"    column="check_project"    />
+        <result property="sampTime"    column="samp_time"    />
+        <result property="testResult"    column="test_result"    />
     </resultMap>
 
     <sql id="selectRandomInspectionInfoChildVo">
@@ -37,6 +42,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inhibitionNum != null "> and inhibition_num = #{inhibitionNum}</if>
             <if test="checkResult != null "> and check_result = #{checkResult}</if>
             <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="ownerCode != null  and ownerCode != ''"> and owner_code = #{ownerCode}</if>
+            <if test="ownerName != null  and ownerName != ''"> and owner_name like concat('%', #{ownerName}, '%')</if>
         </where>
     </select>
     
@@ -62,6 +69,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code,</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name,</if>
+            <if test="checkProject != null  and checkProject != ''">check_project,</if>
+            <if test="sampTime != null  and sampTime != ''">samp_time,</if>
+            <if test="testResult != null  and testResult != ''">test_result,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">#{id},</if>
@@ -78,6 +90,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="ownerCode != null  and ownerCode != ''">#{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">#{ownerName},</if>
+            <if test="checkProject != null  and checkProject != ''">#{checkProject},</if>
+            <if test="sampTime != null  and sampTime != ''">#{sampTime},</if>
+            <if test="testResult != null  and testResult != ''">#{testResult},</if>
          </trim>
     </insert>
 
@@ -97,6 +114,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="ownerCode != null  and ownerCode != ''">owner_code = #{ownerCode},</if>
+            <if test="ownerName != null  and ownerName != ''">owner_name = #{ownerName},</if>
+            <if test="checkProject != null  and checkProject != ''">check_project = #{checkProject},</if>
+            <if test="sampTime != null  and sampTime != ''">samp_time = #{sampTime},</if>
+            <if test="testResult != null  and testResult != ''">test_result = #{testResult},</if>
         </trim>
         where id = #{id}
     </update>

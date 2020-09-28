@@ -47,9 +47,43 @@ public class RandomInspectionInfo extends BaseEntity
     /** 抑制率标准值 */
     @Excel(name = "抑制率标准值")
     private Long inhibitionNum;
+    /** 采样地点 */
+    @Excel(name = "采样地点")
+    private String sampAddress;
+    /** 检测标准 */
+    @Excel(name = "检测标准")
+    private String checkNum;
+    /** 检测设备 */
+    @Excel(name = "检测设备")
+    private String checkDevice;
+
+    public String getCheckDevice() {
+        return checkDevice;
+    }
+
+    public void setCheckDevice(String checkDevice) {
+        this.checkDevice = checkDevice;
+    }
+
+    public String getSampAddress() {
+        return sampAddress;
+    }
+
+    public void setSampAddress(String sampAddress) {
+        this.sampAddress = sampAddress;
+    }
+
+    public String getCheckNum() {
+        return checkNum;
+    }
+
+    public void setCheckNum(String checkNum) {
+        this.checkNum = checkNum;
+    }
+
     /*
-         子表
-      */
+             子表
+          */
     private List<RandomInspectionInfoChild> childrenList;
 
     public List<RandomInspectionInfoChild> getChildrenList() {

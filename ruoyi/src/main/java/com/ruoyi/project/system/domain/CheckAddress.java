@@ -32,6 +32,22 @@ public class CheckAddress extends BaseEntity
 
     /** 上班时间 */
     @Excel(name = "上班时间")
+    private String workStartXtime;
+
+    /** 下班时间 */
+    @Excel(name = "下班时间")
+    private String workEndXtime;
+
+    /** 检测室 */
+    @Excel(name = "检测室")
+    private String checkHome;
+
+    /** 休息日 */
+    @Excel(name = "休息日")
+    private String workDay;
+
+    /** 上班时间 */
+    @Excel(name = "上班时间")
     private String workStartTime;
 
     /** 下班时间 */
@@ -54,7 +70,39 @@ public class CheckAddress extends BaseEntity
     @Excel(name = "联系电话")
     private String workTel;
 
-    public void setId(String id) 
+    public String getWorkStartXtime() {
+        return workStartXtime;
+    }
+
+    public void setWorkStartXtime(String workStartXtime) {
+        this.workStartXtime = workStartXtime;
+    }
+
+    public String getWorkEndXtime() {
+        return workEndXtime;
+    }
+
+    public void setWorkEndXtime(String workEndXtime) {
+        this.workEndXtime = workEndXtime;
+    }
+
+    public String getCheckHome() {
+        return checkHome;
+    }
+
+    public void setCheckHome(String checkHome) {
+        this.checkHome = checkHome;
+    }
+
+    public String getWorkDay() {
+        return workDay;
+    }
+
+    public void setWorkDay(String workDay) {
+        this.workDay = workDay;
+    }
+
+    public void setId(String id)
     {
         this.id = id;
     }
