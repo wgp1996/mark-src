@@ -58,4 +58,11 @@ public interface RandomInspectionInfoChildMapper
      * @return 结果
      */
     public int deleteRandomInspectionInfoChildByIds(String[] ids);
+    /**
+     * 批量删除检测单明细
+     *
+     * @param ids 需要删除的检测单ID
+     * @return 结果
+     */
+    public int deleteRandomInspectionInfoChildByPid(String[] ids);
 }

@@ -81,6 +81,15 @@ public class RandomInspectionInfoChildServiceImpl implements IRandomInspectionIn
     {
         return randomInspectionInfoChildMapper.deleteRandomInspectionInfoChildByIds(ids);
     }
+    /**
+     * 批量删除检测单明细
+     *
+     * @param ids 需要删除的检测单ID
+     * @return 结果
+     */
+    public int deleteRandomInspectionInfoChildByPid(String[] ids){
+        return randomInspectionInfoChildMapper.deleteRandomInspectionInfoChildByPid(ids);
+    }
 
     /**
      * 删除检测单明细信息

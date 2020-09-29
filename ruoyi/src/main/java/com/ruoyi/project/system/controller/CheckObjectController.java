@@ -81,8 +81,10 @@ public class CheckObjectController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody CheckObject checkObject)
     {
-        checkObject.setId(-1);
-        if(checkObjectService.checkObjectIsContain(checkObject)>0){
+        CheckObject CheckObject=new CheckObject();
+        CheckObject.setId(-1);
+        CheckObject.setObjectName(checkObject.getObjectName());
+        if(checkObjectService.checkObjectIsContain(CheckObject)>0){
             return AjaxResult.error("重复添加!");
         }
         checkObject.setCreateBy(SecurityUtils.getUsername());

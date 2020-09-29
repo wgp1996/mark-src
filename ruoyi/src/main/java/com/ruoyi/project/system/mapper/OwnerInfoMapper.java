@@ -36,6 +36,13 @@ public interface OwnerInfoMapper {
      */
     public List<OwnerInfo> selectOwnerInfoList(OwnerInfo ownerInfo);
     /**
+     * 匹配业户建档列表
+     *
+     * @param ownerInfo 业户建档
+     * @return 业户建档集合
+     */
+    public List<OwnerInfo> selectOwnerInfoListLike(OwnerInfo ownerInfo);
+    /**
      * 市平台查询业户建档列表
      *
      * @param ownerInfo 业户建档

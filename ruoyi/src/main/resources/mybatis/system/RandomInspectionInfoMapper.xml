@@ -29,7 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectRandomInspectionInfoVoByRole">
         select a.id, a.dj_number, a.dj_time, a.dj_title, a.create_time, a.dj_status, a.inhibition_num, a.create_by,a.check_num,
-        (select concat(check_address,check_address_detail) from check_address where id=a.check_address) as check_address,
+        (select check_address_detail from check_address where id=a.check_address) as check_address,
         (select device_name from device_item where device_id=a.check_device) as check_device
          from random_inspection_info a
         join sys_user u on a.create_by=u.user_name

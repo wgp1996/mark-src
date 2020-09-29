@@ -1,6 +1,8 @@
 package com.ruoyi.project.system.controller;
 
 import java.util.List;
+
+import com.ruoyi.project.system.domain.RandomInspectionInfo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -98,6 +100,12 @@ public class RandomInspectionInfoChildController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {
+         for(int i=0;i<ids.length;i++){
+             RandomInspectionInfoChild info = randomInspectionInfoChildService.selectRandomInspectionInfoChildById(ids[i]);
+            if("业户待建档".equals(info.getRemark())){
+                return toAjaxByError(info.getDjNumber()+"：该明细禁止删除!");
+            }
+        }
         return toAjax(randomInspectionInfoChildService.deleteRandomInspectionInfoChildByIds(ids));
     }
 }

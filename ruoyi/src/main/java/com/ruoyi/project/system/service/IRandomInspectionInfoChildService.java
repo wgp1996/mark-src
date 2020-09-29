@@ -58,4 +58,12 @@ public interface IRandomInspectionInfoChildService
      * @return 结果
      */
     public int deleteRandomInspectionInfoChildById(String id);
+    /**
+     * 批量删除检测单明细
+     *
+     * @param ids 需要删除的检测单ID
+     * @return 结果
+     */
+    public int deleteRandomInspectionInfoChildByPid(String[] ids);
+
 }

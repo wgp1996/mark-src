@@ -5,6 +5,7 @@ import java.util.List;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
+import com.ruoyi.project.system.domain.CheckObject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,8 +82,11 @@ public class CheckProjectController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody CheckProject checkProject)
     {
-        checkProject.setId(-1);
-        if(checkProjectService.checkProjectIsContain(checkProject)>0){
+
+        CheckProject CheckProject=new CheckProject();
+        CheckProject.setId(-1);
+        CheckProject.setProjectName(checkProject.getProjectName());
+        if(checkProjectService.checkProjectIsContain(CheckProject)>0){
             return  AjaxResult.error("重复添加!");
         }
         checkProject.setCreateBy(SecurityUtils.getUsername());

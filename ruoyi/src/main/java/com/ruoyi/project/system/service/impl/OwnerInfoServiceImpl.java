@@ -41,6 +41,16 @@ public class OwnerInfoServiceImpl implements IOwnerInfoService {
         return ownerInfoMapper.selectOwnerStallInfoList(ownerInfo);
     }
     /**
+     * 匹配业户建档列表
+     *
+     * @param ownerInfo 业户建档
+     * @return 业户建档集合
+     */
+    @Override
+    public List<OwnerInfo> selectOwnerInfoListLike(OwnerInfo ownerInfo){
+        return ownerInfoMapper.selectOwnerInfoListLike(ownerInfo);
+    }
+    /**
      * 查询业户建档
      *
      * @param id   业户建档ID
