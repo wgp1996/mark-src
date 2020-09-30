@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.system.mapper.TestApplicationFormMapper">
+    
+    <resultMap type="TestApplicationForm" id="TestApplicationFormResult">
+        <result property="id"    column="id"    />
+        <result property="checkType"    column="check_type"    />
+        <result property="checkNote"    column="check_note"    />
+        <result property="checkTime"    column="check_time"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectTestApplicationFormVo">
+        select id, check_type, check_note, check_time, dj_number, status, create_by, create_time, update_by, update_time from test_application_form
+    </sql>
+
+    <sql id="selectTestApplicationFormVoByRole">
+        select a.* from test_application_form a
+         join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectTestApplicationFormList" parameterType="TestApplicationForm" resultMap="TestApplicationFormResult">
+        <include refid="selectTestApplicationFormVoByRole"/>
+        <where>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="checkType != null  and checkType != ''"> and check_type = #{checkType}</if>
+            <if test="checkNote != null  and checkNote != ''"> and check_note = #{checkNote}</if>
+            <if test="checkTime != null  and checkTime != ''"> and check_time = #{checkTime}</if>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="status != null "> and status = #{status}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectTestApplicationFormById" parameterType="Long" resultMap="TestApplicationFormResult">
+        <include refid="selectTestApplicationFormVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTestApplicationForm" parameterType="TestApplicationForm">
+        insert into test_application_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="checkType != null  and checkType != ''">check_type,</if>
+            <if test="checkNote != null  and checkNote != ''">check_note,</if>
+            <if test="checkTime != null  and checkTime != ''">check_time,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="status != null ">status,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="checkType != null  and checkType != ''">#{checkType},</if>
+            <if test="checkNote != null  and checkNote != ''">#{checkNote},</if>
+            <if test="checkTime != null  and checkTime != ''">#{checkTime},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateTestApplicationForm" parameterType="TestApplicationForm">
+        update test_application_form
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="checkType != null  and checkType != ''">check_type = #{checkType},</if>
+            <if test="checkNote != null  and checkNote != ''">check_note = #{checkNote},</if>
+            <if test="checkTime != null  and checkTime != ''">check_time = #{checkTime},</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTestApplicationFormById" parameterType="Integer">
+        delete from test_application_form where id = #{id}
+    </delete>
+
+    <delete id="deleteTestApplicationFormByIds" parameterType="Integer">
+        delete from test_application_form where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteTestApplicationFormByPid" parameterType="Integer">
+        delete from test_application_form_child where dj_number in (select dj_number from test_application_form
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    
+</mapper>

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.project.system.mapper.RandomInspectionInfoChildMapper">
+<mapper namespace="com.ruoyi.project.system.mapper.TestApplicationFormChildMapper">
     
-    <resultMap type="RandomInspectionInfoChild" id="RandomInspectionInfoChildResult">
+    <resultMap type="TestApplicationFormChild" id="TestApplicationFormChildResult">
         <result property="id"    column="id"    />
         <result property="goodsCode"    column="goods_code"    />
         <result property="goodsName"    column="goods_name"    />
@@ -19,20 +19,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
-        <result property="checkResultName"    column="check_result_name"    />
         <result property="ownerCode"    column="owner_code"    />
         <result property="ownerName"    column="owner_name"    />
         <result property="checkProject"    column="check_project"    />
         <result property="sampTime"    column="samp_time"    />
         <result property="testResult"    column="test_result"    />
+        <result property="status"    column="status"    />
     </resultMap>
 
-    <sql id="selectRandomInspectionInfoChildVo">
-        select a.*,case a.check_result when 0 then '不合格' when 1 then '合格' end as check_result_name from random_inspection_info_child a
+    <sql id="selectTestApplicationFormChildVo">
+        select * from test_application_form_child
     </sql>
 
-    <select id="selectRandomInspectionInfoChildList" parameterType="RandomInspectionInfoChild" resultMap="RandomInspectionInfoChildResult">
-        <include refid="selectRandomInspectionInfoChildVo"/>
+    <select id="selectTestApplicationForm" parameterType="TestApplicationFormChild" resultMap="TestApplicationFormChildResult">
+        select a.status,a.id,a.create_time,b.goods_code,b.goods_name,b.inhibition_num,
+        b.check_result,b.check_project,b.samp_time
+        from test_application_form a join test_application_form_child b
+        on a.dj_number=b.dj_number
+        <where>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="status != null and status != -1 "> and b.check_result = #{status}</if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="selectTestApplicationFormChildList" parameterType="TestApplicationFormChild" resultMap="TestApplicationFormChildResult">
+        <include refid="selectTestApplicationFormChildVo"/>
         <where>  
             <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
             <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
@@ -40,20 +54,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="af != null "> and AF = #{af}</if>
             <if test="afAi != null "> and AF_AI = #{afAi}</if>
             <if test="inhibitionNum != null "> and inhibition_num = #{inhibitionNum}</if>
-            <if test="checkResult != null and checkResult!=-1 "> and check_result = #{checkResult}</if>
+            <if test="checkResult != null "> and check_result = #{checkResult}</if>
             <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
             <if test="ownerCode != null  and ownerCode != ''"> and owner_code = #{ownerCode}</if>
             <if test="ownerName != null  and ownerName != ''"> and owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="checkProject != null  and checkProject != ''"> and check_project = #{checkProject}</if>
+            <if test="sampTime != null  and sampTime != ''"> and samp_time = #{sampTime}</if>
+            <if test="testResult != null  and testResult != ''"> and test_result = #{testResult}</if>
         </where>
+        order by create_time desc
     </select>
     
-    <select id="selectRandomInspectionInfoChildById" parameterType="String" resultMap="RandomInspectionInfoChildResult">
-        <include refid="selectRandomInspectionInfoChildVo"/>
+    <select id="selectTestApplicationFormChildById" parameterType="String" resultMap="TestApplicationFormChildResult">
+        <include refid="selectTestApplicationFormChildVo"/>
         where id = #{id}
     </select>
         
-    <insert id="insertRandomInspectionInfoChild" parameterType="RandomInspectionInfoChild">
-        insert into random_inspection_info_child
+    <insert id="insertTestApplicationFormChild" parameterType="TestApplicationFormChild">
+        insert into test_application_form_child
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">id,</if>
             <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
@@ -65,7 +83,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="checkResult != null ">check_result,</if>
             <if test="djNumber != null  and djNumber != ''">dj_number,</if>
             <if test="createBy != null  and createBy != ''">create_by,</if>
-            <if test="createTime != null ">create_time,</if>
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
@@ -74,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="checkProject != null  and checkProject != ''">check_project,</if>
             <if test="sampTime != null  and sampTime != ''">samp_time,</if>
             <if test="testResult != null  and testResult != ''">test_result,</if>
+            create_time
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null  and id != ''">#{id},</if>
@@ -86,7 +104,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="checkResult != null ">#{checkResult},</if>
             <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
-            <if test="createTime != null ">#{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
@@ -95,11 +112,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="checkProject != null  and checkProject != ''">#{checkProject},</if>
             <if test="sampTime != null  and sampTime != ''">#{sampTime},</if>
             <if test="testResult != null  and testResult != ''">#{testResult},</if>
+            sysdate()
          </trim>
     </insert>
 
-    <update id="updateRandomInspectionInfoChild" parameterType="RandomInspectionInfoChild">
-        update random_inspection_info_child
+    <update id="updateTestApplicationFormChild" parameterType="TestApplicationFormChild">
+        update test_application_form_child
         <trim prefix="SET" suffixOverrides=",">
             <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
             <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
@@ -112,34 +130,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
-            <if test="updateTime != null ">update_time = #{updateTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
             <if test="ownerCode != null  and ownerCode != ''">owner_code = #{ownerCode},</if>
             <if test="ownerName != null  and ownerName != ''">owner_name = #{ownerName},</if>
             <if test="checkProject != null  and checkProject != ''">check_project = #{checkProject},</if>
             <if test="sampTime != null  and sampTime != ''">samp_time = #{sampTime},</if>
             <if test="testResult != null  and testResult != ''">test_result = #{testResult},</if>
+            update_time = sysdate()
         </trim>
         where id = #{id}
     </update>
 
-    <delete id="deleteRandomInspectionInfoChildById" parameterType="String">
-        delete from random_inspection_info_child where id = #{id}
+    <delete id="deleteTestApplicationFormChildById" parameterType="String">
+        delete from test_application_form_child where id = #{id}
     </delete>
 
-    <delete id="deleteRandomInspectionInfoChildByIds" parameterType="String">
-        delete from random_inspection_info_child where id in 
+    <delete id="deleteTestApplicationFormChildByIds" parameterType="String">
+        delete from test_application_form_child where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
-    </delete>
-    <delete id="deleteRandomInspectionInfoChildByPid" parameterType="String">
-        delete from random_inspection_info_child where dj_number in (select dj_number from random_inspection_info
-        where id in
-        <foreach item="id" collection="array" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-        )
     </delete>
     
 </mapper>

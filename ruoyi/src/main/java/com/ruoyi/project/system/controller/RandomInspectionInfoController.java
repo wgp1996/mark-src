@@ -149,6 +149,7 @@ public class RandomInspectionInfoController extends BaseController
                         child.setCheckProject(info.get(4));
                         child.setSampTime(info.get(5));
                         child.setTestResult(info.get(6));
+                        child.setInhibitionNum(Float.parseFloat(info.get(6).replaceAll("%","")==null?"0.0":info.get(6).replaceAll("%","")));
                         if("合格".equals(info.get(7))){
                             child.setCheckResult(1);
                         }else{

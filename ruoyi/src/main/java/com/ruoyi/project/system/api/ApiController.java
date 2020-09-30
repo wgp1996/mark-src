@@ -89,6 +89,12 @@ public class ApiController extends BaseController
     private IShopInfoOwnerService shopInfoOwnerService;
     @Autowired
     private IResultInfoService resultInfoService;
+    @Autowired
+    private ITestApplicationFormService testApplicationFormService;
+    @Autowired
+    private ITestApplicationFormChildService testApplicationFormChildService;
+    @Autowired
+    private IRandomInspectionInfoChildService randomInspectionInfoChildService;
     /**
      * APP版本列表
      */
@@ -124,6 +130,118 @@ public class ApiController extends BaseController
         ajaxResult.put("data", list);
         return ajaxResult;
     }
+
+
+    /**
+     * 查询检测单列表
+     */
+    @ApiOperation("APP检测单列表")
+    @GetMapping("/appRandomInspList/{createBy}/{status}")
+    public TableDataInfo appRandomInspList(@PathVariable String createBy,@PathVariable Integer status)
+    {
+        RandomInspectionInfoChild item=new RandomInspectionInfoChild();
+        item.setOwnerCode(createBy);
+        item.setCheckResult(status);
+        List<RandomInspectionInfoChild> list =randomInspectionInfoChildService.selectRandomInspectionInfoChildList(item);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询检测申请单列表
+     */
+    @ApiOperation("APP检测申请单列表")
+    @GetMapping("/appTestFormList/{createBy}/{status}")
+    public TableDataInfo appTestFormList(@PathVariable String createBy,@PathVariable Integer status)
+    {
+        TestApplicationFormChild item=new TestApplicationFormChild();
+        item.setCreateBy(createBy);
+        item.setStatus(status);
+        List<TestApplicationFormChild> list = testApplicationFormChildService.selectTestApplicationForm(item);
+        return getDataTable(list);
+    }
+
+    /**
+     * 获取APP检测申请单详细信息
+     */
+    @ApiOperation("APP检测申请单列表单个明细")
+    @GetMapping(value = "appTestFormInfo/{id}")
+    public AjaxResult appTestFormInfo(@PathVariable("id") Integer id)
+    {
+        TestApplicationForm info=testApplicationFormService.selectTestApplicationFormById(id);
+        TestApplicationFormChild TestApplicationFormChild=new TestApplicationFormChild();
+        TestApplicationFormChild.setDjNumber(info.getDjNumber());
+        info.setChildrenList(testApplicationFormChildService.selectTestApplicationFormChildList(TestApplicationFormChild));
+        TestApplicationFormChild=null;
+        return AjaxResult.success(info);
+    }
+
+    /**
+     * APP检测申请单新增
+     */
+    @ApiOperation("APP检测申请单新增(单)")
+    @Log(title = "APP检测申请单新增(单)", businessType = BusinessType.INSERT)
+    @PostMapping("/appTestFormAdd")
+    public AjaxResult appTestFormAdd(TestApplicationForm cgRkd)
+    {
+        if(cgRkd.getRows()==""){
+            return  toAjaxByError("明细信息不能为空!");
+        }
+        List<TestApplicationFormChild> childList= JSONArray.parseArray(cgRkd.getRows(),TestApplicationFormChild.class);
+        if(cgRkd.getId()!=null){
+            cgRkd.setDjNumber(StringUtils.getRandomCode("TAF"));
+            cgRkd.setStatus(0);
+            for(TestApplicationFormChild child:childList){
+                child.setCreateBy(cgRkd.getCreateBy());
+                child.setId(StringUtils.getId());
+                child.setDjNumber(cgRkd.getDjNumber());
+                child.setCreateTime(DateUtils.getNowDate());
+                testApplicationFormChildService.insertTestApplicationFormChild(child);
+            }
+            return toAjax(testApplicationFormService.insertTestApplicationForm(cgRkd));
+        }else{
+            cgRkd.setUpdateBy(cgRkd.getCreateBy());
+            //删除明细
+            for(TestApplicationFormChild child:childList){
+                if(child.getId()!=""){
+                    testApplicationFormChildService.deleteTestApplicationFormChildById(child.getId());
+                }
+            }
+            for(TestApplicationFormChild child:childList){
+                child.setCreateBy(cgRkd.getCreateBy());
+                child.setId(StringUtils.getId());
+                child.setDjNumber(cgRkd.getDjNumber());
+                child.setCreateTime(DateUtils.getNowDate());
+                testApplicationFormChildService.insertTestApplicationFormChild(child);
+            }
+            return toAjax(testApplicationFormService.updateTestApplicationForm(cgRkd));
+        }
+    }
+
+    /**
+     * 删除检测申请单
+     */
+    @ApiOperation("APP删除检测申请单")
+    @Log(title = "APP删除检测申请单", businessType = BusinessType.DELETE)
+    @GetMapping("appTestFormRemove/{ids}")
+    public AjaxResult appTestFormRemove(@PathVariable Integer[] ids)
+    {
+        for(int i=0;i<ids.length;i++){
+            TestApplicationForm info = testApplicationFormService.selectTestApplicationFormById(ids[i]);
+            if(info.getStatus()!=0){
+                return toAjaxByError(info.getDjNumber()+"：该单据状态禁止删除!");
+            }
+        }
+        //删除子表信息
+        int result=testApplicationFormService.deleteTestApplicationFormByPid(ids);
+        if(result>0){
+            testApplicationFormService.deleteTestApplicationFormByIds(ids);
+            return toAjaxBySuccess("删除成功!");
+        }else{
+            return  toAjaxByError("删除失败!");
+        }
+    }
+
+
 
     /**
      * 查询采购单列表
