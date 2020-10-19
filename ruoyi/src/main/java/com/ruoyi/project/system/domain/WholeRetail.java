@@ -23,7 +23,9 @@ public class WholeRetail extends BaseEntity
     /** 单据编号 */
     @Excel(name = "客户编号")
     private String khCode;
-
+    /** 客户名称 */
+    @Excel(name = "客户名称")
+    private String khName;
     /** 销售类型 */
     @Excel(name = "销售类型")
     private Long wholeType;
@@ -36,9 +38,7 @@ public class WholeRetail extends BaseEntity
     @Excel(name = "单据日期")
     private String djTime;
 
-    /** 客户名称 */
-    @Excel(name = "客户名称")
-    private String khName;
+
 
     /** 单据状态 */
     @Excel(name = "单据状态")
@@ -47,22 +47,72 @@ public class WholeRetail extends BaseEntity
     /** 来源方式 */
     @Excel(name = "来源方式")
     private Integer from;
-
     private String rows;
-
     private String djStatusName;
+    private String createName;
 
-     /*
-       子表
-    */
-    private List<WholeRetailChild> childrenList;
-
-    public String getDjStatusName() {
-        return djStatusName;
+    public String getId() {
+        return id;
     }
 
-    public void setDjStatusName(String djStatusName) {
-        this.djStatusName = djStatusName;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getKhCode() {
+        return khCode;
+    }
+
+    public void setKhCode(String khCode) {
+        this.khCode = khCode;
+    }
+
+    public String getKhName() {
+        return khName;
+    }
+
+    public void setKhName(String khName) {
+        this.khName = khName;
+    }
+
+    public Long getWholeType() {
+        return wholeType;
+    }
+
+    public void setWholeType(Long wholeType) {
+        this.wholeType = wholeType;
+    }
+
+    public String getDjNumber() {
+        return djNumber;
+    }
+
+    public void setDjNumber(String djNumber) {
+        this.djNumber = djNumber;
+    }
+
+    public String getDjTime() {
+        return djTime;
+    }
+
+    public void setDjTime(String djTime) {
+        this.djTime = djTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getFrom() {
+        return from;
+    }
+
+    public void setFrom(Integer from) {
+        this.from = from;
     }
 
     public String getRows() {
@@ -73,6 +123,22 @@ public class WholeRetail extends BaseEntity
         this.rows = rows;
     }
 
+    public String getDjStatusName() {
+        return djStatusName;
+    }
+
+    public void setDjStatusName(String djStatusName) {
+        this.djStatusName = djStatusName;
+    }
+
+    public String getCreateName() {
+        return createName;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName;
+    }
+
     public List<WholeRetailChild> getChildrenList() {
         return childrenList;
     }
@@ -81,88 +147,21 @@ public class WholeRetail extends BaseEntity
         this.childrenList = childrenList;
     }
 
-    public void setId(String id)
-    {
-        this.id = id;
-    }
+    /*
+               子表
+            */
+    private List<WholeRetailChild> childrenList;
 
-    public String getId() 
-    {
-        return id;
-    }
-    public void setkhCode(String khCode) 
-    {
-        this.khCode = khCode;
-    }
-
-    public String getkhCode() 
-    {
-        return khCode;
-    }
-    public void setWholeType(Long wholeType) 
-    {
-        this.wholeType = wholeType;
-    }
-
-    public Long getWholeType() 
-    {
-        return wholeType;
-    }
-    public void setDjNumber(String djNumber) 
-    {
-        this.djNumber = djNumber;
-    }
-
-    public String getDjNumber() 
-    {
-        return djNumber;
-    }
-    public void setDjTime(String djTime) 
-    {
-        this.djTime = djTime;
-    }
-
-    public String getDjTime() 
-    {
-        return djTime;
-    }
-    public void setkhName(String khName) 
-    {
-        this.khName = khName;
-    }
-
-    public String getkhName() 
-    {
-        return khName;
-    }
-    public void setStatus(Integer status) 
-    {
-        this.status = status;
-    }
-
-    public Integer getStatus() 
-    {
-        return status;
-    }
-    public void setFrom(Integer from) 
-    {
-        this.from = from;
-    }
-
-    public Integer getFrom() 
-    {
-        return from;
-    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("khCode", getkhCode())
+            .append("khCode", getKhCode())
             .append("wholeType", getWholeType())
             .append("djNumber", getDjNumber())
             .append("djTime", getDjTime())
-            .append("khName", getkhName())
+            .append("khName", getKhName())
             .append("status", getStatus())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())

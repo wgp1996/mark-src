@@ -18,7 +18,13 @@ public interface RandomInspectionInfoChildMapper
      * @return 检测单明细
      */
     public RandomInspectionInfoChild selectRandomInspectionInfoChildById(String id);
-
+    /**
+     * 查询检测单所有明细列表
+     *
+     * @param randomInspectionInfoChild 检测单明细
+     * @return 检测单明细集合
+     */
+    public List<RandomInspectionInfoChild> selectRandomInspectionInfoAllList(RandomInspectionInfoChild randomInspectionInfoChild);
     /**
      * 查询检测单明细列表
      * 

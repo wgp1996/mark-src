@@ -26,6 +26,13 @@ public interface IRandomInspectionInfoChildService
      * @return 检测单明细集合
      */
     public List<RandomInspectionInfoChild> selectRandomInspectionInfoChildList(RandomInspectionInfoChild randomInspectionInfoChild);
+    /**
+     * 查询检测单所有明细列表
+     *
+     * @param randomInspectionInfoChild 检测单明细
+     * @return 检测单明细集合
+     */
+    public List<RandomInspectionInfoChild> selectRandomInspectionInfoAllList(RandomInspectionInfoChild randomInspectionInfoChild);
 
     /**
      * 新增检测单明细

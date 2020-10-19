@@ -70,7 +70,37 @@ public class MarkInfo extends BaseEntity
     @Excel(name = "市场编码")
     private String markCode;
 
-    public void setId(String id) 
+    private String addressLat;
+
+    private String addressLng;
+
+    private String fileName;
+
+    public String getAddressLat() {
+        return addressLat;
+    }
+
+    public void setAddressLat(String addressLat) {
+        this.addressLat = addressLat;
+    }
+
+    public String getAddressLng() {
+        return addressLng;
+    }
+
+    public void setAddressLng(String addressLng) {
+        this.addressLng = addressLng;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setId(String id)
     {
         this.id = id;
     }

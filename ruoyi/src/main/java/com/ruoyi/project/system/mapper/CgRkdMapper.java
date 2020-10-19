@@ -48,6 +48,11 @@ public interface CgRkdMapper
      */
     public List<CgRkd> selectCgRkdAllListBySpt(CgRkd cgRkd);
     /**
+     * 查询周公河收支信息
+     *
+     */
+    public CgRkd selectMatkSum(String createBy,String createTime);
+    /**
      * 市平台查询周公河数量信息
      *
      */

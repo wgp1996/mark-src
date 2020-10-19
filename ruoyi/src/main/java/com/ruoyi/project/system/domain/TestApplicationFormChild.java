@@ -28,23 +28,23 @@ public class TestApplicationFormChild extends BaseEntity
 
     /** AI */
     @Excel(name = "AI")
-    private Long ai;
+    private Float ai;
 
     /** AF */
     @Excel(name = "AF")
-    private Long af;
+    private Float af;
 
     /** AF_AI */
     @Excel(name = "AF_AI")
-    private Long afAi;
+    private Float afAi;
 
     /** 抑制率 */
     @Excel(name = "抑制率")
-    private Long inhibitionNum;
+    private Float inhibitionNum;
 
     /** 合格状态 */
     @Excel(name = "合格状态")
-    private Long checkResult;
+    private Integer checkResult;
 
     /** 单号 */
     @Excel(name = "单号")
@@ -69,6 +69,16 @@ public class TestApplicationFormChild extends BaseEntity
     /** 检验结果 */
     @Excel(name = "检验结果")
     private String testResult;
+
+    private String checkResultName;
+
+    public String getCheckResultName() {
+        return checkResultName;
+    }
+
+    public void setCheckResultName(String checkResultName) {
+        this.checkResultName = checkResultName;
+    }
 
     private Integer status;
 
@@ -107,52 +117,48 @@ public class TestApplicationFormChild extends BaseEntity
     {
         return goodsName;
     }
-    public void setAi(Long ai) 
-    {
+
+    public Float getAi() {
+        return ai;
+    }
+
+    public void setAi(Float ai) {
         this.ai = ai;
     }
 
-    public Long getAi() 
-    {
-        return ai;
+    public Float getAf() {
+        return af;
     }
-    public void setAf(Long af) 
-    {
+
+    public void setAf(Float af) {
         this.af = af;
     }
 
-    public Long getAf() 
-    {
-        return af;
+    public Float getAfAi() {
+        return afAi;
     }
-    public void setAfAi(Long afAi) 
-    {
+
+    public void setAfAi(Float afAi) {
         this.afAi = afAi;
     }
 
-    public Long getAfAi() 
-    {
-        return afAi;
+    public Float getInhibitionNum() {
+        return inhibitionNum;
     }
-    public void setInhibitionNum(Long inhibitionNum) 
-    {
+
+    public void setInhibitionNum(Float inhibitionNum) {
         this.inhibitionNum = inhibitionNum;
     }
 
-    public Long getInhibitionNum() 
-    {
-        return inhibitionNum;
+    public Integer getCheckResult() {
+        return checkResult;
     }
-    public void setCheckResult(Long checkResult) 
-    {
+
+    public void setCheckResult(Integer checkResult) {
         this.checkResult = checkResult;
     }
 
-    public Long getCheckResult() 
-    {
-        return checkResult;
-    }
-    public void setDjNumber(String djNumber) 
+    public void setDjNumber(String djNumber)
     {
         this.djNumber = djNumber;
     }

@@ -104,6 +104,9 @@ public class TestApplicationFormController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody TestApplicationForm testApplicationForm)
     {
+        if(testApplicationForm.getStatus()==1||testApplicationForm.getStatus()==-1){
+            return  toAjaxByError("重复操作!");
+        }
         if(testApplicationForm.getRows()==""){
             return  toAjaxByError("明细信息不能为空!");
         }
@@ -125,9 +128,13 @@ public class TestApplicationFormController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Integer[] ids)
     {
+
         //修改单据状态
         for(int i=0;i<ids.length;i++){
             TestApplicationForm info=testApplicationFormService.selectTestApplicationFormById(ids[i]);
+            if(info.getStatus()==1||info.getStatus()==-1){
+                return  toAjaxByError(info.getDjNumber()+"重复操作!");
+            }
             info.setStatus(-1);
             testApplicationFormService.updateTestApplicationForm(info);
         }

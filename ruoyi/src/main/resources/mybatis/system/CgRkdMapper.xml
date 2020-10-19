@@ -83,7 +83,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="rkdSummaryList" parameterType="CgRkd" resultMap="CgRkdResult">
-          select distinct a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
+        select t.* from ( select distinct a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as
+        dj_status_name,
         (select sum(goods_num) from cg_rkd_child where dj_number=a.dj_number) as sum_num,
         (select nick_name from sys_user where user_name=a.create_by) as create_name,
         b.goods_num,b.goods_name,b.goods_dw,b.goods_address
@@ -95,16 +96,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
 
         UNION ALL
-            select distinct a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
+        select distinct a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
         (select sum(goods_num) from cg_rkd_single_child where dj_number=a.dj_number) as sum_num,
         (select nick_name from sys_user where user_name=a.create_by) as create_name,
         b.goods_num,b.goods_name,b.goods_dw,b.goods_address
         from cg_rkd_single a join cg_rkd_single_child b on a.dj_number=b.dj_number
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
-        <where>
-        ${dataScope}
+        <where>${dataScope}
         </where>
+        ) as t ORDER BY t.dj_time DESC
     </select>
 
     <!--百大待审核总数-->
@@ -204,18 +205,56 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY create_time DESC
     </select>
 
+    <!-- 查询费用信息 -->
+    <select id="selectMatkSum" resultMap="CgRkdResult">
+        select
+        (
+              (
+                select ifnull(sum(whole_money),0) from whole_retail a join  whole_retail_child b on a.dj_number=b.dj_number where a.create_by=#{createBy}
+                <if test="createTime!='' and createTime!=null">
+                    and #{createTime}>=DATE_FORMAT(a.dj_time, '%Y-%m')
+                </if>
+              )
+              +
+              (
+                select ifnull(sum(whole_money),0) from whole_sales a join  whole_sales_child b on a.dj_number=b.dj_number where a.create_by=#{createBy}
+                <if test="createTime!='' and createTime!=null">
+                    and #{createTime}>=DATE_FORMAT(a.dj_time, '%Y-%m')
+                </if>
+              )
+        ) as dj_status_name,<!--收入-->
+        (
+            (
+            select ifnull(sum(goods_money),0) from cg_rkd a join  cg_rkd_child b on a.dj_number=b.dj_number where a.create_by=#{createBy}
+            <if test="createTime!='' and createTime!=null">
+                and #{createTime}>=DATE_FORMAT(a.dj_time, '%Y-%m')
+            </if>
+            )
+            +
+            (
+            select ifnull(sum(goods_money),0) from cg_rkd_single a join  cg_rkd_single_child b on a.dj_number=b.dj_number where a.create_by=#{createBy}
+            <if test="createTime!='' and createTime!=null">
+                and #{createTime}>=DATE_FORMAT(a.dj_time, '%Y-%m')
+            </if>
+            )
+
+        ) as goods_name<!-- 成本 -->
+
+
+    </select>
+
     <!--市平台查询周公河数量信息-->
     <select id="selectMatkIndexNum" resultMap="CgRkdResult">
         select
 
-        (select count(id) from owner_info) as djStatusName,<!--业户总数-->
+        (select count(id) from owner_info) as dj_status_name,<!--业户总数-->
 
-        (select count(id) from goods_info_owner where create_by in(select owner_code from owner_info)) as goodsName,<!--业户商品总数-->
+        (select count(id) from goods_info_owner where create_by in(select owner_code from owner_info)) as goods_name,<!--业户商品总数-->
 
         (select (select count(id) from cg_rkd where create_by in(select owner_code from owner_info))+
-        (select count(id) from cg_rkd_single where create_by in(select owner_code from owner_info)))as createName,<!--进货单总数-->
+        (select count(id) from cg_rkd_single where create_by in(select owner_code from owner_info)))as create_name,<!--进货单总数-->
 
-        (select count(id) from goods_info_owner where create_by in(select owner_code from owner_info) and goods_address is not null) as personName<!--业户总数-->
+        (select count(id) from goods_info_owner where create_by in(select owner_code from owner_info) and goods_address is not null) as person_name<!--业户总数-->
 
     </select>
 

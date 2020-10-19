@@ -80,10 +80,10 @@ public class CheckNumController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody CheckNum checkNum)
     {
+        checkNum.setCreateBy(SecurityUtils.getUsername());
         if(checkNumService.checkNumIsContain(checkNum)>0){
             return  AjaxResult.error("只能添加一条默认数据!");
         }
-        checkNum.setCreateBy(SecurityUtils.getUsername());
         return toAjax(checkNumService.insertCheckNum(checkNum));
     }
 

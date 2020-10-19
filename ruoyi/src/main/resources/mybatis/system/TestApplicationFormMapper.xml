@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectTestApplicationFormVo">
-        select id, check_type, check_note, check_time, dj_number, status, create_by, create_time, update_by, update_time from test_application_form
+        select a.*,(select owner_name from owner_info where owner_code=a.create_by) from test_application_form a
     </sql>
 
     <sql id="selectTestApplicationFormVoByRole">
@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         order by a.create_time desc
     </select>
     
-    <select id="selectTestApplicationFormById" parameterType="Long" resultMap="TestApplicationFormResult">
+    <select id="selectTestApplicationFormById" parameterType="Integer" resultMap="TestApplicationFormResult">
         <include refid="selectTestApplicationFormVo"/>
         where id = #{id}
     </select>

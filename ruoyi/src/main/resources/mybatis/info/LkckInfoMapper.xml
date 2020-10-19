@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.LkckInfoMapper">
+    
+    <resultMap type="LkckInfo" id="LkckInfoResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="djStatus"    column="dj_status"    />
+        <result property="djTime"    column="dj_time"    />
+        <result property="storeNum"    column="store_num"    />
+        <result property="ckTime"    column="ck_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="storeName"    column="store_name"    />
+    </resultMap>
+
+    <sql id="selectLkckInfoVo">
+        select id, dj_number, dj_status, dj_time, store_num, ck_time, create_by, create_time, update_by, update_time, remark, store_name from lkck_info
+    </sql>
+
+    <sql id="selectLkckInfoVoByRole">
+        select a.* from lkck_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectLkckInfoList" parameterType="LkckInfo" resultMap="LkckInfoResult">
+        <include refid="selectLkckInfoVoByRole"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="djStatus != null "> and dj_status = #{djStatus}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="storeNum != null  and storeNum != ''"> and store_num = #{storeNum}</if>
+            <if test="ckTime != null  and ckTime != ''"> and ck_time = #{ckTime}</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectLkckInfoById" parameterType="String" resultMap="LkckInfoResult">
+        <include refid="selectLkckInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertLkckInfo" parameterType="LkckInfo">
+        insert into lkck_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="djStatus != null ">dj_status,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="storeNum != null  and storeNum != ''">store_num,</if>
+            <if test="ckTime != null  and ckTime != ''">ck_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="storeName != null  and storeName != ''">store_name,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="djStatus != null ">#{djStatus},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="storeNum != null  and storeNum != ''">#{storeNum},</if>
+            <if test="ckTime != null  and ckTime != ''">#{ckTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="storeName != null  and storeName != ''">#{storeName},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateLkckInfo" parameterType="LkckInfo">
+        update lkck_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="djStatus != null ">dj_status = #{djStatus},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="storeNum != null  and storeNum != ''">store_num = #{storeNum},</if>
+            <if test="ckTime != null  and ckTime != ''">ck_time = #{ckTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="storeName != null  and storeName != ''">store_name = #{storeName},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLkckInfoById" parameterType="String">
+        delete from lkck_info where id = #{id}
+    </delete>
+
+    <delete id="deleteLkckInfoByIds" parameterType="String">
+        delete from lkck_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateCkdStatus" parameterType="String">
+        update lkck_info set dj_status='1'  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    
+</mapper>

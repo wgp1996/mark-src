@@ -12,6 +12,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="goodsName"    column="goods_name"    />
         <result property="goodsViceDw"    column="goods_vice_dw"    />
         <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsAssistDw"    column="goods_assist_dw"    />
         <result property="goodsImg"    column="goods_img"    />
         <result property="goodsCodeImg"    column="goods_code_img"    />
         <result property="createBy"    column="create_by"    />
@@ -24,6 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="goodsAddress"    column="goods_address"    />
         <result property="goodsGg"    column="goods_gg"    />
         <result property="isSend"    column="is_send"    />
+        <result property="kcNum"    column="kc_num"    />
     </resultMap>
 
     <sql id="selectGoodsInfoOwnerVo">
@@ -52,6 +54,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by a.create_time desc
     </select>
+
+    <select id="selectGoodsInfoOwnerByRkList" parameterType="GoodsInfoOwner" resultMap="GoodsInfoOwnerResult">
+        select a.*,IFNULL((select sum(goods_num) from rk_info_child where goods_code=a.goods_code),0) as kc_num from goods_info_owner a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsViceDw != null  and goodsViceDw != ''"> and goods_vice_dw = #{goodsViceDw}</if>
+            <if test="goodsDw != null  and goodsDw != ''"> and goods_dw = #{goodsDw}</if>
+            <if test="goodsImg != null  and goodsImg != ''"> and goods_img = #{goodsImg}</if>
+            <if test="goodsType != null "> and goods_type = #{goodsType}</if>
+            <if test="goodsAddress != null  and goodsAddress != ''"> and goods_address = #{goodsAddress}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="isSend != null "> and is_send = #{isSend}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+
     <!--市平台查询所有商品档案-->
     <select id="selectGoodsInfoOwnerListBySpt" parameterType="GoodsInfoOwner" resultMap="GoodsInfoOwnerResult">
         select a.*,
@@ -112,6 +134,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isSend != null ">is_send,</if>
             <if test="goodsNbCode != null  and goodsNbCode != ''">goods_nb_code,</if>
             <if test="goodsSptCode != null  and goodsSptCode != ''">goods_spt_code,</if>
+            <if test="goodsAssistDw != null  and goodsAssistDw != ''">goods_assist_dw,</if>
             create_time
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -131,6 +154,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isSend != null ">#{isSend},</if>
             <if test="goodsNbCode != null  and goodsNbCode != ''">#{goodsNbCode},</if>
             <if test="goodsSptCode != null  and goodsSptCode != ''">#{goodsSptCode},</if>
+            <if test="goodsAssistDw != null  and goodsAssistDw != ''">#{goodsAssistDw},</if>
             sysdate()
          </trim>
     </insert>
@@ -154,6 +178,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isSend != null ">is_send = #{isSend},</if>
             <if test="goodsNbCode != null  and goodsNbCode != ''">goods_nb_code=#{goodsNbCode},</if>
             <if test="goodsSptCode != null  and goodsSptCode != ''">goods_spt_code=#{goodsSptCode},</if>
+            <if test="goodsAssistDw != null  and goodsAssistDw != ''">goods_assist_dw=#{goodsAssistDw},</if>
             update_time = sysdate()
         </trim>
         where id = #{id}

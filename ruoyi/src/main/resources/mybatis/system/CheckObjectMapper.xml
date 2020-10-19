@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="objectNum != null  and objectNum != ''"> and object_num = #{objectNum}</if>
             <if test="objectName != null  and objectName != ''"> and object_name like concat('%', #{objectName}, '%')</if>
+            ${dataScope}
         </where>
     </select>
 

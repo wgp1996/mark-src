@@ -140,7 +140,7 @@ public class RandomInspectionInfoController extends BaseController
                         }else{
                             child.setOwnerCode("admin");
                             child.setOwnerName("管理员");
-                            child.setRemark("业户待建档");
+                            child.setRemark("业户待建档("+info.get(1)+")");
                             //未匹配到的数据默认放到admin帐号下 可修改
                             //randomInspectionInfo.setCreateBy("admin");
                         }
@@ -149,10 +149,19 @@ public class RandomInspectionInfoController extends BaseController
                         child.setCheckProject(info.get(4));
                         child.setSampTime(info.get(5));
                         child.setTestResult(info.get(6));
-                        child.setInhibitionNum(Float.parseFloat(info.get(6).replaceAll("%","")==null?"0.0":info.get(6).replaceAll("%","")));
+                        System.out.println(info.get(6).replaceAll("%",""));
+                        System.out.println(Float.parseFloat(info.get(6).replaceAll("%","")));
+                        float num=Float.parseFloat(info.get(6).replaceAll("%","")==null?"0.0":info.get(6).replaceAll("%",""));
+                        if(num<1){
+                            child.setInhibitionNum(num*100);
+                        }else{
+                            child.setInhibitionNum(num);
+                        }
+
                         if("合格".equals(info.get(7))){
                             child.setCheckResult(1);
                         }else{
+
                             child.setCheckResult(0);
                         }
                         child.setCreateBy(SecurityUtils.getUsername());
@@ -175,12 +184,30 @@ public class RandomInspectionInfoController extends BaseController
         }
     }
     /**
-     * 查询随机检测单列表
+     * 查询随机检测单明细列表
      */
     @PreAuthorize("@ss.hasPermi('system:randomInsp:list')")
     @GetMapping("/list")
     @DataScope(deptAlias = "d", userAlias = "u")
-    public TableDataInfo list(RandomInspectionInfo randomInspectionInfo)
+    public TableDataInfo list(RandomInspectionInfoChild randomInspectionInfo)
+    {
+        startPage();
+        List<RandomInspectionInfoChild> list = randomInspectionInfoChildService.selectRandomInspectionInfoAllList(randomInspectionInfo);
+        /*for(RandomInspectionInfo info:list) {
+            RandomInspectionInfoChild RandomInspectionInfoChild = new RandomInspectionInfoChild();
+            RandomInspectionInfoChild.setDjNumber(info.getDjNumber());
+            info.setChildrenList(randomInspectionInfoChildService.selectRandomInspectionInfoChildList(RandomInspectionInfoChild));
+        }*/
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询随机检测单主子表列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:randomInsp:list')")
+    @GetMapping("/allList")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo allList(RandomInspectionInfo randomInspectionInfo)
     {
         startPage();
         List<RandomInspectionInfo> list = randomInspectionInfoService.selectRandomInspectionInfoList(randomInspectionInfo);

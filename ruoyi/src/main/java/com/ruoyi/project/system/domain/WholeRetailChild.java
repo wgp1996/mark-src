@@ -41,16 +41,39 @@ public class WholeRetailChild extends BaseEntity
     /** 单价 */
     @Excel(name = "单价")
     private String wholePrice;
-
+    /** 总价 */
+    @Excel(name = "总价")
+    private String wholeMoney;
+    /** 单据编号 */
+    @Excel(name = "客户编号")
+    private String khCode;
+    /** 客户名称 */
+    @Excel(name = "客户名称")
+    private String khName;
     /** $column.columnComment */
     @Excel(name = "单价")
     private String wholeBz;
 
     private Integer status;
 
-    private String khName;
 
     private String wholeSum;
+
+    public String getKhCode() {
+        return khCode;
+    }
+
+    public void setKhCode(String khCode) {
+        this.khCode = khCode;
+    }
+
+    public String getWholeMoney() {
+        return wholeMoney;
+    }
+
+    public void setWholeMoney(String wholeMoney) {
+        this.wholeMoney = wholeMoney;
+    }
 
     public String getWholeSum() {
         return wholeSum;

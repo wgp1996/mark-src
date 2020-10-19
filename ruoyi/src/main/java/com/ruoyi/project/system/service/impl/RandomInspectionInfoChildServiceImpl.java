@@ -33,6 +33,17 @@ public class RandomInspectionInfoChildServiceImpl implements IRandomInspectionIn
     }
 
     /**
+     * 查询检测单所有明细列表
+     *
+     * @param randomInspectionInfoChild 检测单明细
+     * @return 检测单明细集合
+     */
+    @Override
+    public List<RandomInspectionInfoChild> selectRandomInspectionInfoAllList(RandomInspectionInfoChild randomInspectionInfoChild){
+        return randomInspectionInfoChildMapper.selectRandomInspectionInfoAllList(randomInspectionInfoChild);
+    }
+
+    /**
      * 查询检测单明细列表
      * 
      * @param randomInspectionInfoChild 检测单明细

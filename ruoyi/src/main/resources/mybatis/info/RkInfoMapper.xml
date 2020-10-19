@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.RkInfoMapper">
+    
+    <resultMap type="RkInfo" id="RkInfoResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="djStatus"    column="dj_status"    />
+        <result property="djTime"    column="dj_time"    />
+        <result property="storeNum"    column="store_num"    />
+        <result property="khCode"    column="kh_code"    />
+        <result property="djType"    column="dj_type"    />
+        <result property="lsNumber"    column="ls_number"    />
+        <result property="rkPc"    column="rk_pc"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="khName"    column="kh_name"    />
+    </resultMap>
+
+    <sql id="selectRkInfoVo">
+        select id, dj_number, dj_status, dj_time, store_num, kh_code, dj_type, ls_number, rk_pc, create_by, create_time, update_by, update_time, remark, store_name, kh_name from rk_info
+    </sql>
+    <sql id="selectRkInfoVoByRole">
+        select a.* from rk_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectRkInfoList" parameterType="RkInfo" resultMap="RkInfoResult">
+        <include refid="selectRkInfoVoByRole"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="djStatus != null "> and dj_status = #{djStatus}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="storeNum != null  and storeNum != ''"> and store_num = #{storeNum}</if>
+            <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
+            <if test="djType != null  and djType != ''"> and dj_type = #{djType}</if>
+            <if test="lsNumber != null  and lsNumber != ''"> and ls_number = #{lsNumber}</if>
+            <if test="rkPc != null  and rkPc != ''"> and rk_pc = #{rkPc}</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            <if test="khName != null  and khName != ''"> and kh_name like concat('%', #{khName}, '%')</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectRkInfoById" parameterType="String" resultMap="RkInfoResult">
+        <include refid="selectRkInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertRkInfo" parameterType="RkInfo">
+        insert into rk_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="djStatus != null ">dj_status,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="storeNum != null  and storeNum != ''">store_num,</if>
+            <if test="khCode != null  and khCode != ''">kh_code,</if>
+            <if test="djType != null  and djType != ''">dj_type,</if>
+            <if test="lsNumber != null  and lsNumber != ''">ls_number,</if>
+            <if test="rkPc != null  and rkPc != ''">rk_pc,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="storeName != null  and storeName != ''">store_name,</if>
+            <if test="khName != null  and khName != ''">kh_name,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="djStatus != null ">#{djStatus},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="storeNum != null  and storeNum != ''">#{storeNum},</if>
+            <if test="khCode != null  and khCode != ''">#{khCode},</if>
+            <if test="djType != null  and djType != ''">#{djType},</if>
+            <if test="lsNumber != null  and lsNumber != ''">#{lsNumber},</if>
+            <if test="rkPc != null  and rkPc != ''">#{rkPc},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="storeName != null  and storeName != ''">#{storeName},</if>
+            <if test="khName != null  and khName != ''">#{khName},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateRkInfo" parameterType="RkInfo">
+        update rk_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="djStatus != null ">dj_status = #{djStatus},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="storeNum != null  and storeNum != ''">store_num = #{storeNum},</if>
+            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
+            <if test="djType != null  and djType != ''">dj_type = #{djType},</if>
+            <if test="lsNumber != null  and lsNumber != ''">ls_number = #{lsNumber},</if>
+            <if test="rkPc != null  and rkPc != ''">rk_pc = #{rkPc},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="storeName != null  and storeName != ''">store_name = #{storeName},</if>
+            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRkInfoById" parameterType="String">
+        delete from rk_info where id = #{id}
+    </delete>
+
+    <delete id="deleteRkInfoByIds" parameterType="String">
+        delete from rk_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="updateRkdStatus" parameterType="String">
+        update rk_info set dj_status='1'  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    
+</mapper>

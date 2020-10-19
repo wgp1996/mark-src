@@ -29,6 +29,22 @@ public interface IWholeSalesChildService
     public List<WholeSalesChild> selectWholeSalesChildList(WholeSalesChild wholeSalesChild);
 
     /**
+     * 查询批发销货单子表列表
+     *
+     * @param wholeSalesChild 批发销货单子表
+     * @return 批发销货单子表集合
+     */
+    public List<WholeSalesChild> selectWholeSalesAllList(WholeSalesChild wholeSalesChild);
+
+    /**
+     * 查询批发单表列表
+     *
+     * @param wholeSalesChild 批发单子表
+     * @return 批发销货单子表集合
+     */
+    public List<WholeSalesChild> selectWholeAllList(WholeSalesChild wholeSalesChild);
+
+    /**
      * 条件查询批发销货单子表列表
      *
      * @return 批发销货单子表集合

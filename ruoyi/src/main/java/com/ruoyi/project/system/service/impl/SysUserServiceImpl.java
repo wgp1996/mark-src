@@ -197,12 +197,12 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public String checkEmailUnique(SysUser user)
     {
-        Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
-        SysUser info = userMapper.checkEmailUnique(user.getEmail());
-        if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue())
-        {
-            return UserConstants.NOT_UNIQUE;
-        }
+//        Long userId = StringUtils.isNull(user.getUserId()) ? -1L : user.getUserId();
+//        SysUser info = userMapper.checkEmailUnique(user.getEmail());
+//        if (StringUtils.isNotNull(info) && info.getUserId().longValue() != userId.longValue())
+//        {
+//            return UserConstants.NOT_UNIQUE;
+//        }
         return UserConstants.UNIQUE;
     }
 

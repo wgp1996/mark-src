@@ -119,6 +119,14 @@ public class CgRkdServiceImpl implements ICgRkdService
         return cgRkdMapper.selectMatkIndexNum();
     }
     /**
+     * 查询周公河收支信息
+     *
+     */
+    @Override
+    public CgRkd selectMatkSum(String createBy,String createTime){
+        return cgRkdMapper.selectMatkSum(createBy,createTime);
+    }
+    /**
      * 查询进货单列表
      * 
      * @param cgRkd 进货单

@@ -31,6 +31,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="storeid"    column="storeId"    />
         <result property="shopName"    column="shop_name"    />
         <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
+
     </resultMap>
 
     <sql id="selectCgRkdChildVo">
@@ -74,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectCgRkdChildByUser" parameterType="String" resultMap="CgRkdChildResult">
         select a.*,b.id as pid,
+        case a.status when 0 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 1 then '已接收' when 2 then '已审核' end as status_name,
         (select goods_img from goods_info_owner where goods_code=a.goods_code) as goods_img,
         (select goods_code_img from goods_info_owner where goods_code=a.goods_code) as goods_code_img
         from cg_rkd_child a join cg_rkd b on a.dj_number=b.dj_number

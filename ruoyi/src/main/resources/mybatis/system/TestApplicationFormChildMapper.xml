@@ -25,14 +25,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sampTime"    column="samp_time"    />
         <result property="testResult"    column="test_result"    />
         <result property="status"    column="status"    />
+        <result property="checkResultName"    column="check_result_name"    />
     </resultMap>
 
     <sql id="selectTestApplicationFormChildVo">
-        select * from test_application_form_child
+        select a.*,case a.check_result when 0 then '不合格' when 1 then '合格' end as check_result_name from test_application_form_child a
     </sql>
 
     <select id="selectTestApplicationForm" parameterType="TestApplicationFormChild" resultMap="TestApplicationFormChildResult">
         select a.status,a.id,a.create_time,b.goods_code,b.goods_name,b.inhibition_num,
+        case b.check_result when 0 then '不合格' when 1 then '合格' end as check_result_name,
         b.check_result,b.check_project,b.samp_time
         from test_application_form a join test_application_form_child b
         on a.dj_number=b.dj_number

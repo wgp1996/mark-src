@@ -25,6 +25,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="checkProject"    column="check_project"    />
         <result property="sampTime"    column="samp_time"    />
         <result property="testResult"    column="test_result"    />
+        <result property="inhibitionNums"    column="inhibition_nums"    />
+
     </resultMap>
 
     <sql id="selectRandomInspectionInfoChildVo">
@@ -36,7 +38,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
             <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
-            <if test="ai != null "> and AI = #{ai}</if>
+            <if test="checkResult != null "> and check_result = #{checkResult}</if>
             <if test="af != null "> and AF = #{af}</if>
             <if test="afAi != null "> and AF_AI = #{afAi}</if>
             <if test="inhibitionNum != null "> and inhibition_num = #{inhibitionNum}</if>
@@ -45,6 +47,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="ownerCode != null  and ownerCode != ''"> and owner_code = #{ownerCode}</if>
             <if test="ownerName != null  and ownerName != ''"> and owner_name like concat('%', #{ownerName}, '%')</if>
         </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="selectRandomInspectionInfoAllList" parameterType="RandomInspectionInfoChild" resultMap="RandomInspectionInfoChildResult">
+        select a.dj_time as test_result,a.id,b.goods_code,b.goods_name,b.inhibition_num,CONCAT(b.inhibition_num,'%') as inhibition_nums,b.check_result,b.dj_number,b.owner_code,b.owner_name,b.check_project,b.samp_time,b.remark
+        ,case b.check_result when 0 then '不合格' when 1 then '合格' end as check_result_name from
+        random_inspection_info a join random_inspection_info_child b
+        on a.dj_number=b.dj_number
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        <where>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="checkResult != null "> and check_result = #{checkResult}</if>
+            <if test="af != null "> and AF = #{af}</if>
+            <if test="afAi != null "> and AF_AI = #{afAi}</if>
+            <if test="inhibitionNum != null "> and inhibition_num = #{inhibitionNum}</if>
+            <if test="checkResult != null and checkResult!=-1 "> and check_result = #{checkResult}</if>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="ownerCode != null  and ownerCode != ''"> and owner_code = #{ownerCode}</if>
+            <if test="ownerName != null  and ownerName != ''"> and owner_name like concat('%', #{ownerName}, '%')</if>
+            ${dataScope}
+        </where>
+        order by a.dj_time desc
     </select>
     
     <select id="selectRandomInspectionInfoChildById" parameterType="String" resultMap="RandomInspectionInfoChildResult">

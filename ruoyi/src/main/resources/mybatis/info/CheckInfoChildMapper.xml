@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.CheckInfoChildMapper">
+    
+    <resultMap type="CheckInfoChild" id="CheckInfoChildResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsGg"    column="goods_gg"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="goodsLossMoney"    column="goods_loss_money"    />
+        <result property="goodsLossNum"    column="goods_loss_num"    />
+        <result property="goodsPriceNum"    column="goods_price_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCheckInfoChildVo">
+        select id, dj_number, goods_code, goods_name, goods_gg, goods_dw, goods_num, goods_price, goods_loss_money, goods_loss_num, goods_price_num, create_by, create_time, update_by, update_time, remark from check_info_child
+    </sql>
+
+    <select id="selectCheckInfoChildList" parameterType="CheckInfoChild" resultMap="CheckInfoChildResult">
+        <include refid="selectCheckInfoChildVo"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsGg != null  and goodsGg != ''"> and goods_gg = #{goodsGg}</if>
+            <if test="goodsDw != null  and goodsDw != ''"> and goods_dw = #{goodsDw}</if>
+            <if test="goodsNum != null "> and goods_num = #{goodsNum}</if>
+            <if test="goodsPrice != null "> and goods_price = #{goodsPrice}</if>
+            <if test="goodsLossMoney != null "> and goods_loss_money = #{goodsLossMoney}</if>
+            <if test="goodsLossNum != null "> and goods_loss_num = #{goodsLossNum}</if>
+            <if test="goodsPriceNum != null "> and goods_price_num = #{goodsPriceNum}</if>
+        </where>
+    </select>
+    
+    <select id="selectCheckInfoChildById" parameterType="String" resultMap="CheckInfoChildResult">
+        <include refid="selectCheckInfoChildVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCheckInfoChild" parameterType="CheckInfoChild">
+        insert into check_info_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg,</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw,</if>
+            <if test="goodsNum != null ">goods_num,</if>
+            <if test="goodsPrice != null ">goods_price,</if>
+            <if test="goodsLossMoney != null ">goods_loss_money,</if>
+            <if test="goodsLossNum != null ">goods_loss_num,</if>
+            <if test="goodsPriceNum != null ">goods_price_num,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="goodsGg != null  and goodsGg != ''">#{goodsGg},</if>
+            <if test="goodsDw != null  and goodsDw != ''">#{goodsDw},</if>
+            <if test="goodsNum != null ">#{goodsNum},</if>
+            <if test="goodsPrice != null ">#{goodsPrice},</if>
+            <if test="goodsLossMoney != null ">#{goodsLossMoney},</if>
+            <if test="goodsLossNum != null ">#{goodsLossNum},</if>
+            <if test="goodsPriceNum != null ">#{goodsPriceNum},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateCheckInfoChild" parameterType="CheckInfoChild">
+        update check_info_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg = #{goodsGg},</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw = #{goodsDw},</if>
+            <if test="goodsNum != null ">goods_num = #{goodsNum},</if>
+            <if test="goodsPrice != null ">goods_price = #{goodsPrice},</if>
+            <if test="goodsLossMoney != null ">goods_loss_money = #{goodsLossMoney},</if>
+            <if test="goodsLossNum != null ">goods_loss_num = #{goodsLossNum},</if>
+            <if test="goodsPriceNum != null ">goods_price_num = #{goodsPriceNum},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCheckInfoChildById" parameterType="String">
+        delete from check_info_child where id = #{id}
+    </delete>
+
+    <delete id="deleteCheckInfoChildByIds" parameterType="String">
+        delete from check_info_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteCheckInfoChildByPid" parameterType="String">
+        delete from check_info_child where dj_number in (select dj_number from check_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    
+</mapper>

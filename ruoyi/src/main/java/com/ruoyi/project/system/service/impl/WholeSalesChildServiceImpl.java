@@ -51,6 +51,27 @@ public class WholeSalesChildServiceImpl implements IWholeSalesChildService
     {
         return wholeSalesChildMapper.selectWholeSalesChildList(wholeSalesChild);
     }
+    /**
+     * 查询批发单表列表
+     *
+     * @param wholeSalesChild 批发单子表
+     * @return 批发销货单子表集合
+     */
+    @Override
+    public List<WholeSalesChild> selectWholeAllList(WholeSalesChild wholeSalesChild){
+        return wholeSalesChildMapper.selectWholeAllList(wholeSalesChild);
+    }
+    /**
+     * 查询批批发销货单子表列表
+     *
+     * @param wholeSalesChild 批批发销货单子表
+     * @return 批批发销货单子表
+     */
+    @Override
+    public List<WholeSalesChild> selectWholeSalesAllList(WholeSalesChild wholeSalesChild)
+    {
+        return wholeSalesChildMapper.selectWholeSalesAllList(wholeSalesChild);
+    }
 
     /**
      * 新增批批发销货单子表

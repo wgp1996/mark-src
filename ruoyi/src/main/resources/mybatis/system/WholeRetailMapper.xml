@@ -18,6 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="from"    column="from"    />
+        <result property="createName"    column="create_name"    />
         <result property="djStatusName"    column="dj_status_name"    />
     </resultMap>
 
@@ -26,7 +27,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="selectWholeRetailVoByRole">
-        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name from whole_retail a
+        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name,
+         (select distinct nick_name from sys_user where user_name=a.create_by) as create_name
+         from whole_retail a
          join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>

@@ -26,6 +26,12 @@ public interface ICgRkdService
     public CgRkd selectMatkIndexNum();
 
     /**
+     * 查询周公河收支信息
+     *
+     */
+    public CgRkd selectMatkSum(String createBy,String createTime);
+
+    /**
      * 查询进货单列表
      * 
      * @param cgRkd 进货单

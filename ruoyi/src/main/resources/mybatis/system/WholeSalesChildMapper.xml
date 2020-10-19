@@ -21,10 +21,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="goodsName"    column="goods_name"    />
         <result property="status"    column="status"    />
         <result property="wholeSum"    column="whole_sum"    />
+        <result property="wholeMoney"    column="whole_money"    />
     </resultMap>
 
     <sql id="selectWholeSalesChildVo">
-        select id, dj_number, kh_name, kh_code, whole_num, whole_dw, whole_price, whole_bz, create_by, create_time, update_by, update_time, remark from whole_sales_child
+        select * from whole_sales_child
     </sql>
 
     <select id="selectWholeSalesChildList" parameterType="WholeSalesChild" resultMap="WholeSalesChildResult">
@@ -39,6 +40,48 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="wholeBz != null  and wholeBz != ''"> and whole_bz = #{wholeBz}</if>
         </where>
         order by create_time desc
+    </select>
+
+    <select id="selectWholeSalesAllList" resultMap="WholeSalesChildResult">
+        select  b.dj_time as remark,a.dj_number,a.kh_name,a.kh_code,a.whole_num,a.whole_dw,a.whole_price,a.whole_bz,a.whole_money,b.id
+        ,b.goods_name,b.status,(select distinct nick_name from sys_user where user_name=a.create_by) as create_by from whole_sales_child a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        join whole_sales b on a.dj_number=b.dj_number
+        <where>
+            <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
+            ${dataScope}
+        </where>
+        order by b.dj_time desc,b.create_time desc,b.dj_number
+    </select>
+
+    <select id="selectWholeAllList" resultMap="WholeSalesChildResult">
+        select t.* from (
+        select b.dj_time as
+        remark,a.dj_number,a.kh_name,a.kh_code,a.whole_num,a.whole_dw,a.whole_price,a.whole_bz,a.whole_money,b.id
+        ,b.goods_name,b.status,(select distinct nick_name from sys_user where user_name=a.create_by) as create_by from
+        whole_sales_child a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        join whole_sales b on a.dj_number=b.dj_number
+        <where>
+            <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
+            ${dataScope}
+        </where>
+
+        UNION ALL
+
+         select b.dj_time as remark,a.dj_number,a.goods_name,a.goods_code,a.whole_num,a.whole_dw,a.whole_price,a.whole_bz,a.whole_money,b.id
+        ,b.kh_name,b.status,(select distinct nick_name from sys_user where user_name=a.create_by) as create_by from whole_retail_child a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+         join whole_retail b on a.dj_number=b.dj_number
+        <where>
+            <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
+            ${dataScope}
+        </where>
+        ) t
+        order by t.remark desc
     </select>
 
     <select id="selectWholeSalesChildListByWhere" resultMap="WholeSalesChildResult">
@@ -84,6 +127,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="wholeNum != null  and wholeNum != ''">whole_num,</if>
             <if test="wholeDw != null  and wholeDw != ''">whole_dw,</if>
             <if test="wholePrice != null  and wholePrice != ''">whole_price,</if>
+            <if test="wholeMoney != null  and wholeMoney != ''">whole_money,</if>
             <if test="wholeBz != null  and wholeBz != ''">whole_bz,</if>
             <if test="createBy != null  and createBy != ''">create_by,</if>
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
@@ -99,6 +143,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="wholeNum != null  and wholeNum != ''">#{wholeNum},</if>
             <if test="wholeDw != null  and wholeDw != ''">#{wholeDw},</if>
             <if test="wholePrice != null  and wholePrice != ''">#{wholePrice},</if>
+            <if test="wholeMoney != null  and wholeMoney != ''">#{wholeMoney},</if>
             <if test="wholeBz != null  and wholeBz != ''">#{wholeBz},</if>
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
@@ -117,6 +162,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="wholeNum != null  and wholeNum != ''">whole_num = #{wholeNum},</if>
             <if test="wholeDw != null  and wholeDw != ''">whole_dw = #{wholeDw},</if>
             <if test="wholePrice != null  and wholePrice != ''">whole_price = #{wholePrice},</if>
+            <if test="wholeMoney != null  and wholeMoney != ''">whole_money = #{wholeMoney},</if>
             <if test="wholeBz != null  and wholeBz != ''">whole_bz = #{wholeBz},</if>
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>

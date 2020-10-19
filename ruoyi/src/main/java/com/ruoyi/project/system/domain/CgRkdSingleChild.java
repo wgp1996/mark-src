@@ -71,6 +71,8 @@ public class CgRkdSingleChild extends BaseEntity
     private String goodsImg;
     private  String goodsCodeImg;
     private  String pid;
+    private  String djStatusName;
+
     /** 门店编号 */
     @Excel(name = "门店编号")
     private String storeid;
@@ -78,6 +80,14 @@ public class CgRkdSingleChild extends BaseEntity
     /** 门店名称 */
     @Excel(name = "门店名称")
     private String shopName;
+
+    public String getDjStatusName() {
+        return djStatusName;
+    }
+
+    public void setDjStatusName(String djStatusName) {
+        this.djStatusName = djStatusName;
+    }
 
     public String getStoreid() {
         return storeid;

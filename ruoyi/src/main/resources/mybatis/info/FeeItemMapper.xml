@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.FeeItemMapper">
+    
+    <resultMap type="FeeItem" id="FeeItemResult">
+        <result property="id"    column="id"    />
+        <result property="feeCode"    column="fee_code"    />
+        <result property="feeName"    column="fee_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectFeeItemVo">
+        select * from fee_item
+    </sql>
+    <sql id="selectFeeItemVoByRole">
+        select a.* from fee_item a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectFeeItemList" parameterType="FeeItem" resultMap="FeeItemResult">
+        <include refid="selectFeeItemVoByRole"/>
+        <where>  
+            <if test="feeCode != null  and feeCode != ''"> and fee_code = #{feeCode}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="feeName != null  and feeName != ''"> and fee_name like concat('%', #{feeName}, '%')</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectFeeItemById" parameterType="Long" resultMap="FeeItemResult">
+        <include refid="selectFeeItemVo"/>
+        where id = #{id}
+    </select>
+    <select id="checkFeeItem" parameterType="FeeItem" resultType="Integer">
+        select count(id) from fee_item
+        where create_by = #{createBy} and fee_name=#{feeName}
+        <if test="id!=null and id !=-1">
+            where id != #{id}
+        </if>
+    </select>
+        
+    <insert id="insertFeeItem" parameterType="FeeItem" useGeneratedKeys="true" keyProperty="id">
+        insert into fee_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="feeCode != null  and feeCode != ''">fee_code,</if>
+            <if test="feeName != null  and feeName != ''">fee_name,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="feeCode != null  and feeCode != ''">#{feeCode},</if>
+            <if test="feeName != null  and feeName != ''">#{feeName},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateFeeItem" parameterType="FeeItem">
+        update fee_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="feeCode != null  and feeCode != ''">fee_code = #{feeCode},</if>
+            <if test="feeName != null  and feeName != ''">fee_name = #{feeName},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFeeItemById" parameterType="Long">
+        delete from fee_item where id = #{id}
+    </delete>
+
+    <delete id="deleteFeeItemByIds" parameterType="String">
+        delete from fee_item where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

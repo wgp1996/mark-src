@@ -32,9 +32,13 @@ public class GoodsInfoOwner extends BaseEntity
     @Excel(name = "商品名称")
     private String goodsName;
 
+    /** 重量单位 */
+    @Excel(name = "重量单位")
+    private String goodsViceDw;
+
     /** 副单位 */
     @Excel(name = "副单位")
-    private String goodsViceDw;
+    private String goodsAssistDw;
 
     /** 主单位 */
     @Excel(name = "主单位")
@@ -65,6 +69,23 @@ public class GoodsInfoOwner extends BaseEntity
     private Integer isSend;
 
     private String createName;
+    private String kcNum;
+
+    public String getGoodsAssistDw() {
+        return goodsAssistDw;
+    }
+
+    public void setGoodsAssistDw(String goodsAssistDw) {
+        this.goodsAssistDw = goodsAssistDw;
+    }
+
+    public String getKcNum() {
+        return kcNum;
+    }
+
+    public void setKcNum(String kcNum) {
+        this.kcNum = kcNum;
+    }
 
     public String getCreateName() {
         return createName;

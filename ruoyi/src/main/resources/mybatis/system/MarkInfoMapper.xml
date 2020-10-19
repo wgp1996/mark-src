@@ -23,6 +23,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="addressLat"    column="address_lat"    />
+        <result property="addressLng"    column="address_lng"    />
+        <result property="fileName"    column="file_name"    />
         <result property="remark"    column="remark"    />
     </resultMap>
 
@@ -86,6 +89,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">update_by,</if>
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
+            <if test="addressLat != null  and addressLat != ''">address_lat,</if>
+            <if test="addressLng != null and addressLng != ''">address_lng,</if>
+            <if test="fileName != null  and fileName != ''">file_name,</if>
             create_time
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -107,6 +113,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="addressLat != null  and addressLat != ''">#{addressLat},</if>
+            <if test="addressLng != null and addressLng != ''">#{addressLng},</if>
+            <if test="fileName != null  and fileName != ''">#{fileName},</if>
              sysdate()
          </trim>
     </insert>
@@ -131,6 +140,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="addressLat != null  and addressLat != ''">address_lat=#{addressLat},</if>
+            <if test="addressLng != null and addressLng != ''">address_lng=#{addressLng},</if>
+            <if test="fileName != null  and fileName != ''">file_name=#{fileName},</if>
             update_time = sysdate()
         </trim>
         where id = #{id}

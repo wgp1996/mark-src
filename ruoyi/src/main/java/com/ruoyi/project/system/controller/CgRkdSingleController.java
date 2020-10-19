@@ -53,11 +53,11 @@ public class CgRkdSingleController extends BaseController
     {
         startPage();
         //改为合并子表列表展示 不显示子表信息
-        List<CgRkdSingle> list = cgRkdService.selectCgRkdSingleAllList(cgRkd);
-        /*List<CgRkdSingle> list = cgRkdService.selectCgRkdSingleList(cgRkd);
+        //List<CgRkdSingle> list = cgRkdService.selectCgRkdSingleAllList(cgRkd);
+        List<CgRkdSingle> list = cgRkdService.selectCgRkdSingleList(cgRkd);
         for(CgRkdSingle info:list){
             info.setChildrenList(cgRkdChildService.selectCgRkdSingleChildByNumber(info.getDjNumber()));
-        }*/
+        }
         return getDataTable(list);
     }
     /**
@@ -214,9 +214,12 @@ public class CgRkdSingleController extends BaseController
             }
         }
         //删除子表信息
-        int result=cgRkdChildService.deleteCgRkdSingleChildByPid(ids);
+        if(ids.length>0){
+            cgRkdChildService.deleteCgRkdSingleChildByPid(ids);
+        }
+        int result=cgRkdService.deleteCgRkdSingleByIds(ids);
         if(result>0){
-            cgRkdService.deleteCgRkdSingleByIds(ids);
+
             return toAjaxBySuccess("删除成功!");
         }else{
             return  toAjaxByError("删除失败!");

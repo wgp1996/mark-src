@@ -52,6 +52,17 @@ public class KhInfoController extends BaseController
     }
 
     /**
+     * 查询客户建档列表
+     */
+    @DataScope(deptAlias = "d", userAlias = "u")
+    @GetMapping("/allList")
+    public TableDataInfo allList(KhInfo khInfo)
+    {
+        List<KhInfo> list = khInfoService.selectKhInfoList(khInfo);
+        return getDataTable(list);
+    }
+
+    /**
      * 导出客户建档列表
      */
     @PreAuthorize("@ss.hasPermi('system:kh:export')")

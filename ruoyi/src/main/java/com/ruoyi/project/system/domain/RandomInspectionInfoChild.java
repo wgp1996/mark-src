@@ -62,6 +62,15 @@ public class RandomInspectionInfoChild extends BaseEntity
     private String sampTime;
     @Excel(name = "检测结果")
     private String testResult;
+    private String inhibitionNums;
+
+    public String getInhibitionNums() {
+        return inhibitionNums;
+    }
+
+    public void setInhibitionNums(String inhibitionNums) {
+        this.inhibitionNums = inhibitionNums;
+    }
 
     public String getCheckResultName() {
         return checkResultName;

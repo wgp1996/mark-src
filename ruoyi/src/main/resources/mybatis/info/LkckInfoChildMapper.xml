@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.LkckInfoChildMapper">
+    
+    <resultMap type="LkckInfoChild" id="LkckInfoChildResult">
+        <result property="id"    column="id"    />
+        <result property="storeNum"    column="store_num"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsGg"    column="goods_gg"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="goodsMoney"    column="goods_money"    />
+        <result property="goodsBz"    column="goods_bz"    />
+        <result property="rkPc"    column="rk_pc"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="rkMxid"    column="rk_mxid"    />
+
+    </resultMap>
+
+    <sql id="selectLkckInfoChildVo">
+        select * from lkck_info_child
+    </sql>
+
+    <select id="selectLkckInfoChildList" parameterType="LkckInfoChild" resultMap="LkckInfoChildResult">
+        <include refid="selectLkckInfoChildVo"/>
+        <where>  
+
+            <if test="storeNum != null  and storeNum != ''"> and store_num = #{storeNum}</if>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsGg != null  and goodsGg != ''"> and goods_gg = #{goodsGg}</if>
+            <if test="goodsDw != null  and goodsDw != ''"> and goods_dw = #{goodsDw}</if>
+            <if test="goodsPrice != null "> and goods_price = #{goodsPrice}</if>
+            <if test="goodsNum != null "> and goods_num = #{goodsNum}</if>
+            <if test="goodsMoney != null "> and goods_money = #{goodsMoney}</if>
+            <if test="goodsBz != null  and goodsBz != ''"> and goods_bz = #{goodsBz}</if>
+            <if test="rkPc != null  and rkPc != ''"> and rk_pc = #{rkPc}</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectLkckInfoChildById" parameterType="String" resultMap="LkckInfoChildResult">
+        <include refid="selectLkckInfoChildVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertLkckInfoChild" parameterType="LkckInfoChild">
+        insert into lkck_info_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="storeNum != null  and storeNum != ''">store_num,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg,</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw,</if>
+            <if test="goodsPrice != null ">goods_price,</if>
+            <if test="goodsNum != null ">goods_num,</if>
+            <if test="goodsMoney != null ">goods_money,</if>
+            <if test="goodsBz != null  and goodsBz != ''">goods_bz,</if>
+            <if test="rkPc != null  and rkPc != ''">rk_pc,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="storeName != null  and storeName != ''">store_name,</if>
+            <if test="rkMxid != null  and rkMxid != ''"> rk_mxid,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="storeNum != null  and storeNum != ''">#{storeNum},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="goodsGg != null  and goodsGg != ''">#{goodsGg},</if>
+            <if test="goodsDw != null  and goodsDw != ''">#{goodsDw},</if>
+            <if test="goodsPrice != null ">#{goodsPrice},</if>
+            <if test="goodsNum != null ">#{goodsNum},</if>
+            <if test="goodsMoney != null ">#{goodsMoney},</if>
+            <if test="goodsBz != null  and goodsBz != ''">#{goodsBz},</if>
+            <if test="rkPc != null  and rkPc != ''">#{rkPc},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="storeName != null  and storeName != ''">#{storeName},</if>
+            <if test="rkMxid != null  and rkMxid != ''">  #{rkMxid},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateLkckInfoChild" parameterType="LkckInfoChild">
+        update lkck_info_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="storeNum != null  and storeNum != ''">store_num = #{storeNum},</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg = #{goodsGg},</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw = #{goodsDw},</if>
+            <if test="goodsPrice != null ">goods_price = #{goodsPrice},</if>
+            <if test="goodsNum != null ">goods_num = #{goodsNum},</if>
+            <if test="goodsMoney != null ">goods_money = #{goodsMoney},</if>
+            <if test="goodsBz != null  and goodsBz != ''">goods_bz = #{goodsBz},</if>
+            <if test="rkPc != null  and rkPc != ''">rk_pc = #{rkPc},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="storeName != null  and storeName != ''">store_name = #{storeName},</if>
+            <if test="rkMxid != null  and rkMxid != ''">rk_mxid = #{rkMxid},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteLkckInfoChildById" parameterType="String">
+        delete from lkck_info_child where id = #{id}
+    </delete>
+
+    <delete id="deleteLkckInfoChildByIds" parameterType="String">
+        delete from lkck_info_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteLkckInfoChildByPid" parameterType="String">
+        delete from lkck_info_child where dj_number in (select dj_number from lkck_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    
+</mapper>

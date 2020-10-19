@@ -29,6 +29,13 @@ public interface WholeRetailChildMapper
      */
     public List<WholeRetailChild> selectWholeRetailChildList(WholeRetailChild WholeRetailChild);
     /**
+     * 查询批发销货单子表列表
+     *
+     * @param WholeRetailChild 批发销货单子表
+     * @return 批发销货单子表集合
+     */
+    public List<WholeRetailChild> selectWholeRetailAllList(WholeRetailChild WholeRetailChild);
+    /**
      * 条件查询批发销货单子表列表
      *
      * @return 批发销货单子表集合

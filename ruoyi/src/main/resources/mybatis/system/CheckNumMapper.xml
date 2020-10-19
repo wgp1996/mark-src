@@ -39,6 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inhibitionNum != null  and inhibitionNum != ''"> and inhibition_num = #{inhibitionNum}</if>
             <if test="checkNum != null  and checkNum != ''"> and check_num = #{checkNum}</if>
             <if test="type != null"> and type = #{type}</if>
+            ${dataScope}
         </where>
     </select>
     

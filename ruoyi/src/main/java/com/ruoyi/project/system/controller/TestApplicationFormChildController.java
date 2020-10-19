@@ -40,7 +40,7 @@ public class TestApplicationFormChildController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(TestApplicationFormChild testApplicationFormChild)
     {
-        startPage();
+        //startPage();
         List<TestApplicationFormChild> list = testApplicationFormChildService.selectTestApplicationFormChildList(testApplicationFormChild);
         return getDataTable(list);
     }

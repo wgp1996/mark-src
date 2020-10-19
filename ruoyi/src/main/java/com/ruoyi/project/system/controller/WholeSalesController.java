@@ -55,6 +55,8 @@ public class WholeSalesController extends BaseController
     public TableDataInfo list(WholeSales wholeSales)
     {
         startPage();
+       // List<WholeSalesChild> list = wholeSalesChildService.selectWholeSalesAllList(wholeSales);
+
         List<WholeSales> list = wholeSalesService.selectWholeSalesList(wholeSales);
         for(WholeSales info:list){
             WholeSalesChild child=new WholeSalesChild();
@@ -64,6 +66,20 @@ public class WholeSalesController extends BaseController
         }
         return getDataTable(list);
     }
+
+    /**
+     * 查询首页批发销货单汇总列表
+     */
+    @GetMapping("/selectWholeAllList")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo selectWholeAllList(WholeSalesChild wholeSales)
+    {
+        startPage();
+        List<WholeSalesChild> list = wholeSalesChildService.selectWholeAllList(wholeSales);
+        return getDataTable(list);
+    }
+
+
 
     /**
      * 导出批发销货单列表
@@ -163,9 +179,12 @@ public class WholeSalesController extends BaseController
             }
         }
         //删除子表信息
-        int result=wholeSalesChildService.deleteWholeSalesChildByPid(ids);
+        if(ids.length>0){
+            wholeSalesChildService.deleteWholeSalesChildByPid(ids);
+        }
+        int result=wholeSalesService.deleteWholeSalesByIds(ids);
         if(result>0){
-            wholeSalesService.deleteWholeSalesByIds(ids);
+
             return toAjaxBySuccess("删除成功!");
         }else{
             return  toAjaxByError("删除失败!");

@@ -55,6 +55,18 @@ public class GoodsInfoOwnerController extends BaseController
         List<GoodsInfoOwner> list = goodsInfoOwnerService.selectGoodsInfoOwnerList(goodsInfoOwner);
         return getDataTable(list);
     }
+
+    /**
+     *入库单查询商品列表
+     */
+    @DataScope(deptAlias = "d", userAlias = "u")
+    @GetMapping("/goodsRklist")
+    public TableDataInfo goodsRklist(GoodsInfoOwner goodsInfoOwner)
+    {
+        startPage();
+        List<GoodsInfoOwner> list = goodsInfoOwnerService.selectGoodsInfoOwnerByRkList(goodsInfoOwner);
+        return getDataTable(list);
+    }
     /**
      * 根据业主查询业户商品建档列表
      */

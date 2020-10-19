@@ -43,6 +43,14 @@ public interface IGoodsInfoOwnerService
      */
     public List<GoodsInfoOwner> selectGoodsInfoOwnerList(GoodsInfoOwner goodsInfoOwner);
 
+    /**
+     * 入库单查询业户商品建档列表
+     *
+     * @param goodsInfoOwner 业户商品建档
+     * @return 业户商品建档集合
+     */
+    public List<GoodsInfoOwner> selectGoodsInfoOwnerByRkList(GoodsInfoOwner goodsInfoOwner);
+
 
     /**
      * 市平台查询业户商品建档列表

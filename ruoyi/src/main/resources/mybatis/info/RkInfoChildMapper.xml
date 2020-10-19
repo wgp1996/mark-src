@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.RkInfoChildMapper">
+    
+    <resultMap type="RkInfoChild" id="RkInfoChildResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsGg"    column="goods_gg"    />
+        <result property="goodsDw"    column="goods_dw"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="goodsMoney"    column="goods_money"    />
+        <result property="lsNumber"    column="ls_number"    />
+        <result property="rkPc"    column="rk_pc"    />
+        <result property="goodsAddress"    column="goods_address"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="syNum"    column="sy_num"    />
+        <result property="storeName"    column="store_name"    />
+        <result property="storeNum"    column="store_num"    />
+    </resultMap>
+
+    <sql id="selectRkInfoChildVo">
+        select id, dj_number, goods_code, goods_name, goods_gg, goods_dw, goods_price, goods_num, goods_money, ls_number, rk_pc, goods_address, create_by, create_time, update_by, update_time, remark from rk_info_child
+    </sql>
+
+    <select id="selectRkInfoChildList" parameterType="RkInfoChild" resultMap="RkInfoChildResult">
+        <include refid="selectRkInfoChildVo"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsGg != null  and goodsGg != ''"> and goods_gg = #{goodsGg}</if>
+            <if test="goodsDw != null  and goodsDw != ''"> and goods_dw = #{goodsDw}</if>
+            <if test="goodsPrice != null "> and goods_price = #{goodsPrice}</if>
+            <if test="goodsNum != null "> and goods_num = #{goodsNum}</if>
+            <if test="goodsMoney != null "> and goods_money = #{goodsMoney}</if>
+            <if test="lsNumber != null  and lsNumber != ''"> and ls_number = #{lsNumber}</if>
+            <if test="rkPc != null  and rkPc != ''"> and rk_pc = #{rkPc}</if>
+            <if test="goodsAddress != null  and goodsAddress != ''"> and goods_address = #{goodsAddress}</if>
+        </where>
+    </select>
+    
+    <select id="selectRkInfoChildById" parameterType="String" resultMap="RkInfoChildResult">
+        <include refid="selectRkInfoChildVo"/>
+        where id = #{id}
+    </select>
+    <!--出库单选择入库单-->
+    <select id="selectRkInfoByCkd" parameterType="String" resultMap="RkInfoChildResult">
+         select c.*,a.store_num,a.store_name,(c.goods_num-ifnull((select sum(goods_num) from lkck_info_child where rk_mxid=c.id),0)) as sy_num
+         from rk_info a join rk_info_child c on a.dj_number=c.dj_number
+         join sys_user u on a.create_by=u.user_name
+         left join sys_dept d on u.dept_id = d.dept_id
+         where (c.goods_num-ifnull((select sum(goods_num) from lkck_info_child where rk_mxid=c.id),0))>0
+         and a.dj_status=1
+         ${dataScope}
+        order by a.create_time desc
+    </select>
+
+    <insert id="insertRkInfoChild" parameterType="RkInfoChild">
+        insert into rk_info_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg,</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw,</if>
+            <if test="goodsPrice != null ">goods_price,</if>
+            <if test="goodsNum != null ">goods_num,</if>
+            <if test="goodsMoney != null ">goods_money,</if>
+            <if test="lsNumber != null  and lsNumber != ''">ls_number,</if>
+            <if test="rkPc != null  and rkPc != ''">rk_pc,</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="goodsGg != null  and goodsGg != ''">#{goodsGg},</if>
+            <if test="goodsDw != null  and goodsDw != ''">#{goodsDw},</if>
+            <if test="goodsPrice != null ">#{goodsPrice},</if>
+            <if test="goodsNum != null ">#{goodsNum},</if>
+            <if test="goodsMoney != null ">#{goodsMoney},</if>
+            <if test="lsNumber != null  and lsNumber != ''">#{lsNumber},</if>
+            <if test="rkPc != null  and rkPc != ''">#{rkPc},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">#{goodsAddress},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateRkInfoChild" parameterType="RkInfoChild">
+        update rk_info_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsGg != null  and goodsGg != ''">goods_gg = #{goodsGg},</if>
+            <if test="goodsDw != null  and goodsDw != ''">goods_dw = #{goodsDw},</if>
+            <if test="goodsPrice != null ">goods_price = #{goodsPrice},</if>
+            <if test="goodsNum != null ">goods_num = #{goodsNum},</if>
+            <if test="goodsMoney != null ">goods_money = #{goodsMoney},</if>
+            <if test="lsNumber != null  and lsNumber != ''">ls_number = #{lsNumber},</if>
+            <if test="rkPc != null  and rkPc != ''">rk_pc = #{rkPc},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address = #{goodsAddress},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRkInfoChildById" parameterType="String">
+        delete from rk_info_child where id = #{id}
+    </delete>
+
+    <delete id="deleteRkInfoChildByIds" parameterType="String">
+        delete from rk_info_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteRkInfoChildByPid" parameterType="String">
+        delete from rk_info_child where dj_number in (select dj_number from rk_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+
+</mapper>

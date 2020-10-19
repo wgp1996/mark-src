@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.FeeInfoMapper">
+    
+    <resultMap type="FeeInfo" id="FeeInfoResult">
+        <result property="id"    column="id"    />
+        <result property="feeName"    column="fee_name"    />
+        <result property="feeCode"    column="fee_code"    />
+        <result property="feeMoney"    column="fee_money"    />
+        <result property="feeNum"    column="fee_num"    />
+        <result property="feeTime"    column="fee_time"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="source"    column="source"    />
+    </resultMap>
+
+    <sql id="selectFeeInfoVo">
+        select * from fee_info
+    </sql>
+    <sql id="selectFeeInfoVoByRole">
+        select a.* from fee_info a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectFeeInfoList" parameterType="FeeInfo" resultMap="FeeInfoResult">
+        <include refid="selectFeeInfoVoByRole"/>
+        <where>  
+            <if test="feeName != null  and feeName != ''"> and fee_name like concat('%', #{feeName}, '%')</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="feeMoney != null  and feeMoney != ''"> and fee_money = #{feeMoney}</if>
+            <if test="feeTime != null  and feeTime != ''"> and fee_time = #{feeTime}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectFeeInfoById" parameterType="Long" resultMap="FeeInfoResult">
+        <include refid="selectFeeInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFeeInfo" parameterType="FeeInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into fee_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="feeName != null  and feeName != ''">fee_name,</if>
+            <if test="feeCode != null  and feeCode != ''">fee_code,</if>
+            <if test="feeMoney != null  and feeMoney != ''">fee_money,</if>
+            <if test="feeNum != null  and feeNum != ''">fee_num,</if>
+            <if test="feeTime != null  and feeTime != ''">fee_time,</if>
+            <if test="fileName != null  and fileName != ''">file_name,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="source != null ">source,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="feeName != null  and feeName != ''">#{feeName},</if>
+            <if test="feeCode != null  and feeCode != ''">#{feeCode},</if>
+            <if test="feeMoney != null  and feeMoney != ''">#{feeMoney},</if>
+            <if test="feeNum != null  and feeNum != ''">#{feeNum},</if>
+            <if test="feeTime != null  and feeTime != ''">#{feeTime},</if>
+            <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="source != null ">#{source},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateFeeInfo" parameterType="FeeInfo">
+        update fee_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="feeName != null  and feeName != ''">fee_name = #{feeName},</if>
+            <if test="feeCode != null  and feeCode != ''">fee_code = #{feeCode},</if>
+            <if test="feeMoney != null  and feeMoney != ''">fee_money = #{feeMoney},</if>
+            <if test="feeNum != null  and feeNum != ''">fee_num = #{feeNum},</if>
+            <if test="feeTime != null  and feeTime != ''">fee_time = #{feeTime},</if>
+            <if test="fileName != null  and fileName != ''">file_name = #{fileName},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="source != null ">source=#{source},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFeeInfoById" parameterType="Long">
+        delete from fee_info where id = #{id}
+    </delete>
+
+    <delete id="deleteFeeInfoByIds" parameterType="String">
+        delete from fee_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

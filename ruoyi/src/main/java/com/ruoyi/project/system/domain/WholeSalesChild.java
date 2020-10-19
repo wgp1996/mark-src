@@ -46,10 +46,20 @@ public class WholeSalesChild extends BaseEntity
     @Excel(name = "单价")
     private String wholeBz;
     private Integer status;
-
+    /** 总价 */
+    @Excel(name = "总价")
+    private String wholeMoney;
     private String goodsName;
 
     private String wholeSum;
+
+    public String getWholeMoney() {
+        return wholeMoney;
+    }
+
+    public void setWholeMoney(String wholeMoney) {
+        this.wholeMoney = wholeMoney;
+    }
 
     public String getWholeSum() {
         return wholeSum;

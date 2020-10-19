@@ -16,6 +16,10 @@ import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.domain.server.Sys;
 import com.ruoyi.framework.web.page.TableDataInfo;
+import com.ruoyi.project.info.domain.FeeInfo;
+import com.ruoyi.project.info.domain.FeeItem;
+import com.ruoyi.project.info.service.IFeeInfoService;
+import com.ruoyi.project.info.service.IFeeItemService;
 import com.ruoyi.project.system.domain.*;
 import com.ruoyi.project.system.service.*;
 import io.swagger.annotations.Api;
@@ -95,6 +99,12 @@ public class ApiController extends BaseController
     private ITestApplicationFormChildService testApplicationFormChildService;
     @Autowired
     private IRandomInspectionInfoChildService randomInspectionInfoChildService;
+    @Autowired
+    private ISysNoticeService noticeService;
+    @Autowired
+    private IFeeItemService feeItemService;
+    @Autowired
+    private IFeeInfoService feeInfoService;
     /**
      * APP版本列表
      */
@@ -131,6 +141,79 @@ public class ApiController extends BaseController
         return ajaxResult;
     }
 
+    /**
+     * 查询费用项目
+     */
+    @ApiOperation("APP查询费用项目")
+    @GetMapping("/appFeeItemList/{createBy}")
+    public TableDataInfo appFeeItemList(@PathVariable String createBy)
+    {
+        FeeItem item=new FeeItem();
+        item.setCreateBy(createBy);
+        List<FeeItem> list = feeItemService.selectFeeItemList(item);
+        return getDataTable(list);
+    }
+
+    /**
+     * APP账夹列表
+     */
+    @ApiOperation("APP账夹列表")
+    @GetMapping("/appFeeInfoList/{createBy}")
+    public TableDataInfo appFeeInfoList(@PathVariable String createBy)
+    {
+        FeeInfo item=new FeeInfo();
+        item.setCreateBy(createBy);
+        List<FeeInfo> list = feeInfoService.selectFeeInfoList(item);
+        return getDataTable(list);
+    }
+
+    /**
+     * APP账夹单个明细
+     */
+    @ApiOperation("APP账夹单个明细")
+    @GetMapping(value = "appFeeInfo/{id}")
+    public AjaxResult appFeeInfo(@PathVariable("id") Long id)
+    {
+        FeeInfo info=feeInfoService.selectFeeInfoById(id);
+        return AjaxResult.success(info);
+    }
+
+    /**
+     * APP账夹新增/修改
+     */
+    @ApiOperation("APP账夹新增/修改")
+    @Log(title = "APP账夹新增/修改", businessType = BusinessType.INSERT)
+    @PostMapping("/appFeeInfoAdd")
+    public AjaxResult appFeeInfoAdd(FeeInfo info)
+    {
+        info.setSource(1);
+        if(info.getId()!=null&&info.getId()!=-1){
+            info.setUpdateBy(info.getCreateBy());
+            return toAjax(feeInfoService.updateFeeInfo(info));
+        }else{
+            return toAjax(feeInfoService.insertFeeInfo(info));
+
+        }
+    }
+
+    /**
+     * 删除账夹
+     */
+    @ApiOperation("APP删除账夹")
+    @Log(title = "APP删除账夹", businessType = BusinessType.DELETE)
+    @GetMapping("appFeeInfoRemove/{ids}")
+    public AjaxResult appFeeInfoRemove(@PathVariable Long[] ids)
+    {
+        //删除信息
+        int result=feeItemService.deleteFeeItemByIds(ids);
+        if(result>0){
+            return toAjaxBySuccess("删除成功!");
+        }else{
+            return  toAjaxByError("删除失败!");
+        }
+    }
+
+
 
     /**
      * 查询检测单列表
@@ -141,7 +224,11 @@ public class ApiController extends BaseController
     {
         RandomInspectionInfoChild item=new RandomInspectionInfoChild();
         item.setOwnerCode(createBy);
-        item.setCheckResult(status);
+        if(status==-1){
+            status=null;
+        }else {
+            item.setCheckResult(status);
+        }
         List<RandomInspectionInfoChild> list =randomInspectionInfoChildService.selectRandomInspectionInfoChildList(item);
         return getDataTable(list);
     }
@@ -187,18 +274,10 @@ public class ApiController extends BaseController
             return  toAjaxByError("明细信息不能为空!");
         }
         List<TestApplicationFormChild> childList= JSONArray.parseArray(cgRkd.getRows(),TestApplicationFormChild.class);
-        if(cgRkd.getId()!=null){
-            cgRkd.setDjNumber(StringUtils.getRandomCode("TAF"));
-            cgRkd.setStatus(0);
-            for(TestApplicationFormChild child:childList){
-                child.setCreateBy(cgRkd.getCreateBy());
-                child.setId(StringUtils.getId());
-                child.setDjNumber(cgRkd.getDjNumber());
-                child.setCreateTime(DateUtils.getNowDate());
-                testApplicationFormChildService.insertTestApplicationFormChild(child);
+        if(cgRkd.getId()!=null&&cgRkd.getId()!=-1&&!"".equals(cgRkd.getId())){
+            if(cgRkd.getStatus()!=null&&cgRkd.getStatus()==1){
+                return AjaxResult.error("该状态禁止修改!");
             }
-            return toAjax(testApplicationFormService.insertTestApplicationForm(cgRkd));
-        }else{
             cgRkd.setUpdateBy(cgRkd.getCreateBy());
             //删除明细
             for(TestApplicationFormChild child:childList){
@@ -214,6 +293,18 @@ public class ApiController extends BaseController
                 testApplicationFormChildService.insertTestApplicationFormChild(child);
             }
             return toAjax(testApplicationFormService.updateTestApplicationForm(cgRkd));
+        }else{
+            cgRkd.setDjNumber(StringUtils.getRandomCode("TAF"));
+            cgRkd.setStatus(0);
+            for(TestApplicationFormChild child:childList){
+                child.setCreateBy(cgRkd.getCreateBy());
+                child.setId(StringUtils.getId());
+                child.setDjNumber(cgRkd.getDjNumber());
+                child.setCreateTime(DateUtils.getNowDate());
+                testApplicationFormChildService.insertTestApplicationFormChild(child);
+            }
+            return toAjax(testApplicationFormService.insertTestApplicationForm(cgRkd));
+
         }
     }
 
@@ -800,12 +891,17 @@ public class ApiController extends BaseController
         }
         WholeSalesChild whole=new WholeSalesChild();
         whole.setDjNumber(wholeSales.getDjNumber());
-        List<WholeSalesChild> childLists=wholeSalesChildService.selectWholeSalesChildList(whole);
+        //List<WholeSalesChild> childLists=wholeSalesChildService.selectWholeSalesChildList(whole);
         List<WholeSalesChild> childList= JSONArray.parseArray(wholeSales.getRows(),WholeSalesChild.class);
-        for(WholeSalesChild child:childLists){
+        /*for(WholeSalesChild child:childLists){
             if(child.getId()!=""){
                 wholeSalesChildService.deleteWholeSalesChildById(child.getId());
             }
+        }*/
+        String [] ids=new String[1];
+        if(wholeSales.getId()!=null&&!"".equals(wholeSales.getId())){
+            ids[0]=wholeSales.getId();
+            wholeRetailChildService.deleteWholeRetailChildByPid(ids);
         }
         for(WholeSalesChild child:childList){
 //            if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
@@ -954,12 +1050,17 @@ public class ApiController extends BaseController
             return  toAjaxByError("明细信息不能为空!");
         }
         WholeRetailChild whole=new WholeRetailChild();
-        List<WholeRetailChild> childLists= wholeRetailChildService.selectWholeRetailChildList(whole);
+       // List<WholeRetailChild> childLists= wholeRetailChildService.selectWholeRetailChildList(whole);
         List<WholeRetailChild> childList= JSONArray.parseArray(wholeRetail.getRows(),WholeRetailChild.class);
-        for(WholeRetailChild child:childLists){
+        /*for(WholeRetailChild child:childLists){
             if(child.getId()!=""){
                 wholeRetailChildService.deleteWholeRetailChildById(child.getId());
             }
+        }*/
+        String [] ids=new String[1];
+        if(wholeRetail.getId()!=null&&!"".equals(wholeRetail.getId())){
+            ids[0]=wholeRetail.getId();
+            wholeRetailChildService.deleteWholeRetailChildByPid(ids);
         }
         for(WholeRetailChild child:childList){
 //            if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
@@ -1347,7 +1448,16 @@ public class ApiController extends BaseController
         List<CgRkd> list = cgRkdService.selectCgRkdList(cgRkd);
         return getDataTable(list);
     }
-
+    /**
+     * 获取通知公告列表
+     */
+    @ApiOperation("获取通知公告列表")
+    @GetMapping("/selectNoticeList")
+    public TableDataInfo list(SysNotice notice)
+    {
+        List<SysNotice> list = noticeService.selectNoticeList(notice);
+        return getDataTable(list);
+    }
     /**
      * 市平台查询所有进货单列表
      */
@@ -1378,6 +1488,26 @@ public class ApiController extends BaseController
         ajaxResult.put("msg", "操作成功!");
         ajaxResult.put("code", 200);
         ajaxResult.put("rows", map);
+        return ajaxResult;
+    }
+
+    /**
+     *查询周公河收支信息
+     */
+    @ApiOperation("市平台查询周公河数量信息")
+    @GetMapping("/selectMatkSum/{createBy}/{createTime}")
+    public AjaxResult selectMatkSum(@PathVariable String createBy,@PathVariable String createTime)
+    {
+        CgRkd rkd=cgRkdService.selectMatkSum(createBy,createTime);
+        HashMap map=new HashMap();
+        map.put("incomeNum",rkd.getDjStatusName());//收入
+        map.put("expendNum",rkd.getGoodsName());//支出
+        map.put("profitNum",Float.parseFloat(rkd.getDjStatusName()==null?"0":rkd.getDjStatusName())-
+                Float.parseFloat(rkd.getGoodsName()==null?"0":rkd.getGoodsName()));//利润
+        AjaxResult ajaxResult = new AjaxResult();
+        ajaxResult.put("msg", "操作成功!");
+        ajaxResult.put("code", 200);
+        ajaxResult.put("data", map);
         return ajaxResult;
     }
 
@@ -1500,7 +1630,20 @@ public class ApiController extends BaseController
             child.setCreateTime(DateUtils.getNowDate());
             cgRkdChildService.insertCgRkdChild(child);
         }
-        return toAjax(cgRkdService.insertCgRkd(cgRkd));
+        int result=cgRkdService.insertCgRkd(cgRkd);
+        if(result>0){
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作成功!");
+            ajaxResult.put("code", 200);
+            ajaxResult.put("data", cgRkd.getId());
+            return  ajaxResult;
+        }else{
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作失败!");
+            ajaxResult.put("code", 500);
+            ajaxResult.put("data", "");
+            return  ajaxResult;
+        }
     }
 
     /**
@@ -1551,7 +1694,20 @@ public class ApiController extends BaseController
 //                cgRkdChildService.deleteCgRkdChildById(child.getId());
 //            }
 //        }
-        return toAjax(cgRkdService.updateCgRkd(cgRkd));
+        int result=cgRkdService.updateCgRkd(cgRkd);
+        if(result>0){
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作成功!");
+            ajaxResult.put("code", 200);
+            ajaxResult.put("data", cgRkd.getId());
+            return  ajaxResult;
+        }else{
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作失败!");
+            ajaxResult.put("code", 500);
+            ajaxResult.put("data", "");
+            return  ajaxResult;
+        }
     }
 
     /**
@@ -1680,32 +1836,33 @@ public class ApiController extends BaseController
                 Map<String,String> map = new LinkedHashMap<String,String>();
                 row = sheet.getRow(i);
                 if(row !=null){
-                    //添加摊位信息
-                   /* StallInfo info=new StallInfo();
                     String code=(String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString();
-                    info.setCreateBy(code.substring(0,code.indexOf(".")));
+                    /*//添加摊位信息
+                    StallInfo info=new StallInfo();
+
+                    info.setCreateBy(code);
                     info.setStallName((String)ExcelUtil.getCellFormatValue(row.getCell(2)));
                     info.setId(StringUtils.getId());
                     info.setStallCode(StringUtils.getRandomCode("STL"));
                     info.setCreateTime(DateUtils.getNowDate());
                     info.setStallStatus("1");
-                    stallInfoService.insertStallInfo(info);*/
+                    stallInfoService.insertStallInfo(info);
 
                     //添加默认供应商信息
-                   /* PersonInfo personInfo=new PersonInfo();
-                    personInfo.setCreateBy(code.substring(0,code.indexOf(".")));
-                    personInfo.setPersonName("测试供应商"+"("+code.substring(0,code.indexOf("."))+")");
+                    PersonInfo personInfo=new PersonInfo();
+                    personInfo.setCreateBy(code);
+                    personInfo.setPersonName("测试供应商"+"("+code+")");
                     personInfo.setPersonCode(StringUtils.getRandomCode("PCM"));
                     personInfo.setPersonGoodsAddress("山东省聊城市东昌府区");
                     personInfo.setPersonAddress("山东省聊城市东昌府区");
-                    personInfoService.insertPersonInfo(personInfo);*/
+                    personInfoService.insertPersonInfo(personInfo);
                     //添加默认客户信息
-                  /*  KhInfo khInfo=new KhInfo();
-                    khInfo.setCreateBy(code.substring(0,code.indexOf(".")));
-                    khInfo.setKhName("测试客户"+"("+code.substring(0,code.indexOf("."))+")");
+                    KhInfo khInfo=new KhInfo();
+                    khInfo.setCreateBy(code);
+                    khInfo.setKhName("测试客户"+"("+code+")");
                     khInfo.setKhAddress("山东省聊城市东昌府区");
                     khInfo.setKhCode(StringUtils.getRandomCode("KH"));
-                    khInfoService.insertKhInfo(khInfo);*/
+                    khInfoService.insertKhInfo(khInfo);
                     //添加默认商品信息
                     GoodsInfoOwner goodsInfoOwner=new GoodsInfoOwner();
                     goodsInfoOwner.setCreateBy("lgh");
@@ -1718,25 +1875,25 @@ public class ApiController extends BaseController
                     goodsInfoOwner.setGoodsViceDw("公斤");
                     goodsInfoOwner.setGoodsAddress((String)ExcelUtil.getCellFormatValue(row.getCell(7)).toString());
                     goodsInfoOwner.setGoodsGg((String)ExcelUtil.getCellFormatValue(row.getCell(4)).toString());
-                    goodsInfoOwnerService.insertGoodsInfoOwner(goodsInfoOwner);
+                    goodsInfoOwnerService.insertGoodsInfoOwner(goodsInfoOwner);*/
 
                     /*CarInfo carInfo=new CarInfo();
-                    carInfo.setCarNumber("鲁P88888("+code.substring(0,code.indexOf("."))+"测试)");
+                    carInfo.setCarNumber("鲁P88888("+code+"测试)");
                     carInfo.setCreateBy(SecurityUtils.getUsername());
                     carInfoService.insertCarInfo(carInfo);*/
-                   /* String code=(String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString();
+                    //String code=(String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString();
                     if(code==""||"".equals(code)){
                         break;
                     }
-                    OwnerInfo info = ownerInfoService.selectOwnerInfoByCode(code.substring(0,code.indexOf(".")), "");
-                    if (info != null) {
+                    OwnerInfo infos = ownerInfoService.selectOwnerInfoByCode(code, "");
+                    if (infos != null) {
                         continue;
                     }
                     OwnerInfo ownerInfo=new OwnerInfo();
                     ownerInfo.setCreateBy("admin");
                     ownerInfo.setId(StringUtils.getId());
-                    ownerInfo.setOwnerCode(code.substring(0,code.indexOf(".")));
-                    ownerInfo.setUserName(code.substring(0,code.indexOf(".")));
+                    ownerInfo.setOwnerCode(code);
+                    ownerInfo.setUserName(code);
                     ownerInfo.setOwnerName((String)ExcelUtil.getCellFormatValue(row.getCell(3)));
                     ownerInfo.setOwnerPersonId((String)ExcelUtil.getCellFormatValue(row.getCell(4)));
                     ownerInfo.setOwnerLxr((String)ExcelUtil.getCellFormatValue(row.getCell(5)));
@@ -1751,12 +1908,70 @@ public class ApiController extends BaseController
                     roleIds[0]=3L;
                     user.setDeptId(104L);
                     user.setRoleIds(roleIds);
-                    user.setUserName(code.substring(0,code.indexOf(".")));
+                    user.setUserName(code);
                     user.setPassword(SecurityUtils.encryptPassword("123"));
                     user.setPhonenumber((String)ExcelUtil.getCellFormatValue(row.getCell(6)));
                     user.setNickName((String)ExcelUtil.getCellFormatValue(row.getCell(3)));
                     user.setCreateBy("admin");
-                    userService.insertUser(user);*/
+                    userService.insertUser(user);
+                }else{
+                    break;
+                }
+            }
+        }
+        System.out.println("导入完成!");
+        return AjaxResult.success("导入成功");
+    }
+
+
+    /**
+     * 导入功能测试
+     */
+    @ApiOperation("导入销货单")
+    @GetMapping(value = "/importXhd")
+    public AjaxResult importXhd()
+    {
+        System.out.println("1!");
+        Workbook wb =null;
+        Sheet sheet = null;
+        Row row = null;
+        String cellData = null;
+        String filePath = "D:\\test123.xlsx";
+        wb = ExcelUtil.readExcel(filePath);
+        if(wb != null){
+            System.out.println("2!");
+            //获取第一个sheet
+            sheet = wb.getSheetAt(0);
+            //获取最大行数
+            int rownum = sheet.getPhysicalNumberOfRows();
+            //获取第一行
+            row = sheet.getRow(0);
+            //获取最大列数
+            int colnum = row.getPhysicalNumberOfCells();
+            for (int i = 3; i<rownum; i++) {
+                System.out.println(i);
+                Map<String,String> map = new LinkedHashMap<String,String>();
+                row = sheet.getRow(i);
+                if(row !=null){
+                    String code=(String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString();
+                    if(code==""||"".equals(code)){
+                        break;
+                    }
+                    GoodsInfoOwner goodsInfoOwner=new GoodsInfoOwner();
+                    goodsInfoOwner.setCreateBy("20101");
+
+                    goodsInfoOwner.setGoodsName((String)ExcelUtil.getCellFormatValue(row.getCell(3)).toString());
+                    GoodsInfoOwner info=goodsInfoOwnerService.selectGoodsInfoOwnerByName(-1,goodsInfoOwner.getGoodsName(),goodsInfoOwner.getCreateBy());
+                    if(info!=null) {
+                        continue;
+                    }else{
+                        goodsInfoOwner.setGoodsDw("公斤");
+                        goodsInfoOwner.setGoodsAssistDw("公斤");
+                        goodsInfoOwner.setGoodsViceDw("斤");
+                        goodsInfoOwner.setGoodsAddress("聊城");
+                        goodsInfoOwner.setGoodsCode(StringUtils.getRandomCode("SP"));
+                        goodsInfoOwnerService.insertGoodsInfoOwner(goodsInfoOwner);
+                    }
                 }else{
                     break;
                 }

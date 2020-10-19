@@ -90,6 +90,16 @@ public class CgRkdChild extends BaseEntity
     @Excel(name = "单据状态")
     private Integer status;
 
+    private String statusName;
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
     public Integer getStatus() {
         return status;
     }

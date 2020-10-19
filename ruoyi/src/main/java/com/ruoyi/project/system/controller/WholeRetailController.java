@@ -45,6 +45,7 @@ public class WholeRetailController extends BaseController
     public TableDataInfo list(WholeRetail wholeRetail)
     {
         startPage();
+      //  List<WholeRetailChild> list = wholeRetailChildService.selectWholeRetailAllList(wholeRetail);
         List<WholeRetail> list = wholeRetailService.selectWholeRetailList(wholeRetail);
         for(WholeRetail info:list){
             WholeRetailChild child=new WholeRetailChild();
@@ -153,9 +154,12 @@ public class WholeRetailController extends BaseController
             }
         }
         //删除子表信息
-        int result=wholeRetailChildService.deleteWholeRetailChildByPid(ids);
+        if(ids.length>0){
+            wholeRetailChildService.deleteWholeRetailChildByPid(ids);
+        }
+        int result=wholeRetailService.deleteWholeRetailByIds(ids);
         if(result>0){
-            wholeRetailService.deleteWholeRetailByIds(ids);
+
             return toAjaxBySuccess("删除成功!");
         }else{
             return  toAjaxByError("删除失败!");

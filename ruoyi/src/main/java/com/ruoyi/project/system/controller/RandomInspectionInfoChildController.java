@@ -42,7 +42,7 @@ public class RandomInspectionInfoChildController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(RandomInspectionInfoChild randomInspectionInfoChild)
     {
-        startPage();
+        //startPage();
         List<RandomInspectionInfoChild> list = randomInspectionInfoChildService.selectRandomInspectionInfoChildList(randomInspectionInfoChild);
         return getDataTable(list);
     }

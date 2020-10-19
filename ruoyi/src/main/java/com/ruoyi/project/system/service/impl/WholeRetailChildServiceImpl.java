@@ -32,6 +32,16 @@ public class WholeRetailChildServiceImpl implements IWholeRetailChildService
     {
         return WholeRetailChildMapper.selectWholeRetailChildById(id);
     }
+    /**
+     * 查询批发销货单子表列表
+     *
+     * @param WholeRetailChild 批发销货单子表
+     * @return 批发销货单子表集合
+     */
+    @Override
+    public List<WholeRetailChild> selectWholeRetailAllList(WholeRetailChild WholeRetailChild){
+        return WholeRetailChildMapper.selectWholeRetailAllList(WholeRetailChild);
+    }
 
     /**
      * 查询批批发销货单子表列表
