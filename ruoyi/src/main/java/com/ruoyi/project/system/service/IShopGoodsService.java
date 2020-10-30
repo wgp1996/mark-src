@@ -20,6 +20,12 @@ public interface IShopGoodsService
     public ShopGoods selectShopGoodsById(String id);
 
     /**
+     * 根据商品编码查询门店商品信息
+     *
+     */
+    public ShopGoods selectShopGoodsByStore(String storeId,String goodsCode);
+
+    /**
      * 查询门店商品管理列表
      * 
      * @param shopGoods 门店商品管理

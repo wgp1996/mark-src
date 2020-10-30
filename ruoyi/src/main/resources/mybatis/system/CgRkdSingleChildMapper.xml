@@ -29,6 +29,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="storeid"    column="storeId"    />
         <result property="shopName"    column="shop_name"    />
         <result property="djStatusName"    column="dj_status_name"    />
+        <result property="payTypeName"    column="pay_type_name"    />
+        <result property="isRateName"    column="is_rate_name"    />
     </resultMap>
 
     <sql id="selectCgRkdSingleChildVo">
@@ -57,13 +59,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCgRkdSingleChildVo"/>
         where id = #{id}
     </select>
+    <select id="selectCgRkdSingleChildByNum" parameterType="String" resultMap="CgRkdSingleChildResult">
+        <include refid="selectCgRkdSingleChildVo"/>
+        where a.dj_number =#{dj_number}
+    </select>
     <select id="selectCgRkdSingleChildByNumber" parameterType="String" resultMap="CgRkdSingleChildResult">
         <include refid="selectCgRkdSingleChildVo"/>
-        where a.dj_number = #{dj_number}
+        where a.dj_number =(select dj_number from cg_rkd_single where id=#{dj_number})
     </select>
 
     <select id="selectCgRkdSingleChildByUser" parameterType="String" resultMap="CgRkdSingleChildResult">
          select a.*,b.id as pid,
+        (select dict_label from sys_dict_data where dict_type='pay_type' and dict_value=b.pay_type)as pay_type_name,
+         case b.is_rate when 0 then '正操作' when 1 then '未接收' end as is_rate_name,
          case b.status when 0 then '正操作' when 1 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 2 then '已接收' when 3 then '已审核' end as dj_status_name,
         (select goods_img from goods_info_owner where goods_code=a.goods_code) as goods_img,
         (select goods_code_img from goods_info_owner where goods_code=a.goods_code) as goods_code_img

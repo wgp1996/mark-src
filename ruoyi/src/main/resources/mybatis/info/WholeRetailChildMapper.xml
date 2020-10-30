@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.WholeRetailsChildMapper">
+    
+    <resultMap type="WholeRetailsChild" id="WholeRetailChildResult">
+        <result property="id"    column="id"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsCode"    column="goods_code"    />
+        <result property="goodsAddress"    column="goods_address"    />
+        <result property="wholeNum"    column="whole_num"    />
+        <result property="wholeMoney"    column="whole_money"    />
+        <result property="wholeDw"    column="whole_dw"    />
+        <result property="wholePrice"    column="whole_price"    />
+        <result property="wholeBz"    column="whole_bz"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="khName"    column="kh_name"    />
+        <result property="status"    column="status"    />
+        <result property="wholeSum"    column="whole_sum"    />
+        <result property="khCode"    column="kh_code"    />
+    </resultMap>
+
+    <sql id="selectWholeRetailChildVo">
+        select * from whole_retails_child
+    </sql>
+
+    <select id="selectWholeRetailChildList" parameterType="WholeRetailChild" resultMap="WholeRetailChildResult">
+        <include refid="selectWholeRetailChildVo"/>
+        <where>  
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
+            <if test="wholeNum != null  and wholeNum != ''"> and whole_num = #{wholeNum}</if>
+            <if test="wholeDw != null  and wholeDw != ''"> and whole_dw = #{wholeDw}</if>
+            <if test="wholePrice != null  and wholePrice != ''"> and whole_price = #{wholePrice}</if>
+            <if test="wholeBz != null  and wholeBz != ''"> and whole_bz = #{wholeBz}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectWholeRetailAllList"  resultMap="WholeRetailChildResult">
+        select b.dj_time as remark,a.dj_number,a.goods_name,a.goods_code,a.whole_num,a.whole_dw,a.whole_price,a.whole_bz,a.whole_money,b.id
+        ,ifnull(b.kh_name,a.kh_name) as kh_name,b.status,(select distinct nick_name from sys_user where user_name=a.create_by) as create_by from whole_retails_child a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+         join whole_retail b on a.dj_number=b.dj_number
+        <where>
+            <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
+            ${dataScope}
+        </where>
+        order by b.dj_time desc,b.create_time desc,b.dj_number
+    </select>
+
+    <select id="selectWholeRetailChildListByWhere"  resultMap="WholeRetailChildResult">
+        select a.*,b.kh_name,b.status,sum(a.whole_num) as whole_sum from whole_retails_child a join whole_retail b on a.dj_number=b.dj_number
+        <where>
+            <if test="date != null and date != '' and date!='-1'">
+                and b.create_time &lt;= #{date}
+            </if>
+            <!--本周-->
+            <if test="dateType != null  and dateType==1">
+                and b.create_time&gt;=SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-1)
+                and b.create_time&lt;=SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-7)
+            </if>
+            <!--本月-->
+            <if test="dateType != null  and dateType==2">
+                and b.create_time&gt;=date_add(curdate(), interval - day(curdate()) + 1 day)
+                and b.create_time&lt;=last_day(curdate())
+            </if>
+            <!--本年-->
+            <if test="dateType != null  and dateType==3">
+                and b.create_time&gt;=concat(year(curdate()),'-01-01')
+                and b.create_time&lt;=concat(year(curdate()),'-12-31')
+            </if>
+            <if test="khName != null  and khName != '' and khName != '-1'"> and b.kh_name like concat('%', #{khName}, '%')</if>
+            <if test="goodsName != null  and goodsName != '' and goodsName != '-1'"> and a.goods_name like concat('%', #{goodsName}, '%')</if>
+            and b.create_by = #{createBy}
+        </where>
+        order by b.create_time,b.dj_number,a.create_time desc
+    </select>
+    
+    <select id="selectWholeRetailChildById" parameterType="String" resultMap="WholeRetailChildResult">
+        <include refid="selectWholeRetailChildVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWholeRetailChild" parameterType="WholeRetailChild">
+        insert into whole_retails_child
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name,</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code,</if>
+            <if test="wholeNum != null  and wholeNum != ''">whole_num,</if>
+            <if test="wholeDw != null  and wholeDw != ''">whole_dw,</if>
+            <if test="wholePrice != null  and wholePrice != ''">whole_price,</if>
+            <if test="wholeMoney != null  and wholeMoney != ''">whole_money,</if>
+            <if test="wholeBz != null  and wholeBz != ''">whole_bz,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="khCode != null  and khCode != ''">kh_code,</if>
+            <if test="khName != null  and khName != ''">kh_name,</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="goodsName != null  and goodsName != ''">#{goodsName},</if>
+            <if test="goodsCode != null  and goodsCode != ''">#{goodsCode},</if>
+            <if test="wholeNum != null  and wholeNum != ''">#{wholeNum},</if>
+            <if test="wholeDw != null  and wholeDw != ''">#{wholeDw},</if>
+            <if test="wholePrice != null  and wholePrice != ''">#{wholePrice},</if>
+            <if test="wholeMoney != null  and wholeMoney != ''">#{wholeMoney},</if>
+            <if test="wholeBz != null  and wholeBz != ''">#{wholeBz},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="khCode != null  and khCode != ''">#{khCode},</if>
+            <if test="khName != null  and khName != ''">#{khName},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">#{goodsAddress},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateWholeRetailChild" parameterType="WholeRetailChild">
+        update whole_retails_child
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="goodsName != null  and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsCode != null  and goodsCode != ''">goods_code = #{goodsCode},</if>
+            <if test="wholeNum != null  and wholeNum != ''">whole_num = #{wholeNum},</if>
+            <if test="wholeDw != null  and wholeDw != ''">whole_dw = #{wholeDw},</if>
+            <if test="wholePrice != null  and wholePrice != ''">whole_price = #{wholePrice},</if>
+            <if test="wholeMoney != null  and wholeMoney != ''">whole_money = #{wholeMoney},</if>
+            <if test="wholeBz != null  and wholeBz != ''">whole_bz = #{wholeBz},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
+            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
+            <if test="goodsAddress != null  and goodsAddress != ''">goods_address=#{goodsAddress},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWholeRetailChildById" parameterType="String">
+        delete from whole_retails_child where id = #{id}
+    </delete>
+
+    <delete id="deleteWholeRetailChildByIds" parameterType="String">
+        delete from whole_retails_child where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteWholeRetailChildByPid" parameterType="String">
+        delete from whole_retails_child where dj_number in (select dj_number from whole_retails where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        )
+    </delete>
+</mapper>

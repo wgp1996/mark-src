@@ -41,6 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectCgRkdVoByRole">
         select a.*,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
+
         (select sum(goods_num) from cg_rkd_child where dj_number=a.dj_number) as sum_num
          from cg_rkd a
         join sys_user u on a.create_by=u.user_name
@@ -60,6 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by a.create_time desc
     </select>
+
 
     <select id="selectCgRkdAllList" parameterType="CgRkd" resultMap="CgRkdResult">
         select distinct a.*,
@@ -238,7 +240,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             )
 
-        ) as goods_name<!-- 成本 -->
+        ) as goods_name,<!-- 成本 -->
+        (
+        (
+        select ifnull(sum(fee_money),0) from fee_info  where create_by=#{createBy}
+        <if test="createTime!='' and createTime!=null">
+            and #{createTime}>=DATE_FORMAT(fee_time, '%Y-%m')
+        </if>
+        )
+        ) as dj_number<!-- 费用 -->
 
 
     </select>
@@ -251,8 +261,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         (select count(id) from goods_info_owner where create_by in(select owner_code from owner_info)) as goods_name,<!--业户商品总数-->
 
-        (select (select count(id) from cg_rkd where create_by in(select owner_code from owner_info))+
-        (select count(id) from cg_rkd_single where create_by in(select owner_code from owner_info)))as create_name,<!--进货单总数-->
+        (select (select count(id) from cg_rkd_child where create_by in(select owner_code from owner_info))+
+        (select count(id) from cg_rkd_single_child where create_by in(select owner_code from owner_info)))as create_name,<!--进货单总数-->
+
+        (select (select count(id) from whole_retail_child where create_by in(select owner_code from owner_info))+
+        (select count(id) from whole_sales_child where create_by in(select owner_code from owner_info)))as dj_number,<!--销货单总数-->
 
         (select count(id) from goods_info_owner where create_by in(select owner_code from owner_info) and goods_address is not null) as person_name<!--业户总数-->
 

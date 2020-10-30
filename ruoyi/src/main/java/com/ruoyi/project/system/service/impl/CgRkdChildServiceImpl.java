@@ -39,6 +39,16 @@ public class CgRkdChildServiceImpl implements ICgRkdChildService
      * @return 进货单子表
      */
     @Override
+    public List<CgRkdChild> selectCgRkdChildByNum(String dj_number){
+        return cgRkdChildMapper.selectCgRkdChildByNum(dj_number);
+    }
+    /**
+     * 查询进货单子表
+     *
+     * @param dj_number 进货单子表编码
+     * @return 进货单子表
+     */
+    @Override
     public List<CgRkdChild> selectCgRkdChildByNumber(String dj_number){
         return cgRkdChildMapper.selectCgRkdChildByNumber(dj_number);
     }

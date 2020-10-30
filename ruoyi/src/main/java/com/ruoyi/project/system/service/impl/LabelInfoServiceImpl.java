@@ -33,6 +33,16 @@ public class LabelInfoServiceImpl implements ILabelInfoService
     }
 
     /**
+     * mac查询电子价签管理
+     *
+     * @param mac 电子价签mac
+     * @return 电子价签管理
+     */
+    @Override
+    public LabelInfo selectLabelInfoByMac(String mac){
+        return labelInfoMapper.selectLabelInfoByMac(mac);
+    }
+    /**
      * 查询电子价签管理列表
      * 
      * @param labelInfo 电子价签管理

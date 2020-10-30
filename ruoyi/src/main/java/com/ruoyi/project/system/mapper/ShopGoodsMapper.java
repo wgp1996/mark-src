@@ -19,6 +19,11 @@ public interface ShopGoodsMapper
      */
     public ShopGoods selectShopGoodsById(String id);
     /**
+     * 根据商品编码查询门店商品信息
+     *
+     */
+    public ShopGoods selectShopGoodsByStore(String storeId,String goodsCode);
+    /**
      * 查询该商品是否存在
      *
      * @return 结果

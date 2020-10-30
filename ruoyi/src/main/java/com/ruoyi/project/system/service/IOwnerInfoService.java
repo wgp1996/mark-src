@@ -69,6 +69,15 @@ public interface IOwnerInfoService {
      */
     public int updateOwnerInfo(OwnerInfo ownerInfo);
 
+
+    /**
+     * 修改业户营业执照
+     *
+     * @param ownerInfo 业户建档
+     * @return 结果
+     */
+    public int updateOwnerByOwnerCode(OwnerInfo ownerInfo);
+
     /**
      * 批量删除业户建档
      *

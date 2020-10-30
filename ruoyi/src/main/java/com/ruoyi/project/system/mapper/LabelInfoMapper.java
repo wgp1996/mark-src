@@ -19,7 +19,13 @@ public interface LabelInfoMapper
      * @return 电子价签管理
      */
     public LabelInfo selectLabelInfoById(String id);
-
+    /**
+     * mac查询电子价签管理
+     *
+     * @param mac 电子价签mac
+     * @return 电子价签管理
+     */
+    public LabelInfo selectLabelInfoByMac(String mac);
     /**
      * 查询电子价签管理列表
      * 

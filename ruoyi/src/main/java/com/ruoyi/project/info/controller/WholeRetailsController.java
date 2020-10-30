@@ -1,4 +1,4 @@
-package com.ruoyi.project.system.controller;
+package com.ruoyi.project.info.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
@@ -13,9 +13,10 @@ import com.ruoyi.framework.config.RuoYiConfig;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
 import com.ruoyi.framework.web.page.TableDataInfo;
-import com.ruoyi.project.system.domain.*;
-import com.ruoyi.project.system.service.IWholeRetailChildService;
-import com.ruoyi.project.system.service.IWholeRetailService;
+import com.ruoyi.project.info.domain.WholeRetails;
+import com.ruoyi.project.info.domain.WholeRetailsChild;
+import com.ruoyi.project.info.service.IWholeRetailsChildService;
+import com.ruoyi.project.info.service.IWholeRetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,18 +31,18 @@ import java.util.List;
  * @date 2020-08-24
  */
 @RestController
-@RequestMapping("/system/wholeRetail")
-public class WholeRetailController extends BaseController
+@RequestMapping("/info/wholeRetail")
+public class WholeRetailsController extends BaseController
 {
     @Autowired
-    private IWholeRetailService wholeRetailService;
+    private IWholeRetailsService wholeRetailService;
     @Autowired
-    private IWholeRetailChildService wholeRetailChildService;
+    private IWholeRetailsChildService wholeRetailChildService;
 
     /**
      * 导入零售销货单
      */
-    @PreAuthorize("@ss.hasPermi('system:wholeRetail:import')")
+    @PreAuthorize("@ss.hasPermi('info:wholeRetail:import')")
     @Log(title = "导入零售销货单", businessType = BusinessType.EXPORT)
     @PostMapping("/import")
     public AjaxResult uploadFile(MultipartFile file) throws Exception
@@ -62,7 +63,7 @@ public class WholeRetailController extends BaseController
                     if(!"".equals(info.get(3))&&info.get(3)!=null&&!"".equals(info.get(2))&&info.get(2)!=null) {
                         //添加表头
                         if(i==0) {
-                            WholeRetail wholeRetail=new WholeRetail();
+                            WholeRetails wholeRetail=new WholeRetails();
                             wholeRetail.setDjTime(info.get(1));
                             wholeRetail.setDjNumber(StringUtils.getRandomCode("LSH"));
                             wholeRetail.setStatus(0);
@@ -77,7 +78,7 @@ public class WholeRetailController extends BaseController
                         }
                         if(lag){
                             //添加表体
-                            WholeRetailChild child=new WholeRetailChild();
+                            WholeRetailsChild child=new WholeRetailsChild();
                             child.setCreateBy(SecurityUtils.getUsername());
                             child.setId(StringUtils.getId());
                             child.setDjNumber(djNumber);
@@ -106,16 +107,16 @@ public class WholeRetailController extends BaseController
     /**
      * 查询零售销货单列表
      */
-    @PreAuthorize("@ss.hasPermi('system:wholeRetail:list')")
+    @PreAuthorize("@ss.hasPermi('info:wholeRetail:list')")
     @GetMapping("/list")
     @DataScope(deptAlias = "d", userAlias = "u")
-    public TableDataInfo list(WholeRetail wholeRetail)
+    public TableDataInfo list(WholeRetails wholeRetail)
     {
         startPage();
-      //  List<WholeRetailChild> list = wholeRetailChildService.selectWholeRetailAllList(wholeRetail);
-        List<WholeRetail> list = wholeRetailService.selectWholeRetailList(wholeRetail);
-        for(WholeRetail info:list){
-            WholeRetailChild child=new WholeRetailChild();
+      //  List<WholeRetailsChild> list = wholeRetailChildService.selectWholeRetailAllList(wholeRetail);
+        List<WholeRetails> list = wholeRetailService.selectWholeRetailList(wholeRetail);
+        for(WholeRetails info:list){
+            WholeRetailsChild child=new WholeRetailsChild();
             child.setDjNumber(info.getDjNumber());
             info.setChildrenList(wholeRetailChildService.selectWholeRetailChildList(child));
             child=null;//销毁
@@ -126,20 +127,20 @@ public class WholeRetailController extends BaseController
     /**
      * 导出零售销货单列表
      */
-    @PreAuthorize("@ss.hasPermi('system:wholeRetail:export')")
+    @PreAuthorize("@ss.hasPermi('info:wholeRetail:export')")
     @Log(title = "零售销货单", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(WholeRetail wholeRetail)
+    public AjaxResult export(WholeRetails wholeRetail)
     {
-        List<WholeRetail> list = wholeRetailService.selectWholeRetailList(wholeRetail);
-        ExcelUtil<WholeRetail> util = new ExcelUtil<WholeRetail>(WholeRetail.class);
+        List<WholeRetails> list = wholeRetailService.selectWholeRetailList(wholeRetail);
+        ExcelUtil<WholeRetails> util = new ExcelUtil<WholeRetails>(WholeRetails.class);
         return util.exportExcel(list, "wholeRetail");
     }
 
     /**
      * 获取零售销货单详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:wholeRetail:query')")
+    @PreAuthorize("@ss.hasPermi('info:wholeRetail:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id)
     {
@@ -149,10 +150,10 @@ public class WholeRetailController extends BaseController
     /**
      * 新增零售销货单
      */
-    @PreAuthorize("@ss.hasPermi('system:wholeRetail:add')")
+    @PreAuthorize("@ss.hasPermi('info:wholeRetail:add')")
     @Log(title = "零售销货单", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody WholeRetail wholeRetail)
+    public AjaxResult add(@RequestBody WholeRetails wholeRetail)
     {
         if(wholeRetail.getRows()==""){
             return  toAjaxByError("明细信息不能为空!");
@@ -162,8 +163,8 @@ public class WholeRetailController extends BaseController
         wholeRetail.setFrom(0);//web
         wholeRetail.setCreateBy(SecurityUtils.getUsername());
         wholeRetail.setId(StringUtils.getId());
-        List<WholeRetailChild> childList= JSONArray.parseArray(wholeRetail.getRows(),WholeRetailChild.class);
-        for(WholeRetailChild child:childList){
+        List<WholeRetailsChild> childList= JSONArray.parseArray(wholeRetail.getRows(),WholeRetailsChild.class);
+        for(WholeRetailsChild child:childList){
             child.setCreateBy(SecurityUtils.getUsername());
             child.setId(StringUtils.getId());
             child.setDjNumber(wholeRetail.getDjNumber());
@@ -176,10 +177,10 @@ public class WholeRetailController extends BaseController
     /**
      * 修改零售销货单
      */
-    @PreAuthorize("@ss.hasPermi('system:wholeRetail:edit')")
+    @PreAuthorize("@ss.hasPermi('info:wholeRetail:edit')")
     @Log(title = "零售销货单", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody WholeRetail wholeRetail)
+    public AjaxResult edit(@RequestBody WholeRetails wholeRetail)
     {
         //检查是否为已生效的单据
         if(wholeRetail.getStatus()==1){
@@ -189,8 +190,8 @@ public class WholeRetailController extends BaseController
             return  toAjaxByError("明细信息不能为空!");
         }
         wholeRetail.setUpdateBy(SecurityUtils.getUsername());
-        List<WholeRetailChild> childList= JSONArray.parseArray(wholeRetail.getRows(),WholeRetailChild.class);
-        for(WholeRetailChild child:childList){
+        List<WholeRetailsChild> childList= JSONArray.parseArray(wholeRetail.getRows(),WholeRetailsChild.class);
+        for(WholeRetailsChild child:childList){
             if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
                 child.setCreateBy(SecurityUtils.getUsername());
                 child.setDjNumber(wholeRetail.getDjNumber());
@@ -209,13 +210,13 @@ public class WholeRetailController extends BaseController
     /**
      * 删除零售销货单
      */
-    @PreAuthorize("@ss.hasPermi('system:wholeRetail:remove')")
+    @PreAuthorize("@ss.hasPermi('info:wholeRetail:remove')")
     @Log(title = "零售销货单", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)
     {
         for(int i=0;i<ids.length;i++){
-            WholeRetail info = wholeRetailService.selectWholeRetailById(ids[i]);
+            WholeRetails info = wholeRetailService.selectWholeRetailById(ids[i]);
             if(info.getStatus()!=0){
                 return toAjaxByError(info.getDjNumber()+"：该单据状态禁止删除!");
             }
@@ -235,7 +236,7 @@ public class WholeRetailController extends BaseController
     /**
      * 单据生效
      */
-    @PreAuthorize("@ss.hasPermi('system:wholeRetail:effect')")
+    @PreAuthorize("@ss.hasPermi('info:wholeRetail:effect')")
     @Log(title = "零售销货单", businessType = BusinessType.UPDATE)
     @DeleteMapping("/effect/{ids}")
     public AjaxResult effect(@PathVariable String[] ids)

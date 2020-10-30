@@ -96,6 +96,16 @@ public class OwnerInfoServiceImpl implements IOwnerInfoService {
         ownerInfo.setUpdateTime(DateUtils.getNowDate());
         return ownerInfoMapper.updateOwnerInfo(ownerInfo);
     }
+    /**
+     * 修改业户营业执照
+     *
+     * @param ownerInfo 业户建档
+     * @return 结果
+     */
+    @Override
+    public int updateOwnerByOwnerCode(OwnerInfo ownerInfo){
+        return ownerInfoMapper.updateOwnerByOwnerCode(ownerInfo);
+    }
 
     /**
      * 批量删除业户建档

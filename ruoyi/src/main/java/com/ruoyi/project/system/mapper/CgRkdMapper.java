@@ -26,6 +26,7 @@ public interface CgRkdMapper
      * @return 进货单集合
      */
     public List<CgRkd> selectCgRkdList(CgRkd cgRkd);
+
     /**
      * 查询进货单汇总列表
      *

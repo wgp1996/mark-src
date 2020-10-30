@@ -32,6 +32,13 @@ public interface CgRkdChildMapper
      * @param dj_number 进货单子表编码
      * @return 进货单子表
      */
+    public List<CgRkdChild> selectCgRkdChildByNum(String dj_number);
+    /**
+     * 查询进货单子表
+     *
+     * @param dj_number 进货单子表编码
+     * @return 进货单子表
+     */
     public List<CgRkdChild> selectCgRkdChildByNumber(String dj_number);
     /**
      * 查询进货单子表

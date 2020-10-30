@@ -46,6 +46,12 @@ public class CgRkdSingle extends BaseEntity
     @Excel(name = "单据状态")
     private Integer status;
 
+    /** 结算方式 */
+    @Excel(name = "结算方式")
+    private String payType;
+
+    private String payTypeName;
+
     /** $column.columnComment */
     @Excel(name = "文件名")
     private String fileName;
@@ -62,6 +68,31 @@ public class CgRkdSingle extends BaseEntity
     private String goodsAddress;
     private String goodsPrice;
     private String goodsMoney;
+    private String isRateName;
+
+    public String getIsRateName() {
+        return isRateName;
+    }
+
+    public void setIsRateName(String isRateName) {
+        this.isRateName = isRateName;
+    }
+
+    public String getPayTypeName() {
+        return payTypeName;
+    }
+
+    public void setPayTypeName(String payTypeName) {
+        this.payTypeName = payTypeName;
+    }
+
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
+    }
 
     public String getGoodsPrice() {
         return goodsPrice;

@@ -1,5 +1,6 @@
 package com.ruoyi.project.system.mapper;
 
+import com.ruoyi.project.system.domain.CgRkd;
 import com.ruoyi.project.system.domain.CgRkdSingle;
 
 import java.util.List;
@@ -19,6 +20,13 @@ public interface CgRkdSingleMapper
      * @return 进货单
      */
     public CgRkdSingle selectCgRkdSingleById(String id);
+    /**
+     * 百大查询进货单列表
+     *
+     * @param cgRkd 进货单
+     * @return 进货单集合
+     */
+    public List<CgRkdSingle> selectCgRkdBdList(CgRkdSingle cgRkd);
 
     /**
      * 查询进货单列表

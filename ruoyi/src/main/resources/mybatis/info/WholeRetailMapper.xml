@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.project.info.mapper.WholeRetailsMapper">
+    
+    <resultMap type="WholeRetails" id="WholeRetailResult">
+        <result property="id"    column="id"    />
+        <result property="khCode"    column="kh_code"    />
+        <result property="wholeType"    column="whole_type"    />
+        <result property="djNumber"    column="dj_number"    />
+        <result property="djTime"    column="dj_time"    />
+        <result property="khName"    column="kh_name"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="from"    column="from"    />
+        <result property="sumMoney"    column="sum_money"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="isRate"    column="is_rate"    />
+        <result property="rate"    column="rate"    />
+        <result property="createName"    column="create_name"    />
+        <result property="djStatusName"    column="dj_status_name"    />
+        <result property="payTypeName"    column="pay_type_name"    />
+        <result property="isRateName"    column="is_rate_name"    />
+    </resultMap>
+
+    <sql id="selectWholeRetailVo">
+        select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name  from whole_retails a
+    </sql>
+
+    <sql id="selectWholeRetailVoByRole">
+         select a.*,case a.status when 0 then '正操作' when 1 then '已生效' end as dj_status_name,
+         (select dict_label from sys_dict_data where dict_type='pay_type' and dict_value=a.pay_type)as pay_type_name,
+         case a.is_rate when 0 then '未税' when 1 then '含税' end as is_rate_name,
+         (select distinct nick_name from sys_user where user_name=a.create_by) as create_name
+         from whole_retails a
+         join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectWholeRetailList" parameterType="WholeRetail" resultMap="WholeRetailResult">
+        <include refid="selectWholeRetailVoByRole"/>
+        <where>
+            <!--本周-->
+            <if test="dateType != null  and dateType==1">
+                and a.create_time&gt;=SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-1)
+                and a.create_time&lt;=SUBDATE(CURDATE(),DATE_FORMAT(CURDATE(),'%w')-7)
+            </if>
+            <!--本月-->
+            <if test="dateType != null  and dateType==2">
+                and a.create_time&gt;=date_add(curdate(), interval - day(curdate()) + 1 day)
+                and a.create_time&lt;=last_day(curdate())
+            </if>
+            <!--本年-->
+            <if test="dateType != null  and dateType==3">
+                and a.create_time&gt;=concat(year(curdate()),'-01-01')
+                and a.create_time&lt;=concat(year(curdate()),'-12-31')
+            </if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="khCode != null  and khCode != ''"> and kh_code = #{khCode}</if>
+            <if test="wholeType != null and wholeType != -1"> and whole_type = #{wholeType}</if>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="khName != null  and khName != '' and khName != '-1'"> and kh_name like concat('%', #{khName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="from != null "> and `from` = #{from}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
+    
+    <select id="selectWholeRetailById" parameterType="String" resultMap="WholeRetailResult">
+        <include refid="selectWholeRetailVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertWholeRetail" parameterType="WholeRetail">
+        insert into whole_retails
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="khCode != null  and khCode != ''">kh_code,</if>
+            <if test="wholeType != null ">whole_type,</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number,</if>
+            <if test="djTime != null  and djTime != ''">dj_time,</if>
+            <if test="khName != null  and khName != ''">kh_name,</if>
+            <if test="status != null ">status,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="from != null ">`from`,</if>
+            <if test="sumMoney != null  and sumMoney != ''">sum_money,</if>
+            <if test="payType != null  and payType != ''">pay_type,</if>
+            <if test="isRate != null  and isRate != ''">is_rate,</if>
+            <if test="rate != null  and rate != ''">rate,</if>
+            create_time
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="khCode != null  and khCode != ''">#{khCode},</if>
+            <if test="wholeType != null ">#{wholeType},</if>
+            <if test="djNumber != null  and djNumber != ''">#{djNumber},</if>
+            <if test="djTime != null  and djTime != ''">#{djTime},</if>
+            <if test="khName != null  and khName != ''">#{khName},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="from != null ">#{from},</if>
+            <if test="sumMoney != null  and sumMoney != ''">#{sumMoney},</if>
+            <if test="payType != null  and payType != ''">#{payType},</if>
+            <if test="isRate != null  and isRate != ''">#{isRate},</if>
+            <if test="rate != null  and rate != ''">#{rate},</if>
+            sysdate()
+         </trim>
+    </insert>
+
+    <update id="updateWholeRetail" parameterType="WholeRetail">
+        update whole_retails
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="khCode != null  and khCode != ''">kh_code = #{khCode},</if>
+            <if test="wholeType != null ">whole_type = #{wholeType},</if>
+            <if test="djNumber != null  and djNumber != ''">dj_number = #{djNumber},</if>
+            <if test="djTime != null  and djTime != ''">dj_time = #{djTime},</if>
+            <if test="khName != null  and khName != ''">kh_name = #{khName},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="from != null ">`from` = #{from},</if>
+            <if test="sumMoney != null  and sumMoney != ''">sum_money=#{sumMoney},</if>
+            <if test="payType != null  and payType != ''">pay_type=#{payType},</if>
+            <if test="isRate != null  and isRate != ''">is_rate=#{isRate},</if>
+            <if test="rate != null  and rate != ''">rate=#{rate},</if>
+            update_time = sysdate()
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteWholeRetailById" parameterType="String">
+        delete from whole_retails where id = #{id}
+    </delete>
+
+    <delete id="deleteWholeRetailByIds" parameterType="String">
+        delete from whole_retails where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="updateWholeRetailStatus" parameterType="String">
+        update whole_retails set status='1'  where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    
+</mapper>

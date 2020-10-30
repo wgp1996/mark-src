@@ -65,6 +65,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
+
+    <select id="selectLabelInfoByMac" parameterType="String" resultMap="LabelInfoResult">
+        <include refid="selectLabelInfoVo"/>
+        where mac = #{mac}
+    </select>
+
     <select id="selectLabelInfoByGoodsCode" parameterType="String" resultMap="LabelInfoResult">
         <include refid="selectLabelInfoVo"/>
         where goods_code = #{goodsCode} and storeId=#{storeId}

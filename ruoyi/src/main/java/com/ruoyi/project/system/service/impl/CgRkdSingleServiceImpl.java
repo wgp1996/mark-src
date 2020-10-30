@@ -1,6 +1,7 @@
 package com.ruoyi.project.system.service.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.project.system.domain.CgRkd;
 import com.ruoyi.project.system.domain.CgRkdSingle;
 import com.ruoyi.project.system.mapper.CgRkdSingleMapper;
 import com.ruoyi.project.system.service.ICgRkdSingleService;
@@ -32,7 +33,16 @@ public class CgRkdSingleServiceImpl implements ICgRkdSingleService
     {
         return cgRkdMapper.selectCgRkdSingleById(id);
     }
-
+    /**
+     * 百大查询进货单列表
+     *
+     * @param cgRkd 进货单
+     * @return 进货单集合
+     */
+    @Override
+    public List<CgRkdSingle> selectCgRkdBdList(CgRkdSingle cgRkd){
+        return cgRkdMapper.selectCgRkdBdList(cgRkd);
+    }
     /**
      * 查询进货单列表
      * 

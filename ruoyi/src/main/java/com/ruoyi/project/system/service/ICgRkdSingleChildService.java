@@ -31,6 +31,14 @@ public interface ICgRkdSingleChildService
     /**
      * 查询进货单子表
      *
+     * @param dj_number 进货单子表编码
+     * @return 进货单子表
+     */
+    public List<CgRkdSingleChild> selectCgRkdSingleChildByNum(String dj_number);
+
+    /**
+     * 查询进货单子表
+     *
      * @param createBy 用户编码
      * @return 进货单子表
      */

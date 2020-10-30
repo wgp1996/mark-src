@@ -6,6 +6,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="CgRkdSingle" id="CgRkdSingleResult">
         <result property="id"    column="id"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="payTypeName"    column="pay_type_name"    />
         <result property="djNumber"    column="dj_number"    />
         <result property="storeCode"    column="store_code"    />
         <result property="djTime"    column="dj_time"    />
@@ -28,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="goodsNum"    column="goods_num"    />
         <result property="createName"    column="create_name"    />
         <result property="goodsAddress"    column="goods_address"    />
+        <result property="isRateName"    column="is_rate_name"    />
     </resultMap>
 
     <sql id="selectCgRkdSingleVo">
@@ -36,12 +39,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectCgRkdSingleVoByRole">
         select a.*,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
+        (select dict_label from sys_dict_data where dict_type='pay_type' and dict_value=a.pay_type)as pay_type_name,
+         case a.is_rate when 0 then '未税' when 1 then '含税' end as is_rate_name,
         (select sum(goods_num) from cg_rkd_single_child where dj_number=a.dj_number) as sum_num
          from cg_rkd_single a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
-
+    <sql id="selectCgRkdBdVoByRole">
+        select a.*,case a.status when 0 then '正操作' when 1 then '未接收' when -1 then '已拒绝' when -2 then '被退回' when 2 then '已接收' when 3 then '已审核' end as dj_status_name,
+        (select sum(goods_num) from cg_rkd_child where dj_number=a.dj_number) as sum_num
+         from cg_rkd_single a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+    <select id="selectCgRkdBdList" parameterType="CgRkdSingle" resultMap="CgRkdSingleResult">
+        <include refid="selectCgRkdBdVoByRole"/>
+        <where>
+            <if test="djNumber != null  and djNumber != ''"> and dj_number = #{djNumber}</if>
+            <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
+            <if test="djTime != null  and djTime != ''"> and dj_time = #{djTime}</if>
+            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            ${dataScope}
+        </where>
+        order by a.create_time desc
+    </select>
     <select id="selectCgRkdSingleList" parameterType="CgRkdSingle" resultMap="CgRkdSingleResult">
         <include refid="selectCgRkdSingleVoByRole"/>
         <where>  
@@ -97,6 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">update_time,</if>
             <if test="remark != null  and remark != ''">remark,</if>
             <if test="fileName != null  and fileName != ''">file_name,</if>
+            <if test="payType != null  and payType != ''">pay_type,</if>
             create_time
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -114,6 +139,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null ">#{updateTime},</if>
             <if test="remark != null  and remark != ''">#{remark},</if>
             <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            <if test="payType != null  and payType != ''">#{payType},</if>
             sysdate()
          </trim>
     </insert>
@@ -133,6 +159,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="payType != null  and payType != ''">pay_type=#{payType},</if>
             file_name=#{fileName},
             update_time = sysdate()
         </trim>

@@ -70,6 +70,20 @@ public class CgRkdController extends BaseController
         return getDataTable(list);
     }
 
+
+    /**
+     * 查询进货单所有列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:cgrkd:list')")
+    @GetMapping("/listAll")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo listAll(CgRkd cgRkd)
+    {
+        startPage();
+        List<CgRkd> list = cgRkdService.selectCgRkdAllList(cgRkd);
+        return getDataTable(list);
+    }
+
     /**
      * 业户接收订单列表
      */

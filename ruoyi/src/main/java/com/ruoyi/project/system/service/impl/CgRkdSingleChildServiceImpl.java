@@ -55,6 +55,16 @@ public class CgRkdSingleChildServiceImpl implements ICgRkdSingleChildService
     /**
      * 查询进货单子表
      *
+     * @param dj_number 进货单子表编码
+     * @return 进货单子表
+     */
+    @Override
+    public List<CgRkdSingleChild> selectCgRkdSingleChildByNum(String dj_number){
+        return cgRkdChildMapper.selectCgRkdSingleChildByNum(dj_number);
+    }
+    /**
+     * 查询进货单子表
+     *
      * @param stallCode 主表摊位编码
      * @return 进货单子表
      */

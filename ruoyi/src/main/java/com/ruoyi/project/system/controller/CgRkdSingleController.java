@@ -56,7 +56,35 @@ public class CgRkdSingleController extends BaseController
         //List<CgRkdSingle> list = cgRkdService.selectCgRkdSingleAllList(cgRkd);
         List<CgRkdSingle> list = cgRkdService.selectCgRkdSingleList(cgRkd);
         for(CgRkdSingle info:list){
-            info.setChildrenList(cgRkdChildService.selectCgRkdSingleChildByNumber(info.getDjNumber()));
+            info.setChildrenList(cgRkdChildService.selectCgRkdSingleChildByNum(info.getDjNumber()));
+        }
+        return getDataTable(list);
+    }
+    /**
+     * 查询进货单列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:cgrkdSingle:list')")
+    @GetMapping("/listAll")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo listAll(CgRkdSingle cgRkd)
+    {
+        startPage();
+        List<CgRkdSingle> list = cgRkdService.selectCgRkdSingleAllList(cgRkd);
+        return getDataTable(list);
+    }
+
+    /**
+     * 百大查询进货单列表
+     */
+    @PreAuthorize("@ss.hasPermi('system:cgrkdSingle:list')")
+    @GetMapping("/bdList")
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public TableDataInfo bdList(CgRkdSingle cgRkd)
+    {
+        startPage();
+        List<CgRkdSingle> list = cgRkdService.selectCgRkdBdList(cgRkd);
+        for(CgRkdSingle info:list){
+            info.setChildrenList(cgRkdChildService.selectCgRkdSingleChildByNum(info.getDjNumber()));
         }
         return getDataTable(list);
     }

@@ -40,8 +40,8 @@ public class SwaggerConfig
     {
         return new Docket(DocumentationType.SWAGGER_2)
                 //后台部署
-                //.pathMapping("/")
-                .pathMapping("/dev-api")
+                .pathMapping("/")
+               // .pathMapping("/dev-api")
                 // 用来创建该API的基本信息，展示在文档的页面中（自定义展示的信息）
                 .apiInfo(apiInfo())
                 // 设置哪些接口暴露给Swagger展示

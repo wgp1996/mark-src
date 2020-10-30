@@ -34,11 +34,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectShopGoodsList" parameterType="ShopGoods" resultMap="ShopGoodsResult">
         <include refid="selectShopGoodsVoByRole"/>
         <where>  
-            <if test="storeid != null  and storeid != ''"> and storeId = #{storeid}</if>
-            <if test="goodsCode != null  and goodsCode != ''"> and goods_code = #{goodsCode}</if>
-            <if test="labelMac != null  and labelMac != ''"> and label_mac = #{labelMac}</if>
-            <if test="goodsPrice != null  and goodsPrice != ''"> and goods_price = #{goodsPrice}</if>
-            <if test="goodsHyPrice != null  and goodsHyPrice != ''"> and goods_hy_price = #{goodsHyPrice}</if>
+            <if test="storeid != null  and storeid != ''"> and a.storeId = #{storeid}</if>
+            <if test="goodsCode != null  and goodsCode != ''"> and a.goods_code = #{goodsCode}</if>
+            <if test="labelMac != null  and labelMac != ''"> and a.label_mac = #{labelMac}</if>
+            <if test="goodsPrice != null  and goodsPrice != ''"> and a.goods_price = #{goodsPrice}</if>
+            <if test="goodsHyPrice != null  and goodsHyPrice != ''"> and a.goods_hy_price = #{goodsHyPrice}</if>
             ${dataScope}
         </where>
         order by a.create_time desc
@@ -47,6 +47,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectShopGoodsById" parameterType="String" resultMap="ShopGoodsResult">
         <include refid="selectShopGoodsVo"/>
         where id = #{id}
+    </select>
+    <select id="selectShopGoodsByStore" parameterType="String" resultMap="ShopGoodsResult">
+        <include refid="selectShopGoodsVo"/>
+        where storeId = #{storeId} and goods_code=#{goodsCode}
     </select>
 
     <select id="checkShopGoods" parameterType="String" resultType="Integer">

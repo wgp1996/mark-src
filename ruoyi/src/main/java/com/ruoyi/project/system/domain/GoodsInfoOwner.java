@@ -68,8 +68,17 @@ public class GoodsInfoOwner extends BaseEntity
     @Excel(name = "是否推送磅房")
     private Integer isSend;
 
+    private String storeNum;
     private String createName;
     private String kcNum;
+
+    public String getStoreNum() {
+        return storeNum;
+    }
+
+    public void setStoreNum(String storeNum) {
+        this.storeNum = storeNum;
+    }
 
     public String getGoodsAssistDw() {
         return goodsAssistDw;

@@ -56,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectGoodsInfoOwnerByRkList" parameterType="GoodsInfoOwner" resultMap="GoodsInfoOwnerResult">
-        select a.*,IFNULL((select sum(goods_num) from rk_info_child where goods_code=a.goods_code),0) as kc_num from goods_info_owner a
+        select a.*,IFNULL((select sum(goods_num) from kc_info where goods_code=a.goods_code and store_num=#{storeNum}),0) as kc_num from goods_info_owner a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
         <where>

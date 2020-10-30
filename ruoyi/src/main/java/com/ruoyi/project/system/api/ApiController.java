@@ -1,38 +1,38 @@
 package com.ruoyi.project.system.api;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.code.MatrixToImageWriter;
 import com.ruoyi.common.utils.file.FileToBase64;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.framework.aspectj.lang.annotation.DataScope;
 import com.ruoyi.framework.aspectj.lang.annotation.Log;
 import com.ruoyi.framework.aspectj.lang.enums.BusinessType;
+import com.ruoyi.framework.config.RuoYiConfig;
 import com.ruoyi.framework.push.JPush;
 import com.ruoyi.framework.web.controller.BaseController;
 import com.ruoyi.framework.web.domain.AjaxResult;
-import com.ruoyi.framework.web.domain.server.Sys;
 import com.ruoyi.framework.web.page.TableDataInfo;
 import com.ruoyi.project.info.domain.FeeInfo;
 import com.ruoyi.project.info.domain.FeeItem;
+import com.ruoyi.project.info.domain.WholeRetails;
+import com.ruoyi.project.info.domain.WholeRetailsChild;
 import com.ruoyi.project.info.service.IFeeInfoService;
 import com.ruoyi.project.info.service.IFeeItemService;
+import com.ruoyi.project.info.service.IWholeRetailsChildService;
+import com.ruoyi.project.info.service.IWholeRetailsService;
 import com.ruoyi.project.system.domain.*;
 import com.ruoyi.project.system.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
@@ -76,6 +76,10 @@ public class ApiController extends BaseController
     @Autowired
     private IWholeRetailChildService wholeRetailChildService;
     @Autowired
+    private IWholeRetailsService IWholeRetailService;
+    @Autowired
+    private IWholeRetailsChildService IWholeRetailChildService;
+    @Autowired
     private IKhInfoService khInfoService;
     @Autowired
     private ISysRoleService roleService;
@@ -105,6 +109,57 @@ public class ApiController extends BaseController
     private IFeeItemService feeItemService;
     @Autowired
     private IFeeInfoService feeInfoService;
+
+    @Log(title = "修改密码", businessType = BusinessType.UPDATE)
+    @ApiOperation("修改密码")
+    @PostMapping("/resetPwd")
+    public AjaxResult resetPwd(SysUser user)
+    {
+        userService.checkUserAllowed(user);
+        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+        return toAjax(userService.resetUserPwd(user.getUserName(),user.getPassword()));
+    }
+
+
+    @ApiOperation("查询业户信息")
+    @Log(title = "查询业户信息", businessType = BusinessType.OTHER)
+    @GetMapping(value = "/selectOwnerInfo/{ownerCode}")
+    public AjaxResult getInfo(@PathVariable("ownerCode") String ownerCode) {
+        return AjaxResult.success(ownerInfoService.selectOwnerInfoByCode(ownerCode,""));
+    }
+
+    @Log(title = "上传营业执照", businessType = BusinessType.UPDATE)
+    @ApiOperation("上传营业执照")
+    @PostMapping("/uploadOwnerFile")
+    public AjaxResult updateOwner(OwnerInfo ownerInfo, HttpServletRequest request)
+    {
+        String path = request.getScheme() + "://" + request.getServerName()
+                + ":" + request.getServerPort() + request.getContextPath();
+        System.out.println(path);
+        String filePath = RuoYiConfig.getUploadPath();
+        String fileName=StringUtils.getId()+".png";
+        System.out.println(filePath+fileName);
+        AjaxResult ajaxResult = new AjaxResult();
+        try{
+            boolean lag=FileToBase64.generateFile(ownerInfo.getFileName1(),filePath+"/"+fileName);
+            System.out.println(lag);
+            if(lag){
+                ownerInfo.setFileName1(path+"/profile/upload/"+fileName);
+                ownerInfoService.updateOwnerByOwnerCode(ownerInfo);
+                ajaxResult.put("msg", "操作成功!");
+                ajaxResult.put("code", 200);
+            }else{
+                ajaxResult.put("msg", "操作失败!");
+                ajaxResult.put("code", 400);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            ajaxResult.put("msg", "操作异常!");
+            ajaxResult.put("code", 500);
+        }
+        return ajaxResult;
+    }
+
     /**
      * APP版本列表
      */
@@ -205,7 +260,7 @@ public class ApiController extends BaseController
     public AjaxResult appFeeInfoRemove(@PathVariable Long[] ids)
     {
         //删除信息
-        int result=feeItemService.deleteFeeItemByIds(ids);
+        int result=feeInfoService.deleteFeeInfoByIds(ids);
         if(result>0){
             return toAjaxBySuccess("删除成功!");
         }else{
@@ -354,7 +409,7 @@ public class ApiController extends BaseController
     public AjaxResult appRkdSingleInfo(@PathVariable("id") String id)
     {
         CgRkdSingle info=cgRkdSingleService.selectCgRkdSingleById(id);
-        info.setChildrenList(cgRkdSingleChildService.selectCgRkdSingleChildByNumber(info.getDjNumber()));
+        info.setChildrenList(cgRkdSingleChildService.selectCgRkdSingleChildByNum(info.getDjNumber()));
         return AjaxResult.success(info);
     }
 
@@ -363,9 +418,10 @@ public class ApiController extends BaseController
      */
     @ApiOperation("APP采购单明细信息")
     @GetMapping(value = "appRkdSingleChildList/{dj_number}")
-    public AjaxResult appRkdSingleChildList(@PathVariable("dj_number") String dj_number)
+    public TableDataInfo appRkdSingleChildList(@PathVariable("dj_number") String dj_number)
     {
-        return AjaxResult.success(cgRkdSingleChildService.selectCgRkdSingleChildByNumber(dj_number));
+        List<CgRkdSingleChild> list= cgRkdSingleChildService.selectCgRkdSingleChildByNumber(dj_number);
+        return getDataTable(list);
     }
 
 
@@ -414,13 +470,18 @@ public class ApiController extends BaseController
             return  toAjaxByError("明细信息不能为空!");
         }
         cgRkd.setUpdateBy(cgRkd.getCreateBy());
-        List<CgRkdSingleChild> childLists= cgRkdSingleChildService.selectCgRkdSingleChildByNumber(cgRkd.getDjNumber());
+        List<CgRkdSingleChild> childLists= cgRkdSingleChildService.selectCgRkdSingleChildByNum(cgRkd.getDjNumber());
         List<CgRkdSingleChild> childList= JSONArray.parseArray(cgRkd.getRows(),CgRkdSingleChild.class);
         //删除明细
-        for(CgRkdSingleChild child:childLists){
+        /*for(CgRkdSingleChild child:childLists){
             if(child.getId()!=""){
-                cgRkdSingleChildService.deleteCgRkdSingleChildById(child.getId());
+                cgRkdSingleChildService.de(child.getId());
             }
+        }*/
+        String [] ids=new String[1];
+        if(cgRkd.getId()!=null&&!"".equals(cgRkd.getId())){
+            ids[0]=cgRkd.getId();
+            cgRkdSingleChildService.deleteCgRkdSingleChildByPid(ids);
         }
         for(CgRkdSingleChild child:childList){
             if("".equals(child.getGoodsRate())){
@@ -673,6 +734,18 @@ public class ApiController extends BaseController
         return getDataTable(list);
     }
 
+
+
+    /**
+     * 内库商品单个明细
+     */
+    @ApiOperation("内库商品单个明细")
+    @GetMapping("/appGoodsInfo/{id}")
+    public AjaxResult appGoodsInfo(@PathVariable("id") Integer id)
+    {
+        return AjaxResult.success(goodsInfoOwnerService.selectGoodsInfoOwnerById(id));
+    }
+
     /**
      * APP新增业户商品建档
      */
@@ -726,6 +799,45 @@ public class ApiController extends BaseController
         }
     }
 
+
+    /**
+     * APP客户单个明细
+     */
+    @ApiOperation("APP客户单个明细")
+    @GetMapping("/appKhInfo/{id}")
+    public AjaxResult appKhInfo(@PathVariable("id") Integer id)
+    {
+        return AjaxResult.success(khInfoService.selectKhInfoById(id));
+    }
+
+    /**
+     * APP客户建档修改
+     */
+    @ApiOperation("APP客户建档修改")
+    @Log(title = "APP客户建档修改", businessType = BusinessType.UPDATE)
+    @PostMapping("/appKhEdit")
+    public AjaxResult appKhEdit(KhInfo khInfo)
+    {
+        KhInfo info=khInfoService.selectKhInfoByName(khInfo.getKhName(),khInfo.getCreateBy(),khInfo.getId());
+        if(info!=null) {
+            return  toAjaxByError("该客户在系统中已存在");
+        }else {
+            return  toAjax(khInfoService.updateKhInfo(khInfo));
+        }
+    }
+
+    /**
+     * APP客户建档删除
+     */
+    @ApiOperation("APP客户建档删除")
+    @Log(title = "APP客户建档删除", businessType = BusinessType.DELETE)
+    @GetMapping("appKhRemove/{ids}")
+    public AjaxResult appKhRemove(@PathVariable Integer[] ids)
+    {
+        return toAjax(khInfoService.deleteKhInfoByIds(ids));
+    }
+
+
     /**
      * APP供应商建档
      */
@@ -753,18 +865,54 @@ public class ApiController extends BaseController
     }
 
     /**
+     * APP供应商单个明细
+     */
+    @ApiOperation("APP供应商单个明细")
+    @GetMapping("/appPersonInfo/{id}")
+    public AjaxResult appPersonInfo(@PathVariable("id") Integer id) {
+        return AjaxResult.success(personInfoService.selectPersonInfoById(id));
+    }
+        /**
+         * APP供应商建档
+         */
+    @ApiOperation("APP供应商建档修改")
+    @Log(title = "APP供应商建档修改", businessType = BusinessType.UPDATE)
+    @PostMapping("/appPersonEdit")
+    public AjaxResult appPersonEdit(PersonInfo personInfo)
+    {
+        PersonInfo info=personInfoService.selectPersonInfoByName(personInfo.getPersonName(),personInfo.getCreateBy(),personInfo.getId());
+        if(info!=null) {
+            return  toAjaxByError("该供应商在系统中已存在");
+        }else {
+            //personInfo.setPersonCode(StringUtils.getRandomCode("PCM"));
+            return toAjax(personInfoService.updatePersonInfo(personInfo));
+        }
+    }
+
+    /**
+     * APP删除业户商品建档
+     */
+    @ApiOperation("APP供应商建档删除")
+    @Log(title = "APP供应商建档删除", businessType = BusinessType.DELETE)
+    @GetMapping("appPersonRemove/{ids}")
+    public AjaxResult appPersonRemove(@PathVariable Integer[] ids)
+    {
+        return toAjax(personInfoService.deletePersonInfoByIds(ids));
+    }
+
+    /**
      * APP修改业户商品建档
      */
     @ApiOperation("内库商品修改")
     @Log(title = "APP业户商品建档", businessType = BusinessType.UPDATE)
-    @PutMapping("/appGoodsEdit")
+    @PostMapping("/appGoodsEdit")
     public AjaxResult appGoodsEdit(GoodsInfoOwner goodsInfoOwner)
     {
         GoodsInfoOwner info=goodsInfoOwnerService.selectGoodsInfoOwnerByName(goodsInfoOwner.getId(),goodsInfoOwner.getGoodsName(),goodsInfoOwner.getCreateBy());
         if(info!=null) {
             return  toAjaxByError("该商品在内库档案中已存在");
         }else{
-            goodsInfoOwner.setUpdateBy(SecurityUtils.getUsername());
+            goodsInfoOwner.setUpdateBy(goodsInfoOwner.getCreateBy());
             return toAjax(goodsInfoOwnerService.updateGoodsInfoOwner(goodsInfoOwner));
         }
     }
@@ -871,7 +1019,25 @@ public class ApiController extends BaseController
             child.setCreateTime(DateUtils.getNowDate());
             wholeSalesChildService.insertWholeSalesChild(child);
         }
-        return toAjax(wholeSalesService.insertWholeSales(wholeSales));
+        int result=wholeSalesService.insertWholeSales(wholeSales);
+        if(result>0){
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作成功!");
+            ajaxResult.put("code", 200);
+            HashMap map=new HashMap();
+            map.put("id",wholeSales.getId());
+            ajaxResult.put("data", map);
+            return  ajaxResult;
+        }else{
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作失败!");
+            ajaxResult.put("code", 500);
+            HashMap map=new HashMap();
+            map.put("id","");
+            ajaxResult.put("data", map);
+            return  ajaxResult;
+        }
+
     }
 
     /**
@@ -1030,7 +1196,24 @@ public class ApiController extends BaseController
             child.setCreateTime(DateUtils.getNowDate());
             wholeRetailChildService.insertWholeRetailChild(child);
         }
-        return toAjax(wholeRetailService.insertWholeRetail(wholeRetail));
+        int result=wholeRetailService.insertWholeRetail(wholeRetail);
+        if(result>0){
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作成功!");
+            ajaxResult.put("code", 200);
+            HashMap map=new HashMap();
+            map.put("id",wholeRetail.getId());
+            ajaxResult.put("data", map);
+            return  ajaxResult;
+        }else{
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作失败!");
+            ajaxResult.put("code", 500);
+            HashMap map=new HashMap();
+            map.put("id","");
+            ajaxResult.put("data", map);
+            return  ajaxResult;
+        }
     }
 
     /**
@@ -1127,6 +1310,187 @@ public class ApiController extends BaseController
         }
     }
 
+
+
+
+    /**
+     * 查询销售单列表
+     */
+    @ApiOperation("APP销售单列表")
+    @GetMapping("/appWholeRetailsList/{createBy}/{wholeType}/{dateType}/{khName}")
+    public TableDataInfo appWholeRetailsList(@PathVariable String createBy,@PathVariable Long wholeType,@PathVariable String dateType,@PathVariable String khName)
+    {
+        WholeRetails sales=new WholeRetails();
+        sales.setWholeType(wholeType);
+        sales.setCreateBy(createBy);
+        sales.setDateType(dateType);
+        sales.setKhName(khName);
+        List<WholeRetails> list = IWholeRetailService.selectWholeRetailList(sales);
+        return getDataTable(list);
+    }
+
+    /**
+     * 获取销售单详细信息
+     */
+    @ApiOperation("APP销售单单个明细")
+    @GetMapping(value = "appWholeRetailsInfo/{id}")
+    public AjaxResult appWholeRetailsInfo(@PathVariable("id") String id)
+    {
+        WholeRetails info=IWholeRetailService.selectWholeRetailById(id);
+        if(info!=null) {
+            WholeRetailsChild child = new WholeRetailsChild();
+            child.setDjNumber(info.getDjNumber());
+            info.setChildrenList(IWholeRetailChildService.selectWholeRetailChildList(child));
+        }
+        return AjaxResult.success(info);
+    }
+    /**
+     * 获取销售单详细信息
+     */
+    @ApiOperation("APP销售单明细")
+    @GetMapping(value = "appWholeRetailsChildList/{id}")
+    public TableDataInfo appWholeRetailsChildList(@PathVariable("id") String id)
+    {
+        WholeRetails info=IWholeRetailService.selectWholeRetailById(id);
+        WholeRetailsChild child = new WholeRetailsChild();
+        child.setDjNumber(info.getDjNumber());
+        List<WholeRetailsChild> list = IWholeRetailChildService.selectWholeRetailChildList(child);
+        return getDataTable(list);
+    }
+
+    /**
+     * APP新增销售单
+     */
+    @ApiOperation("APP销售单新增")
+    @Log(title = "APP新增销售单", businessType = BusinessType.INSERT)
+    @PostMapping("/appWholeRetailsAdd")
+    public AjaxResult appWholeRetailsAdd(WholeRetails wholeRetail)
+    {
+        if(wholeRetail.getRows()==""){
+            return  toAjaxByError("明细信息不能为空!");
+        }
+        wholeRetail.setDjNumber(StringUtils.getRandomCode("LSH"));
+        wholeRetail.setStatus(0);
+        wholeRetail.setFrom(1);//web
+        wholeRetail.setId(StringUtils.getId());
+        List<WholeRetailsChild> childList= JSONArray.parseArray(wholeRetail.getRows(),WholeRetailsChild.class);
+        for(WholeRetailsChild child:childList){
+            child.setCreateBy(wholeRetail.getCreateBy());
+            child.setId(StringUtils.getId());
+            child.setDjNumber(wholeRetail.getDjNumber());
+            child.setCreateTime(DateUtils.getNowDate());
+            IWholeRetailChildService.insertWholeRetailChild(child);
+        }
+        int result=IWholeRetailService.insertWholeRetail(wholeRetail);
+        if(result>0){
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作成功!");
+            ajaxResult.put("code", 200);
+            HashMap map=new HashMap();
+            map.put("id",wholeRetail.getId());
+            ajaxResult.put("data", map);
+            return  ajaxResult;
+        }else{
+            AjaxResult ajaxResult = new AjaxResult();
+            ajaxResult.put("msg", "操作失败!");
+            ajaxResult.put("code", 500);
+            HashMap map=new HashMap();
+            map.put("id","");
+            ajaxResult.put("data", map);
+            return  ajaxResult;
+        }
+    }
+
+    /**
+     *
+     *
+     */
+    @ApiOperation("APP销售单修改")
+    @Log(title = "APP修改销售单", businessType = BusinessType.INSERT)
+    @PostMapping("/appWholeRetailsEdit")
+    public AjaxResult appWholeRetailsEdit(WholeRetails wholeRetail)
+    {
+        //检查是否为已生效的单据
+        if(wholeRetail.getStatus()>=1){
+            return  toAjaxByError("该状态禁止修改!");
+        }
+        if(wholeRetail.getRows()==""){
+            return  toAjaxByError("明细信息不能为空!");
+        }
+        WholeRetailsChild whole=new WholeRetailsChild();
+        // List<WholeRetailChild> childLists= wholeRetailChildService.selectWholeRetailChildList(whole);
+        List<WholeRetailsChild> childList= JSONArray.parseArray(wholeRetail.getRows(),WholeRetailsChild.class);
+        /*for(WholeRetailChild child:childLists){
+            if(child.getId()!=""){
+                wholeRetailChildService.deleteWholeRetailChildById(child.getId());
+            }
+        }*/
+        String [] ids=new String[1];
+        if(wholeRetail.getId()!=null&&!"".equals(wholeRetail.getId())){
+            ids[0]=wholeRetail.getId();
+            IWholeRetailChildService.deleteWholeRetailChildByPid(ids);
+        }
+        for(WholeRetailsChild child:childList){
+//            if(child.getId()!=""&&child.getId()!=null&&!"".equals(child.getId())){
+//                child.setCreateBy(wholeRetail.getCreateBy());
+//                child.setDjNumber(wholeRetail.getDjNumber());
+//                wholeRetailChildService.updateWholeRetailChild(child);
+//            }else{
+            child.setCreateBy(wholeRetail.getCreateBy());
+            child.setId(StringUtils.getId());
+            child.setDjNumber(wholeRetail.getDjNumber());
+            child.setCreateTime(DateUtils.getNowDate());
+            IWholeRetailChildService.insertWholeRetailChild(child);
+            //    }
+        }
+        whole=null;
+        return toAjax(IWholeRetailService.updateWholeRetail(wholeRetail));
+    }
+    /**
+     * 删除零售销货单
+     */
+    @ApiOperation("删除APP零售单")
+    @Log(title = "APP零售单删除", businessType = BusinessType.DELETE)
+    @GetMapping("/appWholeRetailsRemove/{ids}")
+    public AjaxResult appWholeRetailsRemove(@PathVariable String[] ids)
+    {
+        for(int i=0;i<ids.length;i++){
+            WholeRetails info = IWholeRetailService.selectWholeRetailById(ids[i]);
+            if(info.getStatus()!=0){
+                return toAjaxByError(info.getDjNumber()+"：该单据状态禁止删除!");
+            }
+        }
+        //删除子表信息
+        int result=IWholeRetailChildService.deleteWholeRetailChildByPid(ids);
+        if(result>0){
+            IWholeRetailService.deleteWholeRetailByIds(ids);
+            return toAjaxBySuccess("删除成功!");
+        }else{
+            return  toAjaxByError("删除失败!");
+        }
+    }
+
+    /**
+     * 删除零售销货单明细
+     */
+    @ApiOperation("删除APP零售单明细")
+    @Log(title = "APP零售单删除明细", businessType = BusinessType.DELETE)
+    @GetMapping("/appWholeRetailsChildRemove/{ids}")
+    public AjaxResult appWholeRetailsChildRemove(@PathVariable String[] ids)
+    {
+        //删除子表信息
+        int result=IWholeRetailChildService.deleteWholeRetailChildByIds(ids);
+        if(result>0){
+            return toAjaxBySuccess("删除成功!");
+        }else{
+            return  toAjaxByError("删除失败!");
+        }
+    }
+
+
+
+
+
     /**
      * APP百大审核订单列表
      */
@@ -1190,7 +1554,7 @@ public class ApiController extends BaseController
         //单供应商
         if(type==0){
             CgRkdSingle CgRkd=cgRkdSingleService.selectCgRkdSingleById(id);
-            return getDataTable(cgRkdSingleChildService.selectCgRkdSingleChildByNumber(CgRkd.getDjNumber()));
+            return getDataTable(cgRkdSingleChildService.selectCgRkdSingleChildByNum(CgRkd.getDjNumber()));
         }else{
             CgRkdChild cgRkdChild= cgRkdChildService.selectCgRkdChildById(id);
             List<CgRkdChild> CgRkdChild=new ArrayList<>();
@@ -1429,7 +1793,6 @@ public class ApiController extends BaseController
             }else{
                 return AjaxResult.error("状态修改失败");
             }
-
         }catch (Exception e){
             e.printStackTrace();
             return AjaxResult.error("接收失败");
@@ -1458,6 +1821,16 @@ public class ApiController extends BaseController
         List<SysNotice> list = noticeService.selectNoticeList(notice);
         return getDataTable(list);
     }
+
+    /**
+     * 获取通知公告单个明细
+     */
+    @ApiOperation("获取通知公告单个明细")
+    @GetMapping("/selectNoticeInfo/{noticeId}")
+    public AjaxResult getInfo(@PathVariable Long noticeId)
+    {
+        return AjaxResult.success(noticeService.selectNoticeById(noticeId));
+    }
     /**
      * 市平台查询所有进货单列表
      */
@@ -1480,6 +1853,8 @@ public class ApiController extends BaseController
     {
         CgRkd rkd=cgRkdService.selectMatkIndexNum();
         HashMap map=new HashMap();
+        //用四个字段代替数量
+        map.put("xsdCount",rkd.getDjNumber());
         map.put("ownerCount",rkd.getDjStatusName());
         map.put("goodsCount",rkd.getGoodsName());
         map.put("rkdCount",rkd.getCreateName());
@@ -1500,10 +1875,12 @@ public class ApiController extends BaseController
     {
         CgRkd rkd=cgRkdService.selectMatkSum(createBy,createTime);
         HashMap map=new HashMap();
+        map.put("feeNum",rkd.getDjNumber());//费用
         map.put("incomeNum",rkd.getDjStatusName());//收入
         map.put("expendNum",rkd.getGoodsName());//支出
         map.put("profitNum",Float.parseFloat(rkd.getDjStatusName()==null?"0":rkd.getDjStatusName())-
-                Float.parseFloat(rkd.getGoodsName()==null?"0":rkd.getGoodsName()));//利润
+                Float.parseFloat(rkd.getGoodsName()==null?"0":rkd.getGoodsName())-
+                Float.parseFloat(rkd.getDjNumber()==null?"0":rkd.getDjNumber()));//利润
         AjaxResult ajaxResult = new AjaxResult();
         ajaxResult.put("msg", "操作成功!");
         ajaxResult.put("code", 200);
@@ -1560,7 +1937,7 @@ public class ApiController extends BaseController
     public AjaxResult appRkdInfo(@PathVariable("id") String id)
     {
         CgRkd info=cgRkdService.selectCgRkdById(id);
-        info.setChildrenList(cgRkdChildService.selectCgRkdChildByNumber(info.getDjNumber()));
+        info.setChildrenList(cgRkdChildService.selectCgRkdChildByNum(info.getDjNumber()));
         return AjaxResult.success(info);
     }
 
@@ -1569,9 +1946,10 @@ public class ApiController extends BaseController
      */
     @ApiOperation("APP进货单明细信息")
     @GetMapping(value = "appRkdChildList/{dj_number}")
-    public AjaxResult appRkdChildList(@PathVariable("dj_number") String dj_number)
+    public TableDataInfo appRkdChildList(@PathVariable("dj_number") String dj_number)
     {
-        return AjaxResult.success(cgRkdChildService.selectCgRkdChildByNumber(dj_number));
+        List<CgRkdChild> list= cgRkdChildService.selectCgRkdChildByNumber(dj_number);
+        return getDataTable(list);
     }
 
     /**
@@ -1635,13 +2013,17 @@ public class ApiController extends BaseController
             AjaxResult ajaxResult = new AjaxResult();
             ajaxResult.put("msg", "操作成功!");
             ajaxResult.put("code", 200);
-            ajaxResult.put("data", cgRkd.getId());
+            HashMap map=new HashMap();
+            map.put("id",cgRkd.getId());
+            ajaxResult.put("data", map);
             return  ajaxResult;
         }else{
             AjaxResult ajaxResult = new AjaxResult();
             ajaxResult.put("msg", "操作失败!");
             ajaxResult.put("code", 500);
-            ajaxResult.put("data", "");
+            HashMap map=new HashMap();
+            map.put("id","");
+            ajaxResult.put("data", map);
             return  ajaxResult;
         }
     }
@@ -1665,10 +2047,15 @@ public class ApiController extends BaseController
         List<CgRkdChild> childLists=cgRkdChildService.selectCgRkdChildByNumber(cgRkd.getDjNumber());
         List<CgRkdChild> childList= JSONArray.parseArray(cgRkd.getRows(),CgRkdChild.class);
         //删除明细
-        for(CgRkdChild child:childLists){
+        /*for(CgRkdChild child:childLists){
             if(child.getId()!=""){
                 cgRkdChildService.deleteCgRkdChildById(child.getId());
             }
+        }*/
+        String [] ids=new String[1];
+        if(cgRkd.getId()!=null&&!"".equals(cgRkd.getId())){
+            ids[0]=cgRkd.getId();
+            cgRkdChildService.deleteCgRkdChildByPid(ids);
         }
         for(CgRkdChild child:childList){
             if("".equals(child.getGoodsRate())){
@@ -1699,13 +2086,17 @@ public class ApiController extends BaseController
             AjaxResult ajaxResult = new AjaxResult();
             ajaxResult.put("msg", "操作成功!");
             ajaxResult.put("code", 200);
-            ajaxResult.put("data", cgRkd.getId());
+            HashMap map=new HashMap();
+            map.put("id",cgRkd.getId());
+            ajaxResult.put("data", map);
             return  ajaxResult;
         }else{
             AjaxResult ajaxResult = new AjaxResult();
             ajaxResult.put("msg", "操作失败!");
             ajaxResult.put("code", 500);
-            ajaxResult.put("data", "");
+            HashMap map=new HashMap();
+            map.put("id","");
+            ajaxResult.put("data", map);
             return  ajaxResult;
         }
     }

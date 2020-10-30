@@ -32,6 +32,14 @@ public class ShopGoodsServiceImpl implements IShopGoodsService
         return shopGoodsMapper.selectShopGoodsById(id);
     }
     /**
+     * 根据商品编码查询门店商品信息
+     *
+     */
+    @Override
+    public ShopGoods selectShopGoodsByStore(String storeId,String goodsCode){
+        return shopGoodsMapper.selectShopGoodsByStore(storeId,goodsCode);
+    }
+    /**
      * 查询该商品是否存在
      *
      * @return 结果

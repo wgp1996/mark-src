@@ -70,9 +70,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from cg_rkd_single_child a
         where dj_number = #{djNumber}
     </select>
-    <select id="selectCgRkdChildByNumber" parameterType="String" resultMap="CgRkdChildResult">
+    <select id="selectCgRkdChildByNum" parameterType="String" resultMap="CgRkdChildResult">
         <include refid="selectCgRkdChildVo"/>
         where a.dj_number = #{dj_number}
+    </select>
+    <select id="selectCgRkdChildByNumber" parameterType="String" resultMap="CgRkdChildResult">
+        <include refid="selectCgRkdChildVo"/>
+        where a.dj_number = (select dj_number from cg_rkd where id=#{dj_number})
     </select>
     <select id="selectCgRkdChildByUser" parameterType="String" resultMap="CgRkdChildResult">
         select a.*,b.id as pid,

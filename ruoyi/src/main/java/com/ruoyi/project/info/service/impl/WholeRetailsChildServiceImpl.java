@@ -1,9 +1,9 @@
-package com.ruoyi.project.system.service.impl;
+package com.ruoyi.project.info.service.impl;
 
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.project.system.domain.WholeRetailChild;
-import com.ruoyi.project.system.mapper.WholeRetailChildMapper;
-import com.ruoyi.project.system.service.IWholeRetailChildService;
+import com.ruoyi.project.info.mapper.WholeRetailsChildMapper;
+import com.ruoyi.project.info.service.IWholeRetailsChildService;
+import com.ruoyi.project.info.domain.WholeRetailsChild;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,48 +11,48 @@ import java.util.List;
 
 /**
  * 批批发销货单子表Service业务层处理
- * 
+ *
  * @author ruoyi
  * @date 2020-08-24
  */
 @Service
-public class WholeRetailChildServiceImpl implements IWholeRetailChildService
+public class WholeRetailsChildServiceImpl implements IWholeRetailsChildService
 {
     @Autowired
-    private WholeRetailChildMapper WholeRetailChildMapper;
+    private WholeRetailsChildMapper WholeRetailChildMapper;
 
     /**
      * 查询批批发销货单子表
-     * 
+     *
      * @param id 批批发销货单子表ID
      * @return 批批发销货单子表
      */
     @Override
-    public WholeRetailChild selectWholeRetailChildById(String id)
+    public WholeRetailsChild selectWholeRetailChildById(String id)
     {
         return WholeRetailChildMapper.selectWholeRetailChildById(id);
     }
     /**
      * 查询批发销货单子表列表
      *
-     * @param WholeRetailChild 批发销货单子表
+     * @param WholeRetailsChild 批发销货单子表
      * @return 批发销货单子表集合
      */
     @Override
-    public List<WholeRetailChild> selectWholeRetailAllList(WholeRetailChild WholeRetailChild){
-        return WholeRetailChildMapper.selectWholeRetailAllList(WholeRetailChild);
+    public List<WholeRetailsChild> selectWholeRetailAllList(WholeRetailsChild WholeRetailsChild){
+        return WholeRetailChildMapper.selectWholeRetailAllList(WholeRetailsChild);
     }
 
     /**
      * 查询批批发销货单子表列表
-     * 
-     * @param WholeRetailChild 批批发销货单子表
+     *
+     * @param WholeRetailsChild 批批发销货单子表
      * @return 批批发销货单子表
      */
     @Override
-    public List<WholeRetailChild> selectWholeRetailChildList(WholeRetailChild WholeRetailChild)
+    public List<WholeRetailsChild> selectWholeRetailChildList(WholeRetailsChild WholeRetailsChild)
     {
-        return WholeRetailChildMapper.selectWholeRetailChildList(WholeRetailChild);
+        return WholeRetailChildMapper.selectWholeRetailChildList(WholeRetailsChild);
     }
     /**
      * 条件查询批发销货单子表列表
@@ -60,38 +60,38 @@ public class WholeRetailChildServiceImpl implements IWholeRetailChildService
      * @return 批发销货单子表集合
      */
     @Override
-    public List<WholeRetailChild> selectWholeRetailChildListByWhere(String createBy, Integer dateType,String date, String goodsName, String khName){
+    public List<WholeRetailsChild> selectWholeRetailChildListByWhere(String createBy, Integer dateType,String date, String goodsName, String khName){
         return WholeRetailChildMapper.selectWholeRetailChildListByWhere(createBy,dateType,date,goodsName,khName);
     }
     /**
      * 新增批批发销货单子表
-     * 
-     * @param WholeRetailChild 批批发销货单子表
+     *
+     * @param WholeRetailsChild 批批发销货单子表
      * @return 结果
      */
     @Override
-    public int insertWholeRetailChild(WholeRetailChild WholeRetailChild)
+    public int insertWholeRetailChild(WholeRetailsChild WholeRetailsChild)
     {
-        WholeRetailChild.setCreateTime(DateUtils.getNowDate());
-        return WholeRetailChildMapper.insertWholeRetailChild(WholeRetailChild);
+        WholeRetailsChild.setCreateTime(DateUtils.getNowDate());
+        return WholeRetailChildMapper.insertWholeRetailChild(WholeRetailsChild);
     }
 
     /**
      * 修改批批发销货单子表
-     * 
-     * @param WholeRetailChild 批批发销货单子表
+     *
+     * @param WholeRetailsChild 批批发销货单子表
      * @return 结果
      */
     @Override
-    public int updateWholeRetailChild(WholeRetailChild WholeRetailChild)
+    public int updateWholeRetailChild(WholeRetailsChild WholeRetailsChild)
     {
-        WholeRetailChild.setUpdateTime(DateUtils.getNowDate());
-        return WholeRetailChildMapper.updateWholeRetailChild(WholeRetailChild);
+        WholeRetailsChild.setUpdateTime(DateUtils.getNowDate());
+        return WholeRetailChildMapper.updateWholeRetailChild(WholeRetailsChild);
     }
 
     /**
      * 批量删除批批发销货单子表
-     * 
+     *
      * @param ids 需要删除的批批发销货单子表ID
      * @return 结果
      */
@@ -103,7 +103,7 @@ public class WholeRetailChildServiceImpl implements IWholeRetailChildService
 
     /**
      * 删除批批发销货单子表信息
-     * 
+     *
      * @param id 批批发销货单子表ID
      * @return 结果
      */

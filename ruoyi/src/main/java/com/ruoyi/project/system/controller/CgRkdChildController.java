@@ -63,7 +63,7 @@ public class CgRkdChildController extends BaseController
         //单供应商
         if(type==0){
             CgRkdSingle CgRkd=cgRkdSingleService.selectCgRkdSingleById(id);
-            return getDataTable(cgRkdSingleChildService.selectCgRkdSingleChildByNumber(CgRkd.getDjNumber()));
+            return getDataTable(cgRkdSingleChildService.selectCgRkdSingleChildByNum(CgRkd.getDjNumber()));
         }else{
             CgRkdChild cgRkdChild= cgRkdChildService.selectCgRkdChildById(id);
             List<CgRkdChild> CgRkdChild=new ArrayList<>();

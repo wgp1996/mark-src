@@ -195,6 +195,15 @@
         where id = #{id}
     </update>
 
+    <update id="updateOwnerByOwnerCode" parameterType="OwnerInfo">
+        update owner_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName1 != null  and fileName1 != ''">file_name1 = #{fileName1},</if>
+            update_time = sysdate()
+        </trim>
+        where owner_code = #{userName}
+    </update>
+
     <delete id="deleteOwnerInfoById" parameterType="String">
         delete from owner_info where id = #{id}
     </delete>
