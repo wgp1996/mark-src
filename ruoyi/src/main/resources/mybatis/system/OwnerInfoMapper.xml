@@ -31,6 +31,8 @@
         <result property="stallName" column="stall_name"/>
         <result property="stallCode" column="stall_code"/>
         <result property="markTypeName" column="mark_type_name"/>
+        <result property="markGoods" column="mark_goods"/>
+        <result property="markAddress" column="mark_address"/>
     </resultMap>
 
     <sql id="selectOwnerInfoVo">
@@ -55,6 +57,7 @@
             <if test="ownerLxrPhone != null  and ownerLxrPhone != ''">and owner_lxr_phone = #{ownerLxrPhone}</if>
             <if test="userName != null  and userName != ''">and a.user_name = #{userName}</if>
             <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="markType != null  and markType != ''"> and a.mark_type = #{markType}</if>
             ${dataScope}
         </where>
         order by a.owner_code,a.create_time desc
@@ -82,6 +85,7 @@
             <if test="fileTitle2 != null  and fileTitle2 != ''">and file_title2 = #{fileTitle2}</if>
             <if test="userName != null  and userName != ''">and a.user_name = #{userName}</if>
             <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
+            <if test="markType != null  and markType != ''"> and a.mark_type = #{markType}</if>
             ${dataScope}
         </where>
         order by a.owner_code,a.create_time desc
@@ -137,6 +141,8 @@
             <if test="fileTitle2 != null  and fileTitle2 != ''">file_title2,</if>
             <if test="userName != null  and userName != ''">user_name,</if>
             <if test="markType != null  and markType != ''">mark_type,</if>
+            <if test="markAddress != null  and markAddress != ''">mark_address,</if>
+            <if test="markGoods != null  and markGoods != ''">mark_goods,</if>
             create_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -162,6 +168,8 @@
             <if test="fileTitle2 != null  and fileTitle2 != ''">#{fileTitle2},</if>
             <if test="userName != null  and userName != ''">#{userName},</if>
             <if test="markType != null  and markType != ''">#{markType},</if>
+            <if test="markAddress != null  and markAddress != ''">#{markAddress},</if>
+            <if test="markGoods != null  and markGoods != ''">#{markGoods},</if>
             sysdate()
         </trim>
     </insert>
@@ -190,6 +198,8 @@
             <if test="fileTitle2 != null  and fileTitle2 != ''">file_title2 = #{fileTitle2},</if>
             <if test="userName != null  and userName != ''">user_name = #{userName},</if>
             <if test="markType != null  and markType != ''">mark_type = #{markType},</if>
+            <if test="markAddress != null  and markAddress != ''">mark_address=#{markAddress},</if>
+            <if test="markGoods != null  and markGoods != ''">mark_goods=#{markGoods},</if>
             update_time = sysdate()
         </trim>
         where id = #{id}

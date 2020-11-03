@@ -9,17 +9,17 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: D:/ruoyi/uploadPath
+  profile: E:/ruoyi/uploadPath
   # 获取ip地址开关
   addressEnabled: true
 
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 80
+  port: 443
   servlet:
     # 应用的访问路径
-    context-path: /
+    context-path: /mark/
   tomcat:
     # tomcat的URI编码
     uri-encoding: UTF-8
@@ -63,7 +63,7 @@ spring:
     # 密码
     password: 
     # 连接超时时间
-    timeout: 10s
+    timeout: 20s
     lettuce:
       pool:
         # 连接池中的最小空闲连接

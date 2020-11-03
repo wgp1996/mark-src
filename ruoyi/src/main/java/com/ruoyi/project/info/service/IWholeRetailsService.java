@@ -21,6 +21,12 @@ public interface IWholeRetailsService
     public WholeRetails selectWholeRetailById(String id);
 
     /**
+     * 查询首页数量信息
+     *
+     */
+    public WholeRetails selectNumlList();
+
+    /**
      * 查询批发销货一票通列表
      * 
      * @param WholeRetail 批发销货一票通

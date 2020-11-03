@@ -1874,13 +1874,14 @@ public class ApiController extends BaseController
     public AjaxResult selectMatkSum(@PathVariable String createBy,@PathVariable String createTime)
     {
         CgRkd rkd=cgRkdService.selectMatkSum(createBy,createTime);
+        java.text.DecimalFormat   df   =new   java.text.DecimalFormat("0.0");
         HashMap map=new HashMap();
-        map.put("feeNum",rkd.getDjNumber());//费用
-        map.put("incomeNum",rkd.getDjStatusName());//收入
-        map.put("expendNum",rkd.getGoodsName());//支出
-        map.put("profitNum",Float.parseFloat(rkd.getDjStatusName()==null?"0":rkd.getDjStatusName())-
+        map.put("feeNum",df.format(Float.parseFloat(rkd.getDjNumber())));//费用
+        map.put("incomeNum",df.format(Float.parseFloat(rkd.getDjStatusName())));//收入
+        map.put("expendNum",df.format(Float.parseFloat(rkd.getGoodsName())));//支出
+        map.put("profitNum",df.format((Float.parseFloat(rkd.getDjStatusName()==null?"0":rkd.getDjStatusName())-
                 Float.parseFloat(rkd.getGoodsName()==null?"0":rkd.getGoodsName())-
-                Float.parseFloat(rkd.getDjNumber()==null?"0":rkd.getDjNumber()));//利润
+                Float.parseFloat(rkd.getDjNumber()==null?"0":rkd.getDjNumber()))));//利润
         AjaxResult ajaxResult = new AjaxResult();
         ajaxResult.put("msg", "操作成功!");
         ajaxResult.put("code", 200);

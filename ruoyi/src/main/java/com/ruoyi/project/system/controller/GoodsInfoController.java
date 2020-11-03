@@ -69,6 +69,12 @@ public class GoodsInfoController extends BaseController
         List<GoodsInfo> list = goodsInfoService.selectGoodsInfoList(goodsInfo);
         return getDataTable(list);
     }
+    @GetMapping("/goodsListAll")
+    public TableDataInfo goodsListAll(GoodsInfo goodsInfo)
+    {
+        List<GoodsInfo> list = goodsInfoService.selectGoodsInfoList(goodsInfo);
+        return getDataTable(list);
+    }
 
     /**
      * 导出商品建档列表

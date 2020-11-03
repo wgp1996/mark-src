@@ -48,8 +48,11 @@ public class FileToBase64 {
 
     private static String targetFilePath = "D://test123.xlsx";
     public static void main(String[] args) throws Exception {
-         String fileStr = getFileStr("D://gh1.png");
-         System.out.println("fileStr ===" + fileStr);
+        double str=0.11;
+        java.text.DecimalFormat   df   =new   java.text.DecimalFormat("#.00");
+        System.out.println(df.format(str));
+//         String fileStr = getFileStr("D://gh1.png");
+//         System.out.println("fileStr ===" + fileStr);
 //        System.out.println(generateFile(fileStr, targetFilePath));
 //        System.out.println("end");
 //        String name="test.ppt";

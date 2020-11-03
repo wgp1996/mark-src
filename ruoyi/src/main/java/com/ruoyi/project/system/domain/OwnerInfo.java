@@ -78,6 +78,26 @@ public class OwnerInfo extends BaseEntity {
      */
     @Excel(name = "备注")
     private String ownerNote;
+    /**
+     * 地址
+     */
+    @Excel(name = "地址")
+    private String markAddress;
+    /**
+     * 主营商品
+     */
+    @Excel(name = "主营商品")
+    private String markGoods;
+
+    private String [] markGoodsList;
+
+    public String[] getMarkGoodsList() {
+        return markGoodsList;
+    }
+
+    public void setMarkGoodsList(String[] markGoodsList) {
+        this.markGoodsList = markGoodsList;
+    }
 
     /**
      * 关联帐号
@@ -122,6 +142,22 @@ public class OwnerInfo extends BaseEntity {
 
     private String stallName;
     private String stallCode;
+
+    public String getMarkAddress() {
+        return markAddress;
+    }
+
+    public void setMarkAddress(String markAddress) {
+        this.markAddress = markAddress;
+    }
+
+    public String getMarkGoods() {
+        return markGoods;
+    }
+
+    public void setMarkGoods(String markGoods) {
+        this.markGoods = markGoods;
+    }
 
     public String getStallName() {
         return stallName;

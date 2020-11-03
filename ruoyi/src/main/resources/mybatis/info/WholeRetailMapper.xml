@@ -41,7 +41,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
+    <select id="selectNumlList"  resultMap="WholeRetailResult">
+           select  (select count(id) from owner_info) as is_rate_name,
 
+            (select count(id) from goods_info_owner) as pay_type_name,
+
+            (select count(id) from goods_info_owner where goods_address!='')  as dj_status_name,
+
+            (select count(id) from whole_sales_child) as create_name,
+
+            (select count(id) from whole_retail_child)  as kh_name,
+
+            (select COUNT(id) from random_inspection_info_child) as kh_code
+
+    </select>
     <select id="selectWholeRetailList" parameterType="WholeRetail" resultMap="WholeRetailResult">
         <include refid="selectWholeRetailVoByRole"/>
         <where>

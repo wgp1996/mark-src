@@ -52,6 +52,15 @@ public class WholeSalesChild extends BaseEntity
     private String goodsName;
 
     private String wholeSum;
+    private String markType;
+
+    public String getMarkType() {
+        return markType;
+    }
+
+    public void setMarkType(String markType) {
+        this.markType = markType;
+    }
 
     public String getWholeMoney() {
         return wholeMoney;

@@ -33,6 +33,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="statusName"    column="status_name"    />
         <result property="createCount"    column="create_count"    />
         <result property="djId"    column="dj_id"    />
+        <result property="markType"    column="mark_type"    />
+
     </resultMap>
 
     <sql id="selectCgRkdVo">
@@ -93,8 +95,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from cg_rkd a join cg_rkd_child b on a.dj_number=b.dj_number
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
+        left join owner_info c on a.create_by=c.owner_code
         <where>
             ${dataScope}
+            <if test="markType != null and markType!=''">
+                and c.mark_type=#{markType}
+             </if>
+
         </where>
 
         UNION ALL
@@ -105,7 +112,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from cg_rkd_single a join cg_rkd_single_child b on a.dj_number=b.dj_number
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
-        <where>${dataScope}
+        left join owner_info c on a.create_by=c.owner_code
+        <where>
+            <if test="markType != null and markType!=''">
+                and c.mark_type=#{markType}
+            </if>
+            ${dataScope}
         </where>
         ) as t ORDER BY t.dj_time DESC
     </select>

@@ -13,6 +13,11 @@ import java.util.List;
 public interface WholeRetailsMapper
 {
     /**
+     * 查询首页数量信息
+     *
+     */
+    public WholeRetails selectNumlList();
+    /**
      * 查询批发销货一票通
      * 
      * @param id 批发销货一票通ID

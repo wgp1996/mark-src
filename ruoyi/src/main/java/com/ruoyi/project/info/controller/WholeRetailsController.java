@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -145,6 +146,28 @@ public class WholeRetailsController extends BaseController
     public AjaxResult getInfo(@PathVariable("id") String id)
     {
         return AjaxResult.success(wholeRetailService.selectWholeRetailById(id));
+    }
+
+    /**
+     * 查询首页数量信息
+     *
+     */
+    @GetMapping(value = "/selectNumlList")
+    public AjaxResult selectNumlList()
+    {
+        AjaxResult AjaxResult=new AjaxResult();
+        WholeRetails wholeRetails= wholeRetailService.selectNumlList();
+        HashMap map=new HashMap();
+        map.put("ownerCount",wholeRetails.getIsRateName());
+        map.put("goodsCount",wholeRetails.getPayTypeName());
+        map.put("rkdCount",wholeRetails.getDjStatusName());
+        map.put("addressCount",wholeRetails.getCreateName());
+        map.put("wholeCount",wholeRetails.getKhName());
+        map.put("randomCount",wholeRetails.getKhCode());
+        AjaxResult.put("code",200);
+        AjaxResult.put("msg","操作成功");
+        AjaxResult.put("data",map);
+        return  AjaxResult;
     }
 
     /**

@@ -116,7 +116,12 @@ public class OwnerInfoController extends BaseController {
     @PreAuthorize("@ss.hasPermi('system:owner:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id) {
-        return AjaxResult.success(ownerInfoService.selectOwnerInfoById(id));
+        OwnerInfo ownerInfo= ownerInfoService.selectOwnerInfoById(id);
+        if(ownerInfo.getMarkGoods()!=null&&!"".equals(ownerInfo.getMarkGoods())){
+            String [] list=ownerInfo.getMarkGoods().split(",");
+            ownerInfo.setMarkGoodsList(list);
+        }
+        return AjaxResult.success(ownerInfo);
     }
 
     /**
@@ -126,6 +131,7 @@ public class OwnerInfoController extends BaseController {
     @Log(title = "业户信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody OwnerInfo ownerInfo) {
+
         if(ownerInfo.getUserName()!=null&&ownerInfo.getUserName()!=""){
             //查询分配的帐号是否存在
             OwnerInfo info=new OwnerInfo();
@@ -139,6 +145,13 @@ public class OwnerInfoController extends BaseController {
         if (info != null) {
             return toAjaxByError("该业户在系统中已存在");
         } else {
+            String strGoods="";
+            if(ownerInfo.getMarkGoodsList().length>0){
+                for(int i=0;i<ownerInfo.getMarkGoodsList().length;i++){
+                    strGoods+=ownerInfo.getMarkGoodsList()[i]+",";
+                }
+            }
+            ownerInfo.setMarkGoods(strGoods);
             ownerInfo.setCreateBy(SecurityUtils.getUsername());
             ownerInfo.setId(StringUtils.getId());
             //ownerInfo.setOwnerCode(StringUtils.getRandomCode("OR"));
@@ -168,6 +181,13 @@ public class OwnerInfoController extends BaseController {
         if (info != null) {
             return toAjaxByError("该业户在系统中已存在");
         } else {
+            String strGoods="";
+            if(ownerInfo.getMarkGoodsList().length>0){
+                for(int i=0;i<ownerInfo.getMarkGoodsList().length;i++){
+                    strGoods+=ownerInfo.getMarkGoodsList()[i]+",";
+                }
+                ownerInfo.setMarkGoods(strGoods);
+            }
             ownerInfo.setUpdateBy(SecurityUtils.getUsername());
             return toAjax(ownerInfoService.updateOwnerInfo(ownerInfo));
         }

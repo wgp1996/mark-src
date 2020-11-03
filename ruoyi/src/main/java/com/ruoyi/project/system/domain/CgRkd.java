@@ -64,6 +64,15 @@ public class CgRkd extends BaseEntity
     private String statusName;
     private String djId;
     private String createCount;
+    private String markType;
+
+    public String getMarkType() {
+        return markType;
+    }
+
+    public void setMarkType(String markType) {
+        this.markType = markType;
+    }
 
     public String getGoodsPrice() {
         return goodsPrice;

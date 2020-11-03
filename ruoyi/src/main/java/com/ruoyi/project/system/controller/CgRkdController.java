@@ -65,7 +65,7 @@ public class CgRkdController extends BaseController
         //List<CgRkd> list = cgRkdService.selectCgRkdAllList(cgRkd);
         List<CgRkd> list = cgRkdService.selectCgRkdList(cgRkd);
         for(CgRkd info:list){
-            info.setChildrenList(cgRkdChildService.selectCgRkdChildByNumber(info.getDjNumber()));
+            info.setChildrenList(cgRkdChildService.selectCgRkdChildByNum(info.getDjNumber()));
         }
         return getDataTable(list);
     }
