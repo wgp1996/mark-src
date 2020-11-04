@@ -25,6 +25,11 @@ public interface IWholeRetailsService
      *
      */
     public WholeRetails selectNumlList();
+    /**
+     * 查询首页分类数量信息
+     *
+     */
+    public  List<WholeRetails> selectNumFlList(WholeRetails WholeRetail);
 
     /**
      * 查询批发销货一票通列表

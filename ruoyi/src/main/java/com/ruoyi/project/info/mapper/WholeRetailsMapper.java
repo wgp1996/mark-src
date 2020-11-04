@@ -13,6 +13,11 @@ import java.util.List;
 public interface WholeRetailsMapper
 {
     /**
+     * 查询首页分类数量信息
+     *
+     */
+    public  List<WholeRetails> selectNumFlList(WholeRetails WholeRetail);
+    /**
      * 查询首页数量信息
      *
      */

@@ -33,6 +33,14 @@ public class WholeRetailsServiceImpl implements IWholeRetailsService
         return WholeRetailMapper.selectWholeRetailById(id);
     }
     /**
+     * 查询首页分类数量信息
+     *
+     */
+    @Override
+    public  List<WholeRetails> selectNumFlList(WholeRetails WholeRetail){
+        return WholeRetailMapper.selectNumFlList(WholeRetail);
+    }
+    /**
      * 查询首页数量信息
      *
      */

@@ -17,6 +17,7 @@ import com.ruoyi.project.info.domain.WholeRetails;
 import com.ruoyi.project.info.domain.WholeRetailsChild;
 import com.ruoyi.project.info.service.IWholeRetailsChildService;
 import com.ruoyi.project.info.service.IWholeRetailsService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -146,6 +147,15 @@ public class WholeRetailsController extends BaseController
     public AjaxResult getInfo(@PathVariable("id") String id)
     {
         return AjaxResult.success(wholeRetailService.selectWholeRetailById(id));
+    }
+
+    /**
+     * 获取零售销货单详细信息
+     */
+    @GetMapping(value = "/selectNumFlList")
+    public AjaxResult selectNumFlList(WholeRetails wholeRetail)
+    {
+        return AjaxResult.success(wholeRetailService.selectNumFlList(wholeRetail));
     }
 
     /**

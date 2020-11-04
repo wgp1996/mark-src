@@ -57,7 +57,7 @@
             <if test="ownerLxrPhone != null  and ownerLxrPhone != ''">and owner_lxr_phone = #{ownerLxrPhone}</if>
             <if test="userName != null  and userName != ''">and a.user_name = #{userName}</if>
             <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
-            <if test="markType != null  and markType != ''"> and a.mark_type = #{markType}</if>
+            <if test="markType != null  and markType != ''">  and a.mark_type like  concat(#{markType}, '%')</if>
             ${dataScope}
         </where>
         order by a.owner_code,a.create_time desc

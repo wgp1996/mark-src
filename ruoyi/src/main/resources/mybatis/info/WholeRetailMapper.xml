@@ -42,19 +42,53 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
     <select id="selectNumlList"  resultMap="WholeRetailResult">
-           select  (select count(id) from owner_info) as is_rate_name,
+           select
+            (select count(id) from owner_info) as is_rate_name,
 
             (select count(id) from goods_info_owner) as pay_type_name,
 
-            (select count(id) from goods_info_owner where goods_address!='')  as dj_status_name,
+            (select count(id) from goods_info_owner where goods_address!='')  as create_name,
 
-            (select count(id) from whole_sales_child) as create_name,
+            ((select count(id) from cg_rkd_single_child)+(select count(id) from cg_rkd_child))dj_status_name,
 
-            (select count(id) from whole_retail_child)  as kh_name,
+            ((select count(id) from whole_sales_child) +
+
+            (select count(id) from whole_retail_child))  as kh_name,
 
             (select COUNT(id) from random_inspection_info_child) as kh_code
 
     </select>
+
+    <select id="selectNumFlList"  resultMap="WholeRetailResult" parameterType="WholeRetail">
+        <!--业户分类-->
+        <if test="dateType != null  and dateType==1">
+            select count(id) as status,mark_type as rate from owner_info GROUP BY mark_type
+        </if>
+        <!--入库单分类-->
+        <if test="dateType != null  and dateType==2">
+            select t.status,t.rate from (
+            (
+            select count(a.id) as status,b.mark_type as rate from cg_rkd_single_child a join owner_info b on a.create_by=b.owner_code GROUP BY b.mark_type
+            )
+            UNION ALL
+            (
+            select count(a.id) as status,b.mark_type as rate from cg_rkd_child a join owner_info b on a.create_by=b.owner_code GROUP BY b.mark_type
+            )) t
+        </if>
+        <!--销货单分类-->
+        <if test="dateType != null  and dateType==3">
+            select t.rate,t.status from (
+            (
+            select count(a.id) as status,b.mark_type as rate from whole_sales_child a join owner_info b on a.create_by=b.owner_code GROUP BY b.mark_type
+            )
+            UNION ALL
+            (
+            select count(a.id) as status,b.mark_type as rate from whole_retail_child a join owner_info b on a.create_by=b.owner_code GROUP BY b.mark_type
+            )) t
+        </if>
+    </select>
+
+
     <select id="selectWholeRetailList" parameterType="WholeRetail" resultMap="WholeRetailResult">
         <include refid="selectWholeRetailVoByRole"/>
         <where>

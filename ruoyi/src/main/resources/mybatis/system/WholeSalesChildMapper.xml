@@ -69,7 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
             <if test="markType != null and markType!=''">
-                and c.mark_type=#{markType}
+                and c.mark_type like  concat(#{markType}, '%')
             </if>
             ${dataScope}
         </where>
@@ -85,7 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
             <if test="markType != null and markType!=''">
-                and c.mark_type=#{markType}
+                and c.mark_type like  concat(#{markType}, '%')
             </if>
             ${dataScope}
         </where>

@@ -87,7 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="rkdSummaryList" parameterType="CgRkd" resultMap="CgRkdResult">
-        select t.* from ( select distinct a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as
+        select t.* from ( select  a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as
         dj_status_name,
         (select sum(goods_num) from cg_rkd_child where dj_number=a.dj_number) as sum_num,
         (select nick_name from sys_user where user_name=a.create_by) as create_name,
@@ -99,13 +99,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             ${dataScope}
             <if test="markType != null and markType!=''">
-                and c.mark_type=#{markType}
+                and c.mark_type like  concat(#{markType}, '%')
              </if>
 
         </where>
 
         UNION ALL
-        select distinct a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
+        select  a.dj_time,a.create_by,case a.status when 0 then '正操作' when 1 then '已提交' end as dj_status_name,
         (select sum(goods_num) from cg_rkd_single_child where dj_number=a.dj_number) as sum_num,
         (select nick_name from sys_user where user_name=a.create_by) as create_name,
         b.goods_num,b.goods_name,b.goods_dw,b.goods_address
@@ -115,7 +115,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join owner_info c on a.create_by=c.owner_code
         <where>
             <if test="markType != null and markType!=''">
-                and c.mark_type=#{markType}
+                and c.mark_type like  concat(#{markType}, '%')
             </if>
             ${dataScope}
         </where>
