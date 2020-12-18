@@ -79,6 +79,13 @@ public interface IOwnerInfoService {
     public int updateOwnerByOwnerCode(OwnerInfo ownerInfo);
 
     /**
+     * 修改上传省平台状态
+     *
+     * @return 结果
+     */
+    public int updateOwnerIsUpload(String id);
+
+    /**
      * 批量删除业户建档
      *
      * @param ids 需要删除的业户建档ID

@@ -33,6 +33,9 @@
         <result property="markTypeName" column="mark_type_name"/>
         <result property="markGoods" column="mark_goods"/>
         <result property="markAddress" column="mark_address"/>
+        <result property="creditCode" column="credit_code"/>
+        <result property="isUpload" column="is_upload"/>
+
     </resultMap>
 
     <sql id="selectOwnerInfoVo">
@@ -43,7 +46,7 @@
 
     <select id="selectOwnerStallInfoList" parameterType="OwnerInfo" resultMap="OwnerInfoResult">
         select a.*,(select mark_type_name from mark_type where mark_id=a.mark_type) as mark_type_name,b.stall_code,b.stall_name  from owner_info a
-        join stall_info b on a.owner_code=b.create_by
+        left join stall_info b on a.owner_code=b.create_by
         <where>
             <if test="id != null  and id != ''">and id != #{id}</if>
             <if test="ownerCode != null  and ownerCode != ''">and a.owner_code = #{ownerCode}</if>
@@ -86,6 +89,7 @@
             <if test="userName != null  and userName != ''">and a.user_name = #{userName}</if>
             <if test="createBy != null  and createBy != ''"> and a.create_by = #{createBy}</if>
             <if test="markType != null  and markType != ''"> and a.mark_type = #{markType}</if>
+            <if test="isUpload != null"> and a.is_upload = #{isUpload}</if>
             ${dataScope}
         </where>
         order by a.owner_code,a.create_time desc
@@ -143,6 +147,8 @@
             <if test="markType != null  and markType != ''">mark_type,</if>
             <if test="markAddress != null  and markAddress != ''">mark_address,</if>
             <if test="markGoods != null  and markGoods != ''">mark_goods,</if>
+            <if test="creditCode != null  and creditCode != ''">credit_code,</if>
+            <if test="isUpload != null">is_upload,</if>
             create_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -170,6 +176,8 @@
             <if test="markType != null  and markType != ''">#{markType},</if>
             <if test="markAddress != null  and markAddress != ''">#{markAddress},</if>
             <if test="markGoods != null  and markGoods != ''">#{markGoods},</if>
+            <if test="creditCode != null  and creditCode != ''">#{creditCode},</if>
+            <if test="isUpload != null">#{isUpload},</if>
             sysdate()
         </trim>
     </insert>
@@ -200,6 +208,8 @@
             <if test="markType != null  and markType != ''">mark_type = #{markType},</if>
             <if test="markAddress != null  and markAddress != ''">mark_address=#{markAddress},</if>
             <if test="markGoods != null  and markGoods != ''">mark_goods=#{markGoods},</if>
+            <if test="creditCode != null  and creditCode != ''">credit_code=#{creditCode},</if>
+            <if test="isUpload != null">is_upload=#{isUpload},</if>
             update_time = sysdate()
         </trim>
         where id = #{id}
@@ -212,6 +222,11 @@
             update_time = sysdate()
         </trim>
         where owner_code = #{userName}
+    </update>
+
+    <!--修改上传省平台状态-->
+    <update id="updateOwnerIsUpload" parameterType="OwnerInfo">
+        update owner_info set is_upload =1 where id = #{id}
     </update>
 
     <delete id="deleteOwnerInfoById" parameterType="String">

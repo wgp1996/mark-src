@@ -106,7 +106,15 @@ public class OwnerInfoServiceImpl implements IOwnerInfoService {
     public int updateOwnerByOwnerCode(OwnerInfo ownerInfo){
         return ownerInfoMapper.updateOwnerByOwnerCode(ownerInfo);
     }
-
+    /**
+     * 修改上传省平台状态
+     *
+     * @return 结果
+     */
+    @Override
+    public int updateOwnerIsUpload(String id){
+        return ownerInfoMapper.updateOwnerIsUpload(id);
+    }
     /**
      * 批量删除业户建档
      *

@@ -53,7 +53,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
             ((select count(id) from whole_sales_child) +
 
-            (select count(id) from whole_retail_child))  as kh_name,
+            (select count(id) from whole_retail_child)+
+            (select count(id) from whole_retails_child)
+            )  as kh_name,
 
             (select COUNT(id) from random_inspection_info_child) as kh_code
 
@@ -79,12 +81,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="dateType != null  and dateType==3">
             select t.rate,t.status from (
             (
+            select count(a.id) as status,b.mark_type as rate from whole_retails_child a join owner_info b on a.create_by=b.owner_code GROUP BY b.mark_type
+            )
+            UNION ALL
+            (
             select count(a.id) as status,b.mark_type as rate from whole_sales_child a join owner_info b on a.create_by=b.owner_code GROUP BY b.mark_type
             )
             UNION ALL
             (
             select count(a.id) as status,b.mark_type as rate from whole_retail_child a join owner_info b on a.create_by=b.owner_code GROUP BY b.mark_type
-            )) t
+            )
+            ) t
         </if>
     </select>
 

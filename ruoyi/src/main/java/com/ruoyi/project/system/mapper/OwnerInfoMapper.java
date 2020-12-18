@@ -66,6 +66,13 @@ public interface OwnerInfoMapper {
     public int updateOwnerInfo(OwnerInfo ownerInfo);
 
     /**
+     * 修改上传省平台状态
+     *
+     * @return 结果
+     */
+    public int updateOwnerIsUpload(String id);
+
+    /**
      * 删除业户建档
      *
      * @param id 业户建档ID

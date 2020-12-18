@@ -1918,6 +1918,19 @@ public class ApiController extends BaseController
         return getDataTable(list);
     }
     /**
+     * 市平台查询检测数据
+     */
+    @ApiOperation("市平台查询检测数据")
+    @GetMapping("/randomInspList")
+    public TableDataInfo randomInspList(RandomInspectionInfoChild randomInspectionInfo,HttpServletResponse response)
+    {
+        startPage();
+        List<RandomInspectionInfoChild> list = randomInspectionInfoChildService.selectRandomInspectionInfoAllList(randomInspectionInfo);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Cache-Control","no-cache");
+        return getDataTable(list);
+    }
+    /**
      * 市平台查询业户信息列表
      */
     @ApiOperation("市平台查询业户信息")
@@ -2364,6 +2377,50 @@ public class ApiController extends BaseController
                         goodsInfoOwner.setGoodsCode(StringUtils.getRandomCode("SP"));
                         goodsInfoOwnerService.insertGoodsInfoOwner(goodsInfoOwner);
                     }
+                }else{
+                    break;
+                }
+            }
+        }
+        System.out.println("导入完成!");
+        return AjaxResult.success("导入成功");
+    }
+
+    /**
+     * 修改业户测试
+     */
+    @ApiOperation("修改业户")
+    @GetMapping(value = "/importOwners")
+    public AjaxResult importOwners()
+    {
+        System.out.println("1!");
+        Workbook wb =null;
+        Sheet sheet = null;
+        Row row = null;
+        String cellData = null;
+        String filePath = "D:\\test123.xlsx";
+        wb = ExcelUtil.readExcel(filePath);
+        if(wb != null){
+            System.out.println("2!");
+            //获取第一个sheet
+            sheet = wb.getSheetAt(0);
+            //获取最大行数
+            int rownum = sheet.getPhysicalNumberOfRows();
+            //获取第一行
+            row = sheet.getRow(0);
+            //获取最大列数
+            int colnum = row.getPhysicalNumberOfCells();
+            for (int i = 3; i<rownum; i++) {
+                System.out.println(i);
+                Map<String,String> map = new LinkedHashMap<String,String>();
+                row = sheet.getRow(i);
+                if(row !=null){
+                    String code=(String)ExcelUtil.getCellFormatValue(row.getCell(1)).toString();
+                    if(code==""||"".equals(code)){
+                        break;
+                    }
+                    OwnerInfo ownerInfo=new OwnerInfo();
+
                 }else{
                     break;
                 }

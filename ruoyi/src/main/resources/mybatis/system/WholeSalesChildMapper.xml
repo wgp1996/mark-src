@@ -19,6 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="goodsName"    column="goods_name"    />
+        <result property="goodsCode"    column="goods_code"    />
         <result property="status"    column="status"    />
         <result property="wholeSum"    column="whole_sum"    />
         <result property="wholeMoney"    column="whole_money"    />
@@ -60,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select t.* from (
         select b.dj_time as
         remark,a.dj_number,a.kh_name,a.whole_num,a.whole_dw,a.whole_price,a.whole_bz,a.whole_money,b.id
-        ,b.goods_name,b.status,(select distinct nick_name from sys_user where user_name=a.create_by) as create_by from
+        ,b.goods_name,b.goods_code,b.status,(select distinct nick_name from sys_user where user_name=a.create_by) as create_by from
         whole_sales_child a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
@@ -76,8 +77,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
         UNION ALL
 
-         select b.dj_time as remark,a.dj_number,b.kh_name,a.whole_num,a.whole_dw,a.whole_price,a.whole_bz,a.whole_money,b.id
-        ,a.goods_name,b.status,(select distinct nick_name from sys_user where user_name=a.create_by) as create_by from whole_retail_child a
+        select b.dj_time as
+        remark,a.dj_number,a.kh_name,a.whole_num,a.whole_dw,a.whole_price,a.whole_bz,a.whole_money,b.id
+        ,a.goods_name,a.goods_code,b.status,(select distinct nick_name from sys_user where user_name=a.create_by) as create_by from
+        whole_retails_child a
+        join sys_user u on a.create_by=u.user_name
+        left join sys_dept d on u.dept_id = d.dept_id
+        join whole_retails b on a.dj_number=b.dj_number
+        left join owner_info c on a.create_by=c.owner_code
+        <where>
+            <if test="djNumber != null  and djNumber != ''"> and a.dj_number = #{djNumber}</if>
+            <if test="markType != null and markType!=''">
+                and c.mark_type like  concat(#{markType}, '%')
+            </if>
+            ${dataScope}
+        </where>
+
+
+        UNION ALL
+
+         select b.dj_time as remark,a.dj_number,a.kh_name,a.whole_num,a.whole_dw,a.whole_price,a.whole_bz,a.whole_money,b.id
+        ,a.goods_name,a.goods_code,b.status,(select distinct nick_name from sys_user where user_name=a.create_by) as create_by from whole_retail_child a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
          join whole_retail b on a.dj_number=b.dj_number
@@ -90,11 +110,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ${dataScope}
         </where>
         ) t
-        order by t.remark desc
+        order by DATE_FORMAT(t.remark,'%m-%d-%Y') desc
     </select>
 
     <select id="selectWholeSalesChildListByWhere" resultMap="WholeSalesChildResult">
-        select a.*,b.goods_name,b.status,sum(a.whole_num) as whole_sum from whole_sales_child a join whole_sales b on a.dj_number=b.dj_number
+        select a.*,b.goods_name,b.sselectWholeAllListtatus,sum(a.whole_num) as whole_sum from whole_sales_child a join whole_sales b on a.dj_number=b.dj_number
         <where>
             <if test="date != null and date != '' and date!='-1'">
                 and b.create_time &lt;= #{date}

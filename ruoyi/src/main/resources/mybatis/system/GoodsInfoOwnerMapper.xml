@@ -33,7 +33,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="selectGoodsInfoOwnerVoByRole">
-        select a.* from goods_info_owner a
+        select a.*,(select nick_name from sys_user where user_name=a.create_by) as create_name
+
+        from goods_info_owner a
         join sys_user u on a.create_by=u.user_name
         left join sys_dept d on u.dept_id = d.dept_id
     </sql>
@@ -52,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isSend != null "> and is_send = #{isSend}</if>
             ${dataScope}
         </where>
-        order by a.create_time desc
+        order by a.goods_address desc,a.create_time desc
     </select>
 
     <select id="selectGoodsInfoOwnerByRkList" parameterType="GoodsInfoOwner" resultMap="GoodsInfoOwnerResult">

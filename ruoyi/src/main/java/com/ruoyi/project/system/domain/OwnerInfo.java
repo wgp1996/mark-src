@@ -88,6 +88,19 @@ public class OwnerInfo extends BaseEntity {
      */
     @Excel(name = "主营商品")
     private String markGoods;
+    /**
+     * 信用代码
+     */
+    @Excel(name = "信用代码")
+    private String creditCode;
+
+    public String getCreditCode() {
+        return creditCode;
+    }
+
+    public void setCreditCode(String creditCode) {
+        this.creditCode = creditCode;
+    }
 
     private String [] markGoodsList;
 
@@ -140,8 +153,19 @@ public class OwnerInfo extends BaseEntity {
     @Excel(name = "所属市场")
     private String markTypeName;
 
+    @Excel(name = "是否成功上传省平台")
+    private Integer isUpload;
+
     private String stallName;
     private String stallCode;
+
+    public Integer getIsUpload() {
+        return isUpload;
+    }
+
+    public void setIsUpload(Integer isUpload) {
+        this.isUpload = isUpload;
+    }
 
     public String getMarkAddress() {
         return markAddress;

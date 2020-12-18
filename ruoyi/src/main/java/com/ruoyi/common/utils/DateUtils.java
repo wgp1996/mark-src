@@ -4,6 +4,8 @@ import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
+
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
@@ -57,6 +59,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return dateTimeNow(YYYY_MM_DD_HH_MM_SS);
     }
 
+    public static final String getRandomTime()
+    {
+        return dateTimeNow(YYYYMMDDHHMMSS)+getCharAndNumr(6);
+    }
+
     public static final String dateTimeNow()
     {
         return dateTimeNow(YYYYMMDDHHMMSS);
@@ -102,7 +109,22 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         Date now = new Date();
         return DateFormatUtils.format(now, "yyyy/MM/dd");
     }
-
+    /**
+     * 生成随机数字和字母组合
+     * @param length
+     * @return
+     */
+    public static String getCharAndNumr(int length) {
+        Random random = new Random();
+        StringBuffer valSb = new StringBuffer();
+        String charStr = "0123456789abcdefghijklmnopqrstuvwxyz";
+        int charLength = charStr.length();
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(charLength);
+            valSb.append(charStr.charAt(index));
+        }
+        return valSb.toString();
+    }
     /**
      * 日期路径 即年/月/日 如20180808
      */
@@ -161,4 +183,5 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         // long sec = diff % nd % nh % nm / ns;
         return day + "天" + hour + "小时" + min + "分钟";
     }
+
 }

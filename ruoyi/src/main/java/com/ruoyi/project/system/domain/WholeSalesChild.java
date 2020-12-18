@@ -49,10 +49,19 @@ public class WholeSalesChild extends BaseEntity
     /** 总价 */
     @Excel(name = "总价")
     private String wholeMoney;
-    private String goodsName;
 
+    private String goodsName;
+    private String goodsCode;
     private String wholeSum;
     private String markType;
+
+    public String getGoodsCode() {
+        return goodsCode;
+    }
+
+    public void setGoodsCode(String goodsCode) {
+        this.goodsCode = goodsCode;
+    }
 
     public String getMarkType() {
         return markType;
